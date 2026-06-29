@@ -1,0 +1,87 @@
+const bn = {
+	translation: {
+		// App
+		'app.name': 'ল-মেট',
+		'app.tagline': 'আপনার আইনের নোটগুলো সংগঠিত রাখুন',
+
+		// Navigation
+		'nav.notes': 'নোটসমূহ',
+		'nav.trash': 'ট্র্যাশ',
+		'nav.settings': 'সেটিংস',
+
+		// Notes
+		'notes.title': 'নোটসমূহ',
+		'notes.empty': 'কোনো নোট নেই',
+		'notes.empty.description': 'নতুন নোট তৈরি করতে নিচের বাটনে ক্লিক করুন',
+		'notes.create': 'নতুন নোট',
+		'notes.edit': 'নোট সম্পাদনা',
+		'notes.delete': 'মুছে ফেলুন',
+		'notes.save': 'সংরক্ষণ করুন',
+		'notes.cancel': 'বাতিল',
+		'notes.title.label': 'শিরোনাম',
+		'notes.title.placeholder': 'নোটের শিরোনাম লিখুন...',
+		'notes.description.label': 'বিবরণ',
+		'notes.description.placeholder': 'মার্কডাউনে লিখুন...',
+		'notes.deleted.success': 'নোটটি ট্র্যাশে সরানো হয়েছে',
+		'notes.saved.success': 'নোটটি সংরক্ষিত হয়েছে',
+		'notes.untitled': 'শিরোনামহীন',
+		'notes.no.description': 'কোনো বিবরণ নেই',
+
+		// Markdown Editor
+		'editor.write': 'লিখুন',
+		'editor.preview': 'প্রিভিউ',
+		'editor.preview.empty': 'প্রিভিউ করার কিছু নেই',
+		'editor.bold': 'বোল্ড',
+		'editor.italic': 'ইটালিক',
+		'editor.heading': 'শিরোনাম',
+		'editor.link': 'লিঙ্ক',
+		'editor.code': 'কোড',
+		'editor.list': 'তালিকা',
+		'editor.ordered.list': 'ক্রমিক তালিকা',
+		'editor.quote': 'উদ্ধৃতি',
+
+		// Search
+		'search.placeholder': 'নোট খুঁজুন...',
+		'search.empty': 'কোনো ফলাফল পাওয়া যায়নি',
+		'search.hint': 'খুঁজুন',
+
+		// Trash
+		'trash.title': 'ট্র্যাশ',
+		'trash.empty': 'ট্র্যাশ খালি',
+		'trash.empty.description': 'মুছে ফেলা নোটগুলো এখানে দেখা যাবে',
+		'trash.restore': 'পুনরুদ্ধার করুন',
+		'trash.delete.permanent': 'স্থায়ীভাবে মুছুন',
+		'trash.restore.success': 'নোটটি পুনরুদ্ধার করা হয়েছে',
+		'trash.delete.success': 'নোটটি স্থায়ীভাবে মুছে ফেলা হয়েছে',
+		'trash.confirm.delete': 'আপনি কি নিশ্চিত? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।',
+
+		// Settings
+		'settings.title': 'সেটিংস',
+		'settings.language': 'ভাষা',
+		'settings.language.bn': 'বাংলা',
+		'settings.language.en': 'English',
+		'settings.theme': 'থিম',
+		'settings.theme.light': 'লাইট',
+		'settings.theme.dark': 'ডার্ক',
+		'settings.theme.system': 'সিস্টেম',
+		'settings.sync': 'সিংক্রোনাইজেশন',
+		'settings.sync.status': 'সিংক স্ট্যাটাস',
+		'settings.sync.not.connected': 'সংযুক্ত নয়',
+		'settings.sync.manual': 'ম্যানুয়াল সিংক',
+		'settings.storage': 'স্টোরেজ ব্যবহার',
+		'settings.storage.used': 'ব্যবহৃত',
+		'settings.storage.of': 'এর মধ্যে',
+		'settings.version': 'সংস্করণ',
+		'settings.sign.out': 'সাইন আউট',
+
+		// Common
+		'common.loading': 'লোড হচ্ছে...',
+		'common.error': 'একটি ত্রুটি ঘটেছে',
+		'common.retry': 'পুনরায় চেষ্টা করুন',
+		'common.confirm': 'নিশ্চিত করুন',
+		'common.close': 'বন্ধ করুন',
+		'common.or': 'অথবা',
+	},
+} as const;
+
+export default bn;

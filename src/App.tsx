@@ -1,3 +1,24 @@
+import { BrowserRouter, Route, Routes } from 'react-router';
+import { Layout } from '@/app/Layout';
+import { AppProviders } from '@/app/providers/AppProviders';
+import { NoteDetail } from '@/features/notes/components/NoteDetail';
+import { NotesPage } from '@/features/notes/NotesPage';
+import { SettingsPage } from '@/features/settings/SettingsPage';
+import { TrashPage } from '@/features/trash/TrashPage';
+
 export default function App() {
-	return <section className="bg-cyan-500 text-white">Hello World</section>;
+	return (
+		<AppProviders>
+			<BrowserRouter>
+				<Routes>
+					<Route element={<Layout />}>
+						<Route element={<NotesPage />} index />
+						<Route element={<NoteDetail />} path="note/:id" />
+						<Route element={<TrashPage />} path="trash" />
+						<Route element={<SettingsPage />} path="settings" />
+					</Route>
+				</Routes>
+			</BrowserRouter>
+		</AppProviders>
+	);
 }

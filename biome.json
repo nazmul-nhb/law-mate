@@ -33,15 +33,20 @@
 		"enabled": true,
 		"rules": {
 			"preset": "recommended",
+			"performance": {
+				"noJsxPropsBind": "info"
+			},
 			"a11y": {
 				"useButtonType": "info",
 				"useKeyWithClickEvents": "off",
 				"noStaticElementInteractions": "off",
-				"useSemanticElements": "info"
+				"useSemanticElements": "info",
+				"noNoninteractiveElementToInteractiveRole": "info"
 			},
 			"suspicious": {
 				"noUnknownAtRules": "warn",
 				"noArrayIndexKey": "info",
+				"noLeakedRender": "info",
 				"noTsIgnore": "off",
 				"noConsole": {
 					"fix": "none",
