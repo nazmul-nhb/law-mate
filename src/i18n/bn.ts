@@ -74,6 +74,7 @@ const bn = {
 		'settings.storage.used': 'ব্যবহৃত',
 		'settings.storage.of': 'এর মধ্যে',
 		'settings.version': 'সংস্করণ',
+		'settings.sign.in': 'গুগল দিয়ে লগইন করুন',
 		'settings.sign.out': 'সাইন আউট',
 
 		// Common

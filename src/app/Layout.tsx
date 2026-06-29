@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { FileText, Menu, Search, Settings, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router';
@@ -15,6 +16,8 @@ import {
 } from '@/components/ui/sheet';
 import { NoteDialog } from '@/features/notes/components/NoteDialog';
 import { useSearchCommand } from '@/hooks/useSearchCommand';
+import { useAuth } from '@/hooks/useAuth';
+import { syncService } from '@/services/sync.service';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/ui.store';
 
@@ -58,8 +61,30 @@ export function Layout() {
 	const { t } = useTranslation();
 	const setSearchOpen = useUIStore((s) => s.setSearchOpen);
 
+	// Initialize Supabase Auth and Google One Tap
+	const { user, initialized } = useAuth();
+
 	// Register Ctrl+K shortcut
 	useSearchCommand();
+
+	// Sync when online status is restored
+	useEffect(() => {
+		const handleOnline = () => {
+			if (user) {
+				syncService.sync();
+			}
+		};
+
+		window.addEventListener('online', handleOnline);
+		return () => window.removeEventListener('online', handleOnline);
+	}, [user]);
+
+	// Sync on app startup once auth is initialized and user is present
+	useEffect(() => {
+		if (initialized && user) {
+			syncService.sync();
+		}
+	}, [initialized, user]);
 
 	return (
 		<div className="flex min-h-screen flex-col">

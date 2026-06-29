@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { noteRepository } from '@/repositories/note.repository';
+import { syncService } from '@/services/sync.service';
 import type { Note } from '@/types/note.types';
 
 interface UseTrashReturn {
@@ -31,6 +32,10 @@ export function useTrash(): UseTrashReturn {
 
 	useEffect(() => {
 		refresh();
+		window.addEventListener('note-updated', refresh);
+		return () => {
+			window.removeEventListener('note-updated', refresh);
+		};
 	}, [refresh]);
 
 	const restoreNote = useCallback(
@@ -38,6 +43,7 @@ export function useTrash(): UseTrashReturn {
 			try {
 				await noteRepository.restore(id);
 				await refresh();
+				syncService.sync();
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to restore note';
@@ -53,6 +59,7 @@ export function useTrash(): UseTrashReturn {
 			try {
 				await noteRepository.permanentDelete(id);
 				await refresh();
+				syncService.sync();
 				return true;
 			} catch (err) {
 				const message =

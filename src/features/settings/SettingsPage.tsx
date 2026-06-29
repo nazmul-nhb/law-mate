@@ -6,6 +6,7 @@ import { StorageUsage } from '@/features/settings/components/StorageUsage';
 import { SyncSetting } from '@/features/settings/components/SyncSetting';
 import { ThemeSetting } from '@/features/settings/components/ThemeSetting';
 import { FontSizeSetting } from '@/features/settings/components/FontSizeSetting';
+import { AuthButton } from '@/features/auth/components/AuthButton';
 
 export function SettingsPage() {
 	const { t } = useTranslation();
@@ -15,6 +16,11 @@ export function SettingsPage() {
 			<h1 className="mb-6 text-xl font-bold text-foreground">{t('settings.title')}</h1>
 
 			<div className="space-y-6 rounded-lg border border-border bg-card p-6">
+				<div className="flex items-center justify-between">
+					<span className="text-sm font-medium text-foreground">Authentication</span>
+					<AuthButton />
+				</div>
+				<Separator />
 				<LanguageSetting />
 				<Separator />
 				<ThemeSetting />

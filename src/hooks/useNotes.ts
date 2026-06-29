@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { noteRepository } from '@/repositories/note.repository';
+import { syncService } from '@/services/sync.service';
 import type { CreateNoteInput, EditNoteInput, Note } from '@/types/note.types';
 
 interface UseNotesReturn {
@@ -43,6 +44,7 @@ export function useNotes(): UseNotesReturn {
 			try {
 				const note = await noteRepository.create(input);
 				await refresh();
+				syncService.sync();
 				return note;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to create note';
@@ -58,6 +60,7 @@ export function useNotes(): UseNotesReturn {
 			try {
 				await noteRepository.update(id, input);
 				await refresh();
+				syncService.sync();
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to update note';
@@ -73,6 +76,7 @@ export function useNotes(): UseNotesReturn {
 			try {
 				await noteRepository.softDelete(id);
 				await refresh();
+				syncService.sync();
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to delete note';

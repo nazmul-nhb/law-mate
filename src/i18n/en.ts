@@ -74,6 +74,7 @@ const en = {
 		'settings.storage.used': 'used',
 		'settings.storage.of': 'of',
 		'settings.version': 'Version',
+		'settings.sign.in': 'Sign In with Google',
 		'settings.sign.out': 'Sign Out',
 
 		// Common
