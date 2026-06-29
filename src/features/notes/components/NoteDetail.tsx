@@ -121,7 +121,7 @@ export function NoteDetail() {
 					{note.title || t('notes.untitled')}
 				</h1>
 				<p className="mt-2 text-xs text-muted-foreground">
-					{formatDateRelative(note.updated_at)}
+					{formatDateRelative(note.created_at)}
 				</p>
 
 				{note.description ? (

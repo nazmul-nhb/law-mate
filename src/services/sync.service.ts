@@ -173,9 +173,7 @@ export const syncService = {
 							description: remoteNote.description,
 							created_at: remoteNote.created_at as Timestamp,
 							updated_at: remoteNote.updated_at as Timestamp,
-							deleted_at: (remoteNote.deleted_at || undefined) as
-								| Timestamp
-								| undefined,
+							deleted_at: (remoteNote.deleted_at as Timestamp) || undefined,
 							last_synced_at: syncTime,
 							version: remoteNote.version,
 						})

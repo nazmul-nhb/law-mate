@@ -1,6 +1,7 @@
 import { Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { truncateString } from 'toolbox-x';
 import { formatDateRelative } from 'toolbox-x/date';
 import { isNonEmptyString } from 'toolbox-x/guards';
 import { cn } from '@/lib/utils';
@@ -52,11 +53,11 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
 					</h3>
 					{isNonEmptyString(note.description) && (
 						<p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-							{note.description.slice(0, 150)}
+							{truncateString(note.description, 150)}
 						</p>
 					)}
 					<p className="mt-2 text-xs text-muted-foreground">
-						{formatDateRelative(note.updated_at)}
+						{formatDateRelative(note.created_at)}
 					</p>
 				</div>
 
