@@ -1,0 +1,109 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": false
+	},
+	"files": {
+		"ignoreUnknown": true,
+		"includes": ["**", "!node_modules", "!.next", "!dist", "!build", "!**/components/ui"]
+	},
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"indentStyle": "tab",
+		"indentWidth": 4,
+		"lineEnding": "lf",
+		"lineWidth": 96,
+		"attributePosition": "auto",
+		"bracketSameLine": false,
+		"bracketSpacing": true,
+		"expand": "auto",
+		"includes": [
+			"**",
+			"!**/dist",
+			"!**/node_modules",
+			"!**/.estimator",
+			"!**/*.md",
+			"!**/components/ui"
+		]
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"a11y": {
+				"useButtonType": "info",
+				"useKeyWithClickEvents": "off",
+				"noStaticElementInteractions": "off",
+				"useSemanticElements": "info"
+			},
+			"suspicious": {
+				"noUnknownAtRules": "warn",
+				"noArrayIndexKey": "info",
+				"noTsIgnore": "off",
+				"noConsole": {
+					"fix": "none",
+					"level": "warn",
+					"options": {
+						"allow": ["warn", "table", "error", "info", "dir"]
+					}
+				}
+			},
+			"style": {
+				"useImportType": "warn"
+			},
+			"correctness": {
+				"recommended": true,
+				"useExhaustiveDependencies": "warn",
+				"noUnusedFunctionParameters": "warn",
+				"noUnusedImports": "warn",
+				"useUniqueElementIds": "info",
+				"noUnusedVariables": "warn"
+			}
+		},
+		"domains": {
+			"react": "all"
+		}
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on",
+				"useSortedAttributes": "on"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"enabled": true,
+			"arrowParentheses": "always",
+			"quoteStyle": "single",
+			"semicolons": "always",
+			"trailingCommas": "es5",
+			"jsxQuoteStyle": "double"
+		}
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["__ideas__/**/*.ts", "__*.ts", "!*/**/routeTree.gen.ts"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noUnusedVariables": "off"
+					},
+					"suspicious": {
+						"noConsole": "off",
+						"noExplicitAny": "off"
+					}
+				}
+			}
+		}
+	]
+}
