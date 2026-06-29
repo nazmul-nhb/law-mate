@@ -6,7 +6,7 @@ export const schema = defineSchema({
 		id: column.uuid().pk(),
 		user_id: column.text().optional().index(),
 		title: column.text(),
-		description: column.text().optional(),
+		description: column.text(),
 		created_at: column.timestamp(),
 		updated_at: column.timestamp().onUpdate(() => getTimestamp()),
 		deleted_at: column.timestamp().optional(),

@@ -15,6 +15,7 @@ import {
 	SheetTrigger,
 } from '@/components/ui/sheet';
 import { NoteDialog } from '@/features/notes/components/NoteDialog';
+import { UserNav } from '@/features/auth/components/UserNav';
 import { useSearchCommand } from '@/hooks/useSearchCommand';
 import { useAuth } from '@/hooks/useAuth';
 import { syncService } from '@/services/sync.service';
@@ -164,6 +165,7 @@ export function Layout() {
 						</button>
 						<LanguageToggle />
 						<ThemeToggle />
+						<UserNav />
 					</div>
 				</div>
 			</header>

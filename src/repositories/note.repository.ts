@@ -1,6 +1,7 @@
 import type { UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
 import { db } from '@/database/db';
+import { useAuthStore } from '@/stores/auth.store';
 import { DatabaseError, NotFoundError, ValidationError } from '@/lib/errors';
 import type { CreateNoteInput, EditNoteInput, Note } from '@/types/note.types';
 
@@ -11,9 +12,12 @@ export const noteRepository = {
 	/** Get all active (non-deleted) notes, ordered by updated_at descending. */
 	async getAll(): Promise<Note[]> {
 		try {
+			const user = useAuthStore.getState().user;
+			const userId = user?.id || null;
+
 			const notes = await db
 				.from('notes')
-				.where((note) => !note.deleted_at)
+				.where((note) => !note.deleted_at && note.user_id === userId)
 				.orderBy('updated_at', 'desc')
 				.findAll();
 			return notes;
@@ -43,9 +47,13 @@ export const noteRepository = {
 		}
 
 		try {
+			const user = useAuthStore.getState().user;
+			const userId = user?.id || undefined;
+
 			const note = await db
 				.insert('notes')
 				.values({
+					user_id: userId,
 					title: input.title.trim(),
 					description: input.description?.trim(),
 					last_synced_at: undefined,
@@ -142,9 +150,12 @@ export const noteRepository = {
 	/** Get all soft-deleted notes. */
 	async getDeleted(): Promise<Note[]> {
 		try {
+			const user = useAuthStore.getState().user;
+			const userId = user?.id || null;
+
 			const notes = await db
 				.from('notes')
-				.where((note) => !!note.deleted_at)
+				.where((note) => !!note.deleted_at && note.user_id === userId)
 				.orderBy('deleted_at', 'desc')
 				.findAll();
 			return notes;
@@ -181,9 +192,12 @@ export const noteRepository = {
 	/** Get all active notes for search indexing. */
 	async getAllForSearch(): Promise<Note[]> {
 		try {
+			const user = useAuthStore.getState().user;
+			const userId = user?.id || null;
+
 			return await db
 				.from('notes')
-				.where((note) => !note.deleted_at)
+				.where((note) => !note.deleted_at && note.user_id === userId)
 				.findAll();
 		} catch (error) {
 			throw new DatabaseError('getAllForSearch notes', error);

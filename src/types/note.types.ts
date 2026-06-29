@@ -13,7 +13,7 @@ export type UpdateNote = InferUpdateType<typeof schema.notes>;
 /** User-provided fields when creating a note. */
 export interface CreateNoteInput {
 	title: string;
-	description?: string;
+	description: string;
 }
 
 /** User-provided fields when editing a note. */

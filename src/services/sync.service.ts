@@ -1,3 +1,4 @@
+import type { Timestamp, UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
 import { db } from '@/database/db';
 import { supabase } from '@/lib/supabase';
@@ -22,8 +23,9 @@ export const syncService = {
 		setIsSyncing(true);
 
 		try {
-			// 1. Fetch all local notes (including soft-deleted)
-			const localNotes = await db.from('notes').findAll();
+			// 1. Fetch all local notes (including soft-deleted) that belong to this user
+			const allLocalNotes = await db.from('notes').findAll();
+			const localNotes = allLocalNotes.filter((note) => note.user_id === user.id);
 
 			// 2. Fetch all remote notes from Supabase
 			const { data: remoteNotes, error: remoteError } = await supabase
@@ -71,7 +73,10 @@ export const syncService = {
 							.where((n) => n.id === localNote.id)
 							.run();
 					} else {
-						console.error(`Failed to push local note ${localNote.id}:`, insertError);
+						console.error(
+							`Failed to push local note ${localNote.id}:`,
+							insertError
+						);
 					}
 				} else {
 					// Exists on both: resolve conflict
@@ -122,7 +127,10 @@ export const syncService = {
 								.where((n) => n.id === localNote.id)
 								.run();
 						} else {
-							console.error(`Failed to push local update for note ${localNote.id}:`, updateError);
+							console.error(
+								`Failed to push local update for note ${localNote.id}:`,
+								updateError
+							);
 						}
 					} else if (action === 'pull') {
 						await db
@@ -158,13 +166,15 @@ export const syncService = {
 					await db
 						.insert('notes')
 						.values({
-							id: remoteNote.id,
+							id: remoteNote.id as UUID<'v4'>,
 							user_id: user.id,
 							title: remoteNote.title,
-							description: remoteNote.description || undefined,
-							created_at: remoteNote.created_at,
-							updated_at: remoteNote.updated_at,
-							deleted_at: remoteNote.deleted_at || undefined,
+							description: remoteNote.description,
+							created_at: remoteNote.created_at as Timestamp,
+							updated_at: remoteNote.updated_at as Timestamp,
+							deleted_at: (remoteNote.deleted_at || undefined) as
+								| Timestamp
+								| undefined,
 							last_synced_at: syncTime,
 							version: remoteNote.version,
 						})
@@ -174,7 +184,6 @@ export const syncService = {
 
 			// 5. Trigger note updated event to refresh active views
 			window.dispatchEvent(new CustomEvent('note-updated'));
-			console.info('Sync completed successfully.');
 		} catch (error) {
 			console.error('Synchronization failed:', error);
 		} finally {

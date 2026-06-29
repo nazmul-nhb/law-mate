@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { Layout } from '@/app/Layout';
 import { AppProviders } from '@/app/providers/AppProviders';
 import { NoteDetail } from '@/features/notes/components/NoteDetail';
@@ -15,6 +15,7 @@ export default function App() {
 						<Route element={<NotesPage />} index />
 						<Route element={<NoteDetail />} path="note/:id" />
 						<Route element={<TrashPage />} path="trash" />
+						<Route element={<Navigate replace to="/settings" />} path="setting" />
 						<Route element={<SettingsPage />} path="settings" />
 					</Route>
 				</Routes>

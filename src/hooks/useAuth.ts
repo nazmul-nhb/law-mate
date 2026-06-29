@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
+import type { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { db } from '@/database/db';
 import { useAuthStore } from '@/stores/auth.store';
 
 export function useAuth() {
@@ -16,9 +18,47 @@ export function useAuth() {
 	} = useAuthStore();
 
 	useEffect(() => {
+		const assureUserProfile = async (u: User) => {
+			if (!u) return;
+			try {
+				const { data, error } = await supabase
+					.from('profiles')
+					.select('id')
+					.eq('id', u.id)
+					.maybeSingle();
+
+				if (!data && !error) {
+					await supabase.from('profiles').insert({
+						id: u.id,
+						email: u.email || '',
+						full_name: u.user_metadata?.full_name || u.user_metadata?.name || '',
+						avatar_url: u.user_metadata?.avatar_url || u.user_metadata?.picture || '',
+						role: 'user',
+						status: 'active',
+					});
+				}
+
+				// Adopt any local anonymous notes created while signed out
+				const updated = await db
+					.update('notes')
+					.set({ user_id: u.id })
+					.where((n) => !n.user_id)
+					.run();
+
+				if (updated > 0) {
+					window.dispatchEvent(new Event('note-updated'));
+				}
+			} catch (err) {
+				console.error('Failed to assure user profile:', err);
+			}
+		};
+
 		// Get initial session
-		supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+		supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
 			setSession(initialSession);
+			if (initialSession?.user) {
+				await assureUserProfile(initialSession.user);
+			}
 			setIsLoading(false);
 			setInitialized(true);
 		});
@@ -26,8 +66,11 @@ export function useAuth() {
 		// Listen for auth changes
 		const {
 			data: { subscription },
-		} = supabase.auth.onAuthStateChange((_event, currentSession) => {
+		} = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
 			setSession(currentSession);
+			if (currentSession?.user) {
+				await assureUserProfile(currentSession.user);
+			}
 			setIsLoading(false);
 			setInitialized(true);
 		});
