@@ -88,10 +88,7 @@ export function NotesPage() {
 						<DialogClose render={<Button variant="outline" />}>
 							{t('notes.cancel')}
 						</DialogClose>
-						<Button
-							onClick={handleConfirmDelete}
-							variant="destructive"
-						>
+						<Button onClick={handleConfirmDelete} variant="destructive">
 							{t('common.confirm')}
 						</Button>
 					</DialogFooter>

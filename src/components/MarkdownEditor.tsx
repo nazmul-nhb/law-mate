@@ -2,6 +2,7 @@ import { Bold, Code, Heading2, Italic, Link, List, ListOrdered, Quote } from 'lu
 import { type RefObject, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
+import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { cn } from '@/lib/utils';
 
 interface MarkdownEditorProps {
@@ -133,17 +134,17 @@ export function MarkdownEditor({
 				{activeTab === 'write' && (
 					<div className="flex items-center gap-0.5">
 						{TOOLBAR_ACTIONS.map((action) => (
-							<button
-								className="rounded p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-								key={action.labelKey}
-								onClick={() =>
-									applyAction(textareaRef, value, onChange, action)
-								}
-								title={t(action.labelKey)}
-								type="button"
-							>
-								<action.icon className="size-4" />
-							</button>
+							<TooltipSimple content={t(action.labelKey)} key={action.labelKey}>
+								<button
+									className="rounded p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
+									onClick={() =>
+										applyAction(textareaRef, value, onChange, action)
+									}
+									type="button"
+								>
+									<action.icon className="size-4" />
+								</button>
+							</TooltipSimple>
 						))}
 					</div>
 				)}

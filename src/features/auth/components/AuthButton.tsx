@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 
 export function AuthButton() {
@@ -39,9 +39,9 @@ export function AuthButton() {
 		>
 			<svg
 				className="size-4"
+				height="24"
 				viewBox="0 0 24 24"
 				width="24"
-				height="24"
 				xmlns="http://www.w3.org/2000/svg"
 			>
 				<title>Google Logo</title>

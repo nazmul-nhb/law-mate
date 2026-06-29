@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { Separator } from '@/components/ui/separator';
 import { APP_VERSION } from '@/constants/app';
+import { AuthButton } from '@/features/auth/components/AuthButton';
+import { FontSizeSetting } from '@/features/settings/components/FontSizeSetting';
 import { LanguageSetting } from '@/features/settings/components/LanguageSetting';
 import { StorageUsage } from '@/features/settings/components/StorageUsage';
 import { SyncSetting } from '@/features/settings/components/SyncSetting';
 import { ThemeSetting } from '@/features/settings/components/ThemeSetting';
-import { FontSizeSetting } from '@/features/settings/components/FontSizeSetting';
-import { AuthButton } from '@/features/auth/components/AuthButton';
 
 export function SettingsPage() {
 	const { t } = useTranslation();

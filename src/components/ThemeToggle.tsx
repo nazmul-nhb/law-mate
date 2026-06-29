@@ -1,5 +1,6 @@
 import { Monitor, Moon, Sun } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { useSettingsStore } from '@/stores/settings.store';
 import type { Theme } from '@/types/common.types';
 
@@ -23,14 +24,15 @@ export function ThemeToggle() {
 	};
 
 	return (
-		<button
-			aria-label={t(`settings.theme.${theme}`)}
-			className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-			onClick={cycleTheme}
-			title={t(`settings.theme.${theme}`)}
-			type="button"
-		>
-			<Icon className="size-5" />
-		</button>
+		<TooltipSimple content={t(`settings.theme.${theme}`)}>
+			<button
+				aria-label={t(`settings.theme.${theme}`)}
+				className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
+				onClick={cycleTheme}
+				type="button"
+			>
+				<Icon className="size-5" />
+			</button>
+		</TooltipSimple>
 	);
 }

@@ -1,7 +1,7 @@
 const bn = {
 	translation: {
 		// App
-		'app.name': 'ল-মেট',
+		'app.name': 'আইন বন্ধু',
 		'app.tagline': 'আপনার আইনের নোটগুলো সংগঠিত রাখুন',
 
 		// Navigation
@@ -94,7 +94,8 @@ const bn = {
 		'admin.action.unblock': 'আনব্লক করুন',
 		'admin.action.delete': 'সাময়িক মুছুন',
 		'admin.action.restore': 'পুনরুদ্ধার',
-		'admin.blocked.message': 'আপনার অ্যাকাউন্টটি ব্লক করা হয়েছে। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।',
+		'admin.blocked.message':
+			'আপনার অ্যাকাউন্টটি ব্লক করা হয়েছে। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।',
 		'admin.confirm.block': 'আপনি কি নিশ্চিত যে এই ব্যবহারকারীকে ব্লক করতে চান?',
 		'admin.confirm.delete': 'আপনি কি নিশ্চিত যে এই ব্যবহারকারীকে সাময়িকভাবে মুছে ফেলতে চান?',
 

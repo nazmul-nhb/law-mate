@@ -57,7 +57,9 @@ export function UserNav() {
 				<DropdownMenuContent align="end" className="w-56">
 					<div className="px-2.5 py-2 text-xs font-medium text-muted-foreground">
 						<div className="flex flex-col space-y-1">
-							<p className="text-sm font-semibold text-foreground leading-none truncate">{name}</p>
+							<p className="text-sm font-semibold text-foreground leading-none truncate">
+								{name}
+							</p>
 							<p className="text-xs leading-none text-muted-foreground truncate">
 								{user.email}
 							</p>

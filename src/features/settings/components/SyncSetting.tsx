@@ -1,21 +1,30 @@
 import { Cloud, CloudOff, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
-import { useUIStore } from '@/stores/ui.store';
 import { syncService } from '@/services/sync.service';
+import { useSettingsStore } from '@/stores/settings.store';
+import { useUIStore } from '@/stores/ui.store';
 
 export function SyncSetting() {
 	const { t } = useTranslation();
 	const { user } = useAuth();
 	const { isSyncing } = useUIStore();
+	const { lastSyncedAt } = useSettingsStore();
 
 	const handleSync = async () => {
 		if (user) {
 			await syncService.sync();
 		}
 	};
+
+	const formattedSyncTime = lastSyncedAt
+		? new Date(lastSyncedAt).toLocaleString(undefined, {
+				dateStyle: 'medium',
+				timeStyle: 'short',
+			})
+		: null;
 
 	return (
 		<div className="space-y-3">
@@ -32,7 +41,9 @@ export function SyncSetting() {
 						<CloudOff className="size-5 text-muted-foreground" />
 					)}
 					<div>
-						<p className="text-sm font-medium text-foreground">{t('settings.sync.status')}</p>
+						<p className="text-sm font-medium text-foreground">
+							{t('settings.sync.status')}
+						</p>
 						<p className="text-xs text-muted-foreground">
 							{user
 								? isSyncing
@@ -40,6 +51,11 @@ export function SyncSetting() {
 									: `${user.email} (Connected)`
 								: t('settings.sync.not.connected')}
 						</p>
+						{user && formattedSyncTime && !isSyncing && (
+							<p className="text-[10px] text-muted-foreground mt-0.5">
+								Last Synced: {formattedSyncTime}
+							</p>
+						)}
 					</div>
 				</div>
 

@@ -94,7 +94,8 @@ const en = {
 		'admin.action.unblock': 'Unblock',
 		'admin.action.delete': 'Soft Delete',
 		'admin.action.restore': 'Restore',
-		'admin.blocked.message': 'Your account has been blocked. Please contact the administrator.',
+		'admin.blocked.message':
+			'Your account has been blocked. Please contact the administrator.',
 		'admin.confirm.block': 'Are you sure you want to block this user?',
 		'admin.confirm.delete': 'Are you sure you want to soft delete this user?',
 

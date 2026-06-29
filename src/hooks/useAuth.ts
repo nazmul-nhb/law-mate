@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { useEffect } from 'react';
 import { db } from '@/database/db';
+import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
 
 export function useAuth() {
@@ -36,8 +36,10 @@ export function useAuth() {
 						.insert({
 							id: u.id,
 							email: u.email || '',
-							full_name: u.user_metadata?.full_name || u.user_metadata?.name || '',
-							avatar_url: u.user_metadata?.avatar_url || u.user_metadata?.picture || '',
+							full_name:
+								u.user_metadata?.full_name || u.user_metadata?.name || '',
+							avatar_url:
+								u.user_metadata?.avatar_url || u.user_metadata?.picture || '',
 							role: 'user',
 							status: 'active',
 						})

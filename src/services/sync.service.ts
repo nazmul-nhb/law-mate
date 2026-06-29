@@ -3,6 +3,7 @@ import { getTimestamp } from 'toolbox-x/date';
 import { db } from '@/database/db';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
+import { useSettingsStore } from '@/stores/settings.store';
 import { useUIStore } from '@/stores/ui.store';
 import type { Note } from '@/types/note.types';
 
@@ -184,6 +185,7 @@ export const syncService = {
 
 			// 5. Trigger note updated event to refresh active views
 			window.dispatchEvent(new CustomEvent('note-updated'));
+			useSettingsStore.getState().setLastSyncedAt(syncTime);
 		} catch (error) {
 			console.error('Synchronization failed:', error);
 		} finally {

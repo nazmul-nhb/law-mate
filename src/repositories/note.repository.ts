@@ -1,8 +1,8 @@
 import type { UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
 import { db } from '@/database/db';
-import { useAuthStore } from '@/stores/auth.store';
 import { DatabaseError, NotFoundError, ValidationError } from '@/lib/errors';
+import { useAuthStore } from '@/stores/auth.store';
 import type { CreateNoteInput, EditNoteInput, Note } from '@/types/note.types';
 
 type NoteId = UUID<'v4'>;

@@ -6,9 +6,11 @@ interface SettingsState {
 	theme: Theme;
 	language: Language;
 	fontSize: number;
+	lastSyncedAt: string | null;
 	setTheme: (theme: Theme) => void;
 	setLanguage: (language: Language) => void;
 	setFontSize: (size: number) => void;
+	setLastSyncedAt: (time: string | null) => void;
 }
 
 const getStoredTheme = (): Theme => {
@@ -36,10 +38,15 @@ const getStoredFontSize = (): number => {
 	return 16; // default font size
 };
 
+const getStoredLastSyncedAt = (): string | null => {
+	return localStorage.getItem('law-mate-last-synced-at');
+};
+
 export const useSettingsStore = create<SettingsState>((set) => ({
 	theme: getStoredTheme(),
 	language: getStoredLanguage(),
 	fontSize: getStoredFontSize(),
+	lastSyncedAt: getStoredLastSyncedAt(),
 
 	setTheme: (theme) => {
 		localStorage.setItem('law-mate-theme', theme);
@@ -54,5 +61,14 @@ export const useSettingsStore = create<SettingsState>((set) => ({
 	setFontSize: (fontSize) => {
 		localStorage.setItem('law-mate-font-size', String(fontSize));
 		set({ fontSize });
+	},
+
+	setLastSyncedAt: (lastSyncedAt) => {
+		if (lastSyncedAt) {
+			localStorage.setItem('law-mate-last-synced-at', lastSyncedAt);
+		} else {
+			localStorage.removeItem('law-mate-last-synced-at');
+		}
+		set({ lastSyncedAt });
 	},
 }));

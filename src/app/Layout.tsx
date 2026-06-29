@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { FileText, Menu, Search, Settings, Shield, Trash2 } from 'lucide-react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router';
 import { LanguageToggle } from '@/components/LanguageToggle';
@@ -14,14 +14,14 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from '@/components/ui/sheet';
-import { NoteDialog } from '@/features/notes/components/NoteDialog';
 import { UserNav } from '@/features/auth/components/UserNav';
-import { useSearchCommand } from '@/hooks/useSearchCommand';
+import { NoteDialog } from '@/features/notes/components/NoteDialog';
 import { useAuth } from '@/hooks/useAuth';
-import { syncService } from '@/services/sync.service';
+import { useSearchCommand } from '@/hooks/useSearchCommand';
 import { cn } from '@/lib/utils';
-import { useUIStore } from '@/stores/ui.store';
+import { syncService } from '@/services/sync.service';
 import { useAuthStore } from '@/stores/auth.store';
+import { useUIStore } from '@/stores/ui.store';
 
 function NavItem({
 	path,
@@ -177,10 +177,10 @@ export function Layout() {
 							onClick={() => setSearchOpen(true)}
 							type="button"
 						>
-							<div className="flex items-center justify-center gap-1 rounded-md border border-input px-2 py-1 text-xs text-muted-foreground">
-								<kbd className="font-mono pt-0.5">⌘</kbd>
-								<kbd className="font-mono pt-0.5">K</kbd>
-								<Search className="size-4" />
+							<div className="flex items-center justify-center gap-1 h-8 rounded-md border border-input px-2 py-1 text-xs text-muted-foreground">
+								<Search className="size-5 mr-2" />
+								<kbd className="font-mono pt-1">⌘</kbd>
+								<kbd className="font-mono pt-1">K</kbd>
 							</div>
 						</button>
 						<LanguageToggle />

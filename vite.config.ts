@@ -20,7 +20,7 @@ export default defineConfig({
 			},
 			includeAssets: ['favicon.png'],
 			manifest: {
-				name: 'LawMate - Organize Your Law Notes',
+				name: 'LawMate',
 				short_name: 'LawMate',
 				description: 'Keep your law notes organized with offline-first support.',
 				theme_color: '#0a0a0a',

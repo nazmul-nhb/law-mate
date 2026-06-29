@@ -1,11 +1,11 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { Layout } from '@/app/Layout';
 import { AppProviders } from '@/app/providers/AppProviders';
+import { AdminPage } from '@/features/admin/AdminPage';
 import { NoteDetail } from '@/features/notes/components/NoteDetail';
 import { NotesPage } from '@/features/notes/NotesPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { TrashPage } from '@/features/trash/TrashPage';
-import { AdminPage } from '@/features/admin/AdminPage';
 
 export default function App() {
 	return (

@@ -11,6 +11,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
+import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import type { Note } from '@/types/note.types';
 
 interface TrashListProps {
@@ -47,22 +48,24 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 						</div>
 
 						<div className="flex items-center gap-1">
-							<button
-								className="rounded p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-								onClick={() => onRestore(note.id)}
-								title={t('trash.restore')}
-								type="button"
-							>
-								<RotateCcw className="size-4" />
-							</button>
-							<button
-								className="rounded p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-								onClick={() => setConfirmId(note.id)}
-								title={t('trash.delete.permanent')}
-								type="button"
-							>
-								<Trash2 className="size-4" />
-							</button>
+							<TooltipSimple content={t('trash.restore')}>
+								<button
+									className="rounded p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
+									onClick={() => onRestore(note.id)}
+									type="button"
+								>
+									<RotateCcw className="size-4" />
+								</button>
+							</TooltipSimple>
+							<TooltipSimple content={t('trash.delete.permanent')}>
+								<button
+									className="rounded p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+									onClick={() => setConfirmId(note.id)}
+									type="button"
+								>
+									<Trash2 className="size-4" />
+								</button>
+							</TooltipSimple>
 						</div>
 					</div>
 				))}

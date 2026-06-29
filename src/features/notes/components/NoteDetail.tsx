@@ -13,6 +13,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
+import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { noteRepository } from '@/repositories/note.repository';
 import { useUIStore } from '@/stores/ui.store';
 import type { Note } from '@/types/note.types';
@@ -26,52 +27,65 @@ export function NoteDetail() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-	const fetchNote = useCallback(() => {
+	const fetchNote = useCallback(async () => {
 		if (!id) return;
-		noteRepository
-			.getById(id)
-			.then(setNote)
-			.catch(() => navigate('/', { replace: true }))
-			.finally(() => setIsLoading(false));
+		try {
+			setIsLoading(true);
+			const data = await noteRepository.getById(id);
+			setNote(data);
+		} catch (error) {
+			console.error('Failed to fetch note:', error);
+			navigate('/');
+		} finally {
+			setIsLoading(false);
+		}
 	}, [id, navigate]);
 
 	useEffect(() => {
 		fetchNote();
 
-		window.addEventListener('note-updated', fetchNote);
-		return () => {
-			window.removeEventListener('note-updated', fetchNote);
+		// Listen to save events
+		const handleUpdated = () => {
+			fetchNote();
 		};
+		window.addEventListener('note-updated', handleUpdated);
+		return () => window.removeEventListener('note-updated', handleUpdated);
 	}, [fetchNote]);
 
-	const handleDelete = async () => {
-		if (!id) return;
-		await noteRepository.softDelete(id);
-		setIsDeleteOpen(false);
-		navigate('/', { replace: true });
+	const handleEdit = () => {
+		if (!note) return;
+		openNoteDialog(note.id);
 	};
 
-	const handleEdit = () => {
-		if (!id) return;
-		openNoteDialog(id);
+	const handleDelete = async () => {
+		if (!note) return;
+		try {
+			await noteRepository.softDelete(note.id);
+			window.dispatchEvent(new CustomEvent('note-updated'));
+			navigate('/');
+		} catch (error) {
+			console.error('Failed to delete note:', error);
+		}
 	};
 
 	if (isLoading) {
 		return (
-			<div className="flex items-center justify-center py-16">
-				<p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+			<div className="text-center text-sm text-muted-foreground">
+				{t('common.loading')}
 			</div>
 		);
 	}
 
-	if (!note) return null;
+	if (!note) {
+		return <div className="text-center text-sm text-muted-foreground">Note not found</div>;
+	}
 
 	return (
-		<div className="mx-auto max-w-3xl">
-			{/* Header */}
-			<div className="mb-6 flex items-center justify-between">
+		<div className="space-y-6">
+			{/* Toolbar */}
+			<div className="flex items-center justify-between">
 				<button
-					className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+					className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
 					onClick={() => navigate('/')}
 					type="button"
 				>
@@ -80,22 +94,24 @@ export function NoteDetail() {
 				</button>
 
 				<div className="flex items-center gap-1">
-					<button
-						className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-						onClick={handleEdit}
-						title={t('notes.edit')}
-						type="button"
-					>
-						<Pencil className="size-4" />
-					</button>
-					<button
-						className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-						onClick={() => setIsDeleteOpen(true)}
-						title={t('notes.delete')}
-						type="button"
-					>
-						<Trash2 className="size-4" />
-					</button>
+					<TooltipSimple content={t('notes.edit')}>
+						<button
+							className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
+							onClick={handleEdit}
+							type="button"
+						>
+							<Pencil className="size-4" />
+						</button>
+					</TooltipSimple>
+					<TooltipSimple content={t('notes.delete')}>
+						<button
+							className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+							onClick={() => setIsDeleteOpen(true)}
+							type="button"
+						>
+							<Trash2 className="size-4" />
+						</button>
+					</TooltipSimple>
 				</div>
 			</div>
 
@@ -132,10 +148,7 @@ export function NoteDetail() {
 						<DialogClose render={<Button variant="outline" />}>
 							{t('notes.cancel')}
 						</DialogClose>
-						<Button
-							onClick={handleDelete}
-							variant="destructive"
-						>
+						<Button onClick={handleDelete} variant="destructive">
 							{t('common.confirm')}
 						</Button>
 					</DialogFooter>
