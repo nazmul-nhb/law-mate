@@ -5,6 +5,7 @@ import { LanguageSetting } from '@/features/settings/components/LanguageSetting'
 import { StorageUsage } from '@/features/settings/components/StorageUsage';
 import { SyncSetting } from '@/features/settings/components/SyncSetting';
 import { ThemeSetting } from '@/features/settings/components/ThemeSetting';
+import { FontSizeSetting } from '@/features/settings/components/FontSizeSetting';
 
 export function SettingsPage() {
 	const { t } = useTranslation();
@@ -17,6 +18,8 @@ export function SettingsPage() {
 				<LanguageSetting />
 				<Separator />
 				<ThemeSetting />
+				<Separator />
+				<FontSizeSetting />
 				<Separator />
 				<SyncSetting />
 				<Separator />

@@ -5,8 +5,10 @@ import type { Language, Theme } from '@/types/common.types';
 interface SettingsState {
 	theme: Theme;
 	language: Language;
+	fontSize: number;
 	setTheme: (theme: Theme) => void;
 	setLanguage: (language: Language) => void;
+	setFontSize: (size: number) => void;
 }
 
 const getStoredTheme = (): Theme => {
@@ -25,9 +27,19 @@ const getStoredLanguage = (): Language => {
 	return DEFAULT_LANGUAGE;
 };
 
+const getStoredFontSize = (): number => {
+	const stored = localStorage.getItem('law-mate-font-size');
+	if (stored) {
+		const parsed = Number.parseInt(stored, 10);
+		if (!Number.isNaN(parsed)) return parsed;
+	}
+	return 16; // default font size
+};
+
 export const useSettingsStore = create<SettingsState>((set) => ({
 	theme: getStoredTheme(),
 	language: getStoredLanguage(),
+	fontSize: getStoredFontSize(),
 
 	setTheme: (theme) => {
 		localStorage.setItem('law-mate-theme', theme);
@@ -37,5 +49,10 @@ export const useSettingsStore = create<SettingsState>((set) => ({
 	setLanguage: (language) => {
 		localStorage.setItem('law-mate-language', language);
 		set({ language });
+	},
+
+	setFontSize: (fontSize) => {
+		localStorage.setItem('law-mate-font-size', String(fontSize));
+		set({ fontSize });
 	},
 }));

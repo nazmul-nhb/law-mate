@@ -17,10 +17,10 @@ import { useUIStore } from '@/stores/ui.store';
 import type { Note } from '@/types/note.types';
 
 interface NoteDialogProps {
-	onSaved: () => void;
+	onSaved?: () => void;
 }
 
-export function NoteDialog({ onSaved }: NoteDialogProps) {
+export function NoteDialog({ onSaved }: NoteDialogProps = {}) {
 	const { t } = useTranslation();
 	const { noteDialog, closeNoteDialog } = useUIStore();
 	const [title, setTitle] = useState('');
@@ -68,7 +68,8 @@ export function NoteDialog({ onSaved }: NoteDialogProps) {
 			closeNoteDialog();
 			setTitle('');
 			setDescription('');
-			onSaved();
+			window.dispatchEvent(new CustomEvent('note-updated'));
+			if (onSaved) onSaved();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : t('common.error'));
 		} finally {

@@ -1,6 +1,7 @@
 import { FileText, Menu, Search, Settings, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router';
+import { LanguageToggle } from '@/components/LanguageToggle';
 import { SearchCommand } from '@/components/SearchCommand';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from '@/components/ui/sheet';
+import { NoteDialog } from '@/features/notes/components/NoteDialog';
 import { useSearchCommand } from '@/hooks/useSearchCommand';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/ui.store';
@@ -82,7 +84,12 @@ export function Layout() {
 							</SheetTrigger>
 							<SheetContent className="w-64" side="left">
 								<SheetHeader>
-									<SheetTitle className="text-left text-lg font-bold">
+									<SheetTitle className="text-left text-lg font-bold flex items-center gap-2">
+										<img
+											alt="Logo"
+											className="size-6 object-contain"
+											src="/law-mate.png"
+										/>
 										{t('app.name')}
 									</SheetTitle>
 								</SheetHeader>
@@ -96,7 +103,15 @@ export function Layout() {
 							</SheetContent>
 						</Sheet>
 
-						<NavLink className="text-lg font-bold text-foreground" to="/">
+						<NavLink
+							className="text-lg font-bold text-foreground flex items-center gap-2"
+							to="/"
+						>
+							<img
+								alt="LawMate Logo"
+								className="size-6 object-contain"
+								src="/law-mate.png"
+							/>
 							{t('app.name')}
 						</NavLink>
 					</div>
@@ -108,20 +123,21 @@ export function Layout() {
 						))}
 					</nav>
 
-					{/* Right: search + theme */}
+					{/* Right: search + language + theme */}
 					<div className="flex items-center gap-1">
 						<button
 							aria-label={t('search.hint')}
-							className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+							className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
 							onClick={() => setSearchOpen(true)}
 							type="button"
 						>
-							<Search className="size-5" />
+							<div className="flex items-center justify-center gap-1 rounded-md border border-input px-2 py-1 text-xs text-muted-foreground">
+								<kbd className="font-mono pt-0.5">⌘</kbd>
+								<kbd className="font-mono pt-0.5">K</kbd>
+								<Search className="size-4" />
+							</div>
 						</button>
-						<div className="hidden items-center gap-1 rounded-md border border-input px-2 py-1 text-xs text-muted-foreground sm:flex">
-							<kbd className="font-mono">⌘</kbd>
-							<kbd className="font-mono">K</kbd>
-						</div>
+						<LanguageToggle />
 						<ThemeToggle />
 					</div>
 				</div>
@@ -134,6 +150,9 @@ export function Layout() {
 
 			{/* Search command palette */}
 			<SearchCommand />
+
+			{/* Global Note create/edit dialog */}
+			<NoteDialog onSaved={() => {}} />
 		</div>
 	);
 }

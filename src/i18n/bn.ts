@@ -54,6 +54,7 @@ const bn = {
 		'trash.restore.success': 'নোটটি পুনরুদ্ধার করা হয়েছে',
 		'trash.delete.success': 'নোটটি স্থায়ীভাবে মুছে ফেলা হয়েছে',
 		'trash.confirm.delete': 'আপনি কি নিশ্চিত? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।',
+		'trash.confirm.soft.delete': 'আপনি কি নিশ্চিত যে এই নোটটি ট্র্যাশে পাঠাতে চান?',
 
 		// Settings
 		'settings.title': 'সেটিংস',
@@ -64,6 +65,7 @@ const bn = {
 		'settings.theme.light': 'লাইট',
 		'settings.theme.dark': 'ডার্ক',
 		'settings.theme.system': 'সিস্টেম',
+		'settings.fontsize': 'ফন্টের আকার',
 		'settings.sync': 'সিংক্রোনাইজেশন',
 		'settings.sync.status': 'সিংক স্ট্যাটাস',
 		'settings.sync.not.connected': 'সংযুক্ত নয়',

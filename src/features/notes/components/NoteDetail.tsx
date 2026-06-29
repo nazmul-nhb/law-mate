@@ -1,9 +1,18 @@
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { formatDateRelative } from 'toolbox-x/date';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
+import { Button } from '@/components/ui/button';
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 import { noteRepository } from '@/repositories/note.repository';
 import { useUIStore } from '@/stores/ui.store';
 import type { Note } from '@/types/note.types';
@@ -15,10 +24,10 @@ export function NoteDetail() {
 	const openNoteDialog = useUIStore((s) => s.openNoteDialog);
 	const [note, setNote] = useState<Note | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-	useEffect(() => {
+	const fetchNote = useCallback(() => {
 		if (!id) return;
-
 		noteRepository
 			.getById(id)
 			.then(setNote)
@@ -26,9 +35,19 @@ export function NoteDetail() {
 			.finally(() => setIsLoading(false));
 	}, [id, navigate]);
 
+	useEffect(() => {
+		fetchNote();
+
+		window.addEventListener('note-updated', fetchNote);
+		return () => {
+			window.removeEventListener('note-updated', fetchNote);
+		};
+	}, [fetchNote]);
+
 	const handleDelete = async () => {
 		if (!id) return;
 		await noteRepository.softDelete(id);
+		setIsDeleteOpen(false);
 		navigate('/', { replace: true });
 	};
 
@@ -71,7 +90,7 @@ export function NoteDetail() {
 					</button>
 					<button
 						className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-						onClick={handleDelete}
+						onClick={() => setIsDeleteOpen(true)}
 						title={t('notes.delete')}
 						type="button"
 					>
@@ -99,6 +118,29 @@ export function NoteDetail() {
 					</p>
 				)}
 			</article>
+
+			{/* Soft delete confirmation dialog */}
+			<Dialog onOpenChange={setIsDeleteOpen} open={isDeleteOpen}>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle>{t('notes.delete')}</DialogTitle>
+					</DialogHeader>
+					<p className="text-sm text-muted-foreground">
+						{t('trash.confirm.soft.delete')}
+					</p>
+					<DialogFooter>
+						<DialogClose render={<Button variant="outline" />}>
+							{t('notes.cancel')}
+						</DialogClose>
+						<Button
+							onClick={handleDelete}
+							variant="destructive"
+						>
+							{t('common.confirm')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }

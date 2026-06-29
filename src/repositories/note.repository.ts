@@ -48,6 +48,8 @@ export const noteRepository = {
 				.values({
 					title: input.title.trim(),
 					description: input.description?.trim(),
+					last_synced_at: undefined,
+					deleted_at: undefined,
 				})
 				.run();
 

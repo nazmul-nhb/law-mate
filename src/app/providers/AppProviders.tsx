@@ -28,10 +28,21 @@ function ThemeApplier() {
 	return null;
 }
 
+function FontSizeApplier() {
+	const fontSize = useSettingsStore((s) => s.fontSize);
+
+	useEffect(() => {
+		document.documentElement.style.fontSize = `${fontSize}px`;
+	}, [fontSize]);
+
+	return null;
+}
+
 export function AppProviders({ children }: { children: React.ReactNode }) {
 	return (
 		<TooltipProvider>
 			<ThemeApplier />
+			<FontSizeApplier />
 			{children}
 		</TooltipProvider>
 	);

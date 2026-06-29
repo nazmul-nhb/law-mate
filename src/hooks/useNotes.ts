@@ -32,6 +32,10 @@ export function useNotes(): UseNotesReturn {
 
 	useEffect(() => {
 		refresh();
+		window.addEventListener('note-updated', refresh);
+		return () => {
+			window.removeEventListener('note-updated', refresh);
+		};
 	}, [refresh]);
 
 	const createNote = useCallback(

@@ -2,6 +2,7 @@ import { FileText, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { truncateString } from 'toolbox-x';
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -66,7 +67,7 @@ export function SearchCommand() {
 									</p>
 									{note.description && (
 										<p className="truncate text-xs text-muted-foreground">
-											{note.description.slice(0, 100)}
+											{truncateString(note.description)}
 										</p>
 									)}
 								</div>

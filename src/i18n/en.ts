@@ -54,6 +54,7 @@ const en = {
 		'trash.restore.success': 'Note restored successfully',
 		'trash.delete.success': 'Note permanently deleted',
 		'trash.confirm.delete': 'Are you sure? This action cannot be undone.',
+		'trash.confirm.soft.delete': 'Are you sure you want to move this note to trash?',
 
 		// Settings
 		'settings.title': 'Settings',
@@ -64,6 +65,7 @@ const en = {
 		'settings.theme.light': 'Light',
 		'settings.theme.dark': 'Dark',
 		'settings.theme.system': 'System',
+		'settings.fontsize': 'Font Size',
 		'settings.sync': 'Synchronization',
 		'settings.sync.status': 'Sync Status',
 		'settings.sync.not.connected': 'Not connected',

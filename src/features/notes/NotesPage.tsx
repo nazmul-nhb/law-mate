@@ -1,6 +1,15 @@
 import { Plus } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NoteDialog } from '@/features/notes/components/NoteDialog';
+import { Button } from '@/components/ui/button';
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 import { NoteList } from '@/features/notes/components/NoteList';
 import { useNotes } from '@/hooks/useNotes';
 import { useUIStore } from '@/stores/ui.store';
@@ -9,6 +18,7 @@ export function NotesPage() {
 	const { t } = useTranslation();
 	const { notes, isLoading, error, refresh, deleteNote } = useNotes();
 	const openNoteDialog = useUIStore((s) => s.openNoteDialog);
+	const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
 	if (isLoading) {
 		return (
@@ -33,6 +43,13 @@ export function NotesPage() {
 		);
 	}
 
+	const handleConfirmDelete = async () => {
+		if (deleteConfirmId) {
+			await deleteNote(deleteConfirmId);
+			setDeleteConfirmId(null);
+		}
+	};
+
 	return (
 		<div>
 			{/* Header */}
@@ -52,11 +69,34 @@ export function NotesPage() {
 			<NoteList
 				notes={notes}
 				onCreateClick={() => openNoteDialog()}
-				onDelete={deleteNote}
+				onDelete={setDeleteConfirmId}
 			/>
 
-			{/* Create/Edit dialog */}
-			<NoteDialog onSaved={refresh} />
+			{/* Soft delete confirmation dialog */}
+			<Dialog
+				onOpenChange={(open) => !open && setDeleteConfirmId(null)}
+				open={!!deleteConfirmId}
+			>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle>{t('notes.delete')}</DialogTitle>
+					</DialogHeader>
+					<p className="text-sm text-muted-foreground">
+						{t('trash.confirm.soft.delete')}
+					</p>
+					<DialogFooter>
+						<DialogClose render={<Button variant="outline" />}>
+							{t('notes.cancel')}
+						</DialogClose>
+						<Button
+							onClick={handleConfirmDelete}
+							variant="destructive"
+						>
+							{t('common.confirm')}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 
 			{/* Mobile FAB */}
 			<button

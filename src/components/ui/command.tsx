@@ -60,7 +60,9 @@ function CommandDialog({
         )}
         showCloseButton={showCloseButton}
       >
-        {children}
+        <Command className="**:data-[slot=command-input-wrapper]:border-b **:data-[slot=command-input]:h-12 **:data-[slot=command-empty]:py-6 **:data-[slot=command-group]:px-2 **:data-[slot=command-group-heading]:px-2 **:data-[slot=command-group-heading]:font-medium **:data-[slot=command-group-heading]:text-muted-foreground **:data-[slot=command-group]:space-y-1 **:data-[slot=command-item]:px-3 **:data-[slot=command-item]:py-2">
+          {children}
+        </Command>
       </DialogContent>
     </Dialog>
   )
@@ -71,7 +73,7 @@ function CommandInput({
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
-    <div data-slot="command-input-wrapper" className="p-1 pb-0">
+    <div data-slot="command-input-wrapper" className="p-1 pb-2">
       <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
         <CommandPrimitive.Input
           data-slot="command-input"
