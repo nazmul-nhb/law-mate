@@ -23,6 +23,7 @@
 		"includes": [
 			"**",
 			"!**/dist",
+			"!**/dev-dist",
 			"!**/node_modules",
 			"!**/.estimator",
 			"!**/*.md",

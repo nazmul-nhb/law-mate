@@ -11,6 +11,7 @@ export function useAuth() {
 		isLoading,
 		initialized,
 		setSession,
+		setProfile,
 		setIsLoading,
 		setInitialized,
 		signInWithGoogle,
@@ -21,21 +22,35 @@ export function useAuth() {
 		const assureUserProfile = async (u: User) => {
 			if (!u) return;
 			try {
-				const { data, error } = await supabase
+				const { data: existingProfile, error } = await supabase
 					.from('profiles')
-					.select('id')
+					.select('*')
 					.eq('id', u.id)
 					.maybeSingle();
 
-				if (!data && !error) {
-					await supabase.from('profiles').insert({
-						id: u.id,
-						email: u.email || '',
-						full_name: u.user_metadata?.full_name || u.user_metadata?.name || '',
-						avatar_url: u.user_metadata?.avatar_url || u.user_metadata?.picture || '',
-						role: 'user',
-						status: 'active',
-					});
+				let finalProfile = existingProfile;
+
+				if (!existingProfile && !error) {
+					const { data: newProfile, error: insertError } = await supabase
+						.from('profiles')
+						.insert({
+							id: u.id,
+							email: u.email || '',
+							full_name: u.user_metadata?.full_name || u.user_metadata?.name || '',
+							avatar_url: u.user_metadata?.avatar_url || u.user_metadata?.picture || '',
+							role: 'user',
+							status: 'active',
+						})
+						.select('*')
+						.single();
+
+					if (!insertError) {
+						finalProfile = newProfile;
+					}
+				}
+
+				if (finalProfile) {
+					setProfile(finalProfile);
 				}
 
 				// Adopt any local anonymous notes created while signed out
@@ -58,6 +73,8 @@ export function useAuth() {
 			setSession(initialSession);
 			if (initialSession?.user) {
 				await assureUserProfile(initialSession.user);
+			} else {
+				setProfile(null);
 			}
 			setIsLoading(false);
 			setInitialized(true);
@@ -70,6 +87,8 @@ export function useAuth() {
 			setSession(currentSession);
 			if (currentSession?.user) {
 				await assureUserProfile(currentSession.user);
+			} else {
+				setProfile(null);
 			}
 			setIsLoading(false);
 			setInitialized(true);
@@ -78,7 +97,7 @@ export function useAuth() {
 		return () => {
 			subscription.unsubscribe();
 		};
-	}, [setSession, setIsLoading, setInitialized]);
+	}, [setSession, setProfile, setIsLoading, setInitialized]);
 
 	// Initialize Google One Tap if GIS SDK is loaded and client ID exists
 	useEffect(() => {

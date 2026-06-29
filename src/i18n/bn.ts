@@ -77,6 +77,27 @@ const bn = {
 		'settings.sign.in': 'গুগল দিয়ে লগইন করুন',
 		'settings.sign.out': 'সাইন আউট',
 
+		// Admin
+		'nav.admin': 'এডমিন',
+		'admin.title': 'এডমিন কনসোল',
+		'admin.stats.total': 'মোট ব্যবহারকারী',
+		'admin.stats.active': 'সক্রিয়',
+		'admin.stats.blocked': 'ব্লকড',
+		'admin.stats.deleted': 'মুছে ফেলা',
+		'admin.search.placeholder': 'নাম বা ইমেল দিয়ে খুঁজুন...',
+		'admin.table.user': 'ব্যবহারকারী',
+		'admin.table.role': 'ভূমিকা',
+		'admin.table.status': 'অবস্থা',
+		'admin.table.joined': 'যোগদান করেছেন',
+		'admin.table.actions': 'পদক্ষেপ',
+		'admin.action.block': 'ব্লক করুন',
+		'admin.action.unblock': 'আনব্লক করুন',
+		'admin.action.delete': 'সাময়িক মুছুন',
+		'admin.action.restore': 'পুনরুদ্ধার',
+		'admin.blocked.message': 'আপনার অ্যাকাউন্টটি ব্লক করা হয়েছে। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।',
+		'admin.confirm.block': 'আপনি কি নিশ্চিত যে এই ব্যবহারকারীকে ব্লক করতে চান?',
+		'admin.confirm.delete': 'আপনি কি নিশ্চিত যে এই ব্যবহারকারীকে সাময়িকভাবে মুছে ফেলতে চান?',
+
 		// Common
 		'common.loading': 'লোড হচ্ছে...',
 		'common.error': 'একটি ত্রুটি ঘটেছে',
@@ -85,6 +106,6 @@ const bn = {
 		'common.close': 'বন্ধ করুন',
 		'common.or': 'অথবা',
 	},
-} as const;
+};
 
 export default bn;

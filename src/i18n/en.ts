@@ -77,6 +77,27 @@ const en = {
 		'settings.sign.in': 'Sign In with Google',
 		'settings.sign.out': 'Sign Out',
 
+		// Admin
+		'nav.admin': 'Admin',
+		'admin.title': 'Admin Console',
+		'admin.stats.total': 'Total Users',
+		'admin.stats.active': 'Active',
+		'admin.stats.blocked': 'Blocked',
+		'admin.stats.deleted': 'Deleted',
+		'admin.search.placeholder': 'Search users by name or email...',
+		'admin.table.user': 'User',
+		'admin.table.role': 'Role',
+		'admin.table.status': 'Status',
+		'admin.table.joined': 'Joined',
+		'admin.table.actions': 'Actions',
+		'admin.action.block': 'Block',
+		'admin.action.unblock': 'Unblock',
+		'admin.action.delete': 'Soft Delete',
+		'admin.action.restore': 'Restore',
+		'admin.blocked.message': 'Your account has been blocked. Please contact the administrator.',
+		'admin.confirm.block': 'Are you sure you want to block this user?',
+		'admin.confirm.delete': 'Are you sure you want to soft delete this user?',
+
 		// Common
 		'common.loading': 'Loading...',
 		'common.error': 'An error occurred',
@@ -85,6 +106,6 @@ const en = {
 		'common.close': 'Close',
 		'common.or': 'or',
 	},
-} as const;
+};
 
 export default en;

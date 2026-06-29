@@ -5,6 +5,7 @@ import { NoteDetail } from '@/features/notes/components/NoteDetail';
 import { NotesPage } from '@/features/notes/NotesPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { TrashPage } from '@/features/trash/TrashPage';
+import { AdminPage } from '@/features/admin/AdminPage';
 
 export default function App() {
 	return (
@@ -17,6 +18,7 @@ export default function App() {
 						<Route element={<TrashPage />} path="trash" />
 						<Route element={<Navigate replace to="/settings" />} path="setting" />
 						<Route element={<SettingsPage />} path="settings" />
+						<Route element={<AdminPage />} path="admin" />
 					</Route>
 				</Routes>
 			</BrowserRouter>

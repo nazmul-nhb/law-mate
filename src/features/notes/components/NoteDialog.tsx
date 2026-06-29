@@ -56,12 +56,12 @@ export function NoteDialog({ onSaved }: NoteDialogProps = {}) {
 			if (isEditing && noteDialog.noteId) {
 				await noteRepository.update(noteDialog.noteId, {
 					title: title.trim(),
-					description: description.trim() || undefined,
+					description: description.trim(),
 				});
 			} else {
 				await noteRepository.create({
 					title: title.trim(),
-					description: description.trim() || undefined,
+					description: description.trim(),
 				});
 			}
 

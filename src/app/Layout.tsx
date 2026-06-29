@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { FileText, Menu, Search, Settings, Trash2 } from 'lucide-react';
+import { FileText, Menu, Search, Settings, Shield, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router';
 import { LanguageToggle } from '@/components/LanguageToggle';
@@ -21,12 +21,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { syncService } from '@/services/sync.service';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/ui.store';
-
-const NAV_ITEMS = [
-	{ path: '/', labelKey: 'nav.notes', icon: FileText },
-	{ path: '/trash', labelKey: 'nav.trash', icon: Trash2 },
-	{ path: '/settings', labelKey: 'nav.settings', icon: Settings },
-] as const;
+import { useAuthStore } from '@/stores/auth.store';
 
 function NavItem({
 	path,
@@ -61,31 +56,56 @@ function NavItem({
 export function Layout() {
 	const { t } = useTranslation();
 	const setSearchOpen = useUIStore((s) => s.setSearchOpen);
-
-	// Initialize Supabase Auth and Google One Tap
 	const { user, initialized } = useAuth();
+	const { profile } = useAuthStore();
 
-	// Register Ctrl+K shortcut
 	useSearchCommand();
 
-	// Sync when online status is restored
 	useEffect(() => {
 		const handleOnline = () => {
 			if (user) {
 				syncService.sync();
 			}
 		};
-
 		window.addEventListener('online', handleOnline);
 		return () => window.removeEventListener('online', handleOnline);
 	}, [user]);
 
-	// Sync on app startup once auth is initialized and user is present
 	useEffect(() => {
 		if (initialized && user) {
 			syncService.sync();
 		}
 	}, [initialized, user]);
+
+	if (profile?.status === 'blocked') {
+		return (
+			<div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center">
+				<div className="max-w-md space-y-4 rounded-lg border border-destructive/20 bg-destructive/5 p-6 shadow-xs">
+					<Shield className="mx-auto size-12 text-destructive" />
+					<h1 className="text-xl font-bold text-foreground">Access Denied</h1>
+					<p className="text-sm text-muted-foreground">
+						{t('admin.blocked.message')}
+					</p>
+					<button
+						className="rounded-md bg-destructive text-destructive-foreground hover:bg-destructive/90 px-4 py-2 text-sm font-semibold transition-colors cursor-pointer"
+						onClick={() => useAuthStore.getState().signOut()}
+						type="button"
+					>
+						{t('settings.sign.out')}
+					</button>
+				</div>
+			</div>
+		);
+	}
+
+	const navItems = [
+		{ path: '/', labelKey: 'nav.notes', icon: FileText },
+		{ path: '/trash', labelKey: 'nav.trash', icon: Trash2 },
+		{ path: '/settings', labelKey: 'nav.settings', icon: Settings },
+		...(profile?.role === 'admin'
+			? [{ path: '/admin', labelKey: 'nav.admin', icon: Shield }]
+			: []),
+	];
 
 	return (
 		<div className="flex min-h-screen flex-col">
@@ -120,7 +140,7 @@ export function Layout() {
 									</SheetTitle>
 								</SheetHeader>
 								<nav className="mt-4 space-y-1 px-4">
-									{NAV_ITEMS.map((item) => (
+									{navItems.map((item) => (
 										<SheetClose key={item.path} render={<div />}>
 											<NavItem {...item} />
 										</SheetClose>
@@ -144,7 +164,7 @@ export function Layout() {
 
 					{/* Center: desktop nav */}
 					<nav className="hidden items-center gap-1 sm:flex">
-						{NAV_ITEMS.map((item) => (
+						{navItems.map((item) => (
 							<NavItem key={item.path} {...item} />
 						))}
 					</nav>
