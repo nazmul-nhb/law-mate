@@ -1,3 +1,5 @@
+import type { I18Keys } from '@/i18n';
+
 const bn = {
 	translation: {
 		// App
@@ -68,7 +70,9 @@ const bn = {
 		'settings.fontsize': 'ফন্টের আকার',
 		'settings.sync': 'সিংক্রোনাইজেশন',
 		'settings.sync.status': 'সিংক স্ট্যাটাস',
+		'settings.sync.connected': 'সংযুক্ত',
 		'settings.sync.not.connected': 'সংযুক্ত নয়',
+		'settings.sync.label': 'সর্বশেষ সিংক করা হয়েছে',
 		'settings.sync.manual': 'ম্যানুয়াল সিংক',
 		'settings.storage': 'স্টোরেজ ব্যবহার',
 		'settings.storage.used': 'ব্যবহৃত',
@@ -106,7 +110,7 @@ const bn = {
 		'common.confirm': 'নিশ্চিত করুন',
 		'common.close': 'বন্ধ করুন',
 		'common.or': 'অথবা',
-	},
+	} satisfies Record<I18Keys, string>,
 };
 
 export default bn;

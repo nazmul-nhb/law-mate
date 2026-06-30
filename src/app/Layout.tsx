@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/sheet';
 import { UserNav } from '@/features/auth/components/UserNav';
 import { NoteDialog } from '@/features/notes/components/NoteDialog';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth, useAuthInit } from '@/hooks/useAuth';
 import { useSearchCommand } from '@/hooks/useSearchCommand';
 import { cn } from '@/lib/utils';
 import { syncService } from '@/services/sync.service';
@@ -54,6 +54,7 @@ function NavItem({
 }
 
 export function Layout() {
+	useAuthInit();
 	const { t } = useTranslation();
 	const setSearchOpen = useUIStore((s) => s.setSearchOpen);
 	const { user, initialized } = useAuth();

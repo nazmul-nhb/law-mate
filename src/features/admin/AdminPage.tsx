@@ -65,6 +65,10 @@ export function AdminPage() {
 
 	// Fetch users list
 	const fetchUsers = React.useCallback(async () => {
+		if (!navigator.onLine) {
+			setIsLoading(false);
+			return;
+		}
 		try {
 			setIsLoading(true);
 			const { data, error } = await supabase

@@ -6,21 +6,33 @@ import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
 
 export function useAuth() {
-	const {
+	const { user, isLoading, initialized, signInWithGoogle, signOut } = useAuthStore();
+
+	return {
 		user,
 		isLoading,
 		initialized,
-		setUser,
-		setProfile,
-		setIsLoading,
-		setInitialized,
 		signInWithGoogle,
 		signOut,
-	} = useAuthStore();
+	};
+}
+
+export function useAuthInit() {
+	const { user, isLoading, initialized, setUser, setProfile, setIsLoading, setInitialized } =
+		useAuthStore();
+
+	const isOnline = window.navigator.onLine;
 
 	useEffect(() => {
 		const assureUserProfile = async (u: User) => {
 			if (!u) return;
+
+			// Do not Assure Profile if offline
+			if (!isOnline) {
+				console.info('Offline: Skipping profile assurance check.');
+				return;
+			}
+
 			try {
 				const { data: existingProfile, error } = await supabase
 					.from('profiles')
@@ -71,24 +83,27 @@ export function useAuth() {
 			}
 		};
 
-		// Get initial session
-		supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
-			// setSession(initialSession);
-			if (initialSession?.user) {
-				await assureUserProfile(initialSession.user);
-			} else {
-				setProfile(null);
-				setUser(null);
-			}
+		// Get initial session if online
+		if (isOnline) {
+			supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
+				if (initialSession?.user) {
+					await assureUserProfile(initialSession.user);
+				} else {
+					setProfile(null);
+					setUser(null);
+				}
+				setIsLoading(false);
+				setInitialized(true);
+			});
+		} else {
 			setIsLoading(false);
 			setInitialized(true);
-		});
+		}
 
 		// Listen for auth changes
 		const {
 			data: { subscription },
 		} = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
-			// setSession(currentSession);
 			if (currentSession?.user) {
 				await assureUserProfile(currentSession.user);
 			} else {
@@ -102,13 +117,18 @@ export function useAuth() {
 		return () => {
 			subscription.unsubscribe();
 		};
-	}, [setProfile, setUser, setIsLoading, setInitialized]);
+	}, [setProfile, setUser, setIsLoading, setInitialized, isOnline]);
 
 	// Initialize Google One Tap if GIS SDK is loaded and client ID exists
 	useEffect(() => {
 		if (isLoading || !initialized || user) return;
 
 		if (!googleClientId) {
+			return;
+		}
+
+		// No network request when offline
+		if (!isOnline) {
 			return;
 		}
 
@@ -121,6 +141,7 @@ export function useAuth() {
 				client_id: googleClientId,
 				callback: async (response: { credential?: string }) => {
 					if (!response.credential) return;
+					if (!isOnline) return; // check connection before API calls
 					setIsLoading(true);
 					try {
 						const { error } = await supabase.auth.signInWithIdToken({
@@ -152,14 +173,5 @@ export function useAuth() {
 			window.addEventListener('load', handleLoad);
 			return () => window.removeEventListener('load', handleLoad);
 		}
-	}, [user, isLoading, initialized, setIsLoading]);
-
-	return {
-		user,
-		// session,
-		isLoading,
-		initialized,
-		signInWithGoogle,
-		signOut,
-	};
+	}, [user, isLoading, initialized, isOnline, setIsLoading]);
 }

@@ -1,5 +1,7 @@
 import { Cloud, CloudOff, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { digitToBangla } from 'toolbox-x';
+import { formatDate } from 'toolbox-x/date';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
@@ -11,7 +13,9 @@ export function SyncSetting() {
 	const { t } = useTranslation();
 	const { user } = useAuth();
 	const { isSyncing } = useUIStore();
-	const { lastSyncedAt } = useSettingsStore();
+	const { lastSyncedAt, language } = useSettingsStore();
+
+	const isSynced = window.navigator.onLine && !!user;
 
 	const handleSync = async () => {
 		if (user) {
@@ -20,10 +24,7 @@ export function SyncSetting() {
 	};
 
 	const formattedSyncTime = lastSyncedAt
-		? new Date(lastSyncedAt).toLocaleString(undefined, {
-				dateStyle: 'medium',
-				timeStyle: 'short',
-			})
+		? formatDate({ date: lastSyncedAt, format: 'DD-MM-YYYY hh:mm:ss A' })
 		: null;
 
 	return (
@@ -31,7 +32,7 @@ export function SyncSetting() {
 			<Label className="text-sm font-medium">{t('settings.sync')}</Label>
 			<div className="flex flex-col gap-3 rounded-md border border-border bg-muted/30 p-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-3">
-					{user ? (
+					{isSynced ? (
 						isSyncing ? (
 							<Loader2 className="size-5 text-primary animate-spin" />
 						) : (
@@ -45,21 +46,26 @@ export function SyncSetting() {
 							{t('settings.sync.status')}
 						</p>
 						<p className="text-xs text-muted-foreground">
-							{user
+							{isSynced
 								? isSyncing
 									? t('common.loading')
-									: `${user.email} (Connected)`
+									: `${user.email} (${t('settings.sync.connected')})`
 								: t('settings.sync.not.connected')}
 						</p>
 						{user && formattedSyncTime && !isSyncing && (
-							<p className="text-[10px] text-muted-foreground mt-0.5">
-								Last Synced: {formattedSyncTime}
+							<p className="text-xs text-muted-foreground mt-0.5">
+								{t('settings.sync.label')}:{' '}
+								{language === 'bn'
+									? digitToBangla(formattedSyncTime)
+											.replace('PM', 'অপরাহ্ন')
+											.replace('AM', 'পূর্বাহ্ন')
+									: formattedSyncTime}
 							</p>
 						)}
 					</div>
 				</div>
 
-				{user && (
+				{isSynced ? (
 					<Button
 						disabled={isSyncing}
 						onClick={handleSync}
@@ -69,7 +75,7 @@ export function SyncSetting() {
 						{isSyncing && <Loader2 className="mr-2 size-3.5 animate-spin" />}
 						{t('settings.sync.manual')}
 					</Button>
-				)}
+				) : null}
 			</div>
 		</div>
 	);

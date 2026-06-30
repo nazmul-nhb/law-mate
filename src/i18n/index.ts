@@ -16,3 +16,5 @@ i18n.use(initReactI18next).init({
 });
 
 export default i18n;
+
+export type I18Keys = keyof (typeof en)['translation'];
