@@ -3,7 +3,7 @@ import { type RefObject, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
-import type { I18Values } from '@/i18n';
+import type { I18Keys } from '@/i18n';
 import { cn } from '@/lib/utils';
 
 interface MarkdownEditorProps {
@@ -15,7 +15,7 @@ interface MarkdownEditorProps {
 
 interface ToolbarAction {
 	icon: React.ElementType;
-	labelKey: keyof I18Values;
+	labelKey: I18Keys;
 	prefix: string;
 	suffix: string;
 	block?: boolean;

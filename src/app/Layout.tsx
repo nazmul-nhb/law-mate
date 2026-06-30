@@ -2,6 +2,7 @@ import { FileText, Menu, Search, Settings, Shield, Trash2 } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router';
+import { digitToBangla } from 'toolbox-x';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { SearchCommand } from '@/components/SearchCommand';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -18,7 +19,7 @@ import { UserNav } from '@/features/auth/components/UserNav';
 import { NoteDialog } from '@/features/notes/components/NoteDialog';
 import { useAuth, useAuthInit } from '@/hooks/useAuth';
 import { useSearchCommand } from '@/hooks/useSearchCommand';
-import type { I18Values } from '@/i18n';
+import type { I18Keys } from '@/i18n';
 import { cn } from '@/lib/utils';
 import { syncService } from '@/services/sync.service';
 import { useAuthStore } from '@/stores/auth.store';
@@ -27,7 +28,7 @@ import { useUIStore } from '@/stores/ui.store';
 
 type NavItem = {
 	path: string;
-	labelKey: keyof I18Values;
+	labelKey: I18Keys;
 	icon: React.ElementType;
 };
 
@@ -59,7 +60,7 @@ export function Layout() {
 	const setSearchOpen = useUIStore((s) => s.setSearchOpen);
 	const { user, initialized } = useAuth();
 	const { profile, signOut } = useAuthStore();
-	const autoSync = useSettingsStore((state) => state.autoSync);
+	const { autoSync, language } = useSettingsStore();
 
 	useSearchCommand();
 
@@ -98,6 +99,8 @@ export function Layout() {
 			? [{ path: '/admin', labelKey: 'nav.admin', icon: Shield }]
 			: []) satisfies Array<NavItem>),
 	] satisfies Array<NavItem>;
+
+	const year = new Date().getFullYear();
 
 	return (
 		<div className="flex min-h-screen flex-col">
@@ -187,6 +190,38 @@ export function Layout() {
 			<main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
 				<Outlet />
 			</main>
+
+			{/* Footer */}
+			<footer className="border-t border-border bg-background/50">
+				<div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-4 py-6 text-xs text-muted-foreground sm:flex-row">
+					<div>
+						&copy; {language === 'bn' ? digitToBangla(year) : year} {t('app.name')}{' '}
+						- {t('footer.rights')}
+					</div>
+					<div className="flex items-center gap-4">
+						<a
+							className="hover:text-foreground transition-colors"
+							href="https://nazmul-nhb.dev"
+							rel="noopener"
+							target="_blank"
+						>
+							{t('footer.created.by')}
+						</a>
+						<NavLink
+							className="hover:text-foreground transition-colors"
+							to="/privacy"
+						>
+							{t('footer.privacy')}
+						</NavLink>
+						<NavLink
+							className="hover:text-foreground transition-colors"
+							to="/terms"
+						>
+							{t('footer.terms')}
+						</NavLink>
+					</div>
+				</div>
+			</footer>
 
 			{/* Search command palette */}
 			<SearchCommand />

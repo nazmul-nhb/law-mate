@@ -113,6 +113,61 @@ const en = {
 		'common.confirm': 'Confirm',
 		'common.close': 'Close',
 		'common.or': 'or',
+
+		// Footer
+		'footer.privacy': 'Privacy Policy',
+		'footer.terms': 'Terms of Service',
+		'footer.rights': 'All rights reserved',
+		'footer.created.by': 'Created by ❤️ Nazmul Hassan',
+
+		// Legal
+		'legal.last.updated': 'Last updated',
+		'legal.last.updated.date': '2026-07-01',
+		'legal.privacy.title': 'Privacy Policy',
+		'legal.privacy.intro.title': 'Introduction',
+		'legal.privacy.intro.body':
+			'LawMate ("we", "our", or "us") respects your privacy. This Privacy Policy explains how we collect, use, and protect your personal information when you use our application.',
+		'legal.privacy.collect.title': 'Information We Collect',
+		'legal.privacy.collect.email': 'Email address (via Google Sign-In)',
+		'legal.privacy.collect.name': 'Display name and profile picture (via Google Sign-In)',
+		'legal.privacy.collect.avatar': 'Profile avatar URL provided by Google',
+		'legal.privacy.collect.notes': 'Notes and content you create within the application',
+		'legal.privacy.use.title': 'How We Use Your Information',
+		'legal.privacy.use.auth': 'To authenticate your identity and manage your account',
+		'legal.privacy.use.sync':
+			'To synchronize your notes across devices when you are signed in',
+		'legal.privacy.use.improve': 'To maintain and improve the application',
+		'legal.privacy.storage.title': 'Data Storage',
+		'legal.privacy.storage.body':
+			'Your notes are stored locally on your device using IndexedDB. When you sign in, your notes may also be stored on our cloud servers (Supabase) to enable cross-device synchronization. You may use the application without signing in, in which case your data remains entirely on your device.',
+		'legal.privacy.thirdparty.title': 'Third-Party Services',
+		'legal.privacy.thirdparty.body':
+			'We use Google OAuth for authentication and Supabase for cloud storage and synchronization. These services have their own privacy policies that govern their handling of your data.',
+		'legal.privacy.contact.title': 'Contact Us',
+		'legal.privacy.contact.body':
+			'If you have any questions about this Privacy Policy, please contact us via the project repository on GitHub. or this URL (https://nazmul-nhb.dev/)',
+		'legal.terms.title': 'Terms of Service',
+		'legal.terms.acceptance.title': 'Acceptance of Terms',
+		'legal.terms.acceptance.body':
+			'By accessing or using LawMate, you agree to be bound by these Terms of Service. If you do not agree, please do not use the application.',
+		'legal.terms.description.title': 'Service Description',
+		'legal.terms.description.body':
+			'LawMate is a free, open-source note-taking application designed for legal professionals and students. It provides local-first storage with optional cloud synchronization.',
+		'legal.terms.accounts.title': 'User Accounts',
+		'legal.terms.accounts.body':
+			'You may sign in with your Google account to enable cloud synchronization. You are responsible for maintaining the security of your account credentials. We reserve the right to suspend or terminate accounts that violate these terms.',
+		'legal.terms.content.title': 'User Content',
+		'legal.terms.content.body':
+			'You retain full ownership of all content you create within LawMate. We do not claim any intellectual property rights over your notes or data.',
+		'legal.terms.termination.title': 'Termination',
+		'legal.terms.termination.body':
+			'We may suspend or terminate your access to the service at any time, with or without cause. Upon termination, your locally stored data will remain on your device.',
+		'legal.terms.liability.title': 'Limitation of Liability',
+		'legal.terms.liability.body':
+			'LawMate is provided "as is" without warranties of any kind. We shall not be liable for any damages arising from the use or inability to use the application, including data loss.',
+		'legal.terms.changes.title': 'Changes to Terms',
+		'legal.terms.changes.body':
+			'We reserve the right to modify these terms at any time. Continued use of the application after changes constitutes acceptance of the revised terms.',
 	},
 };
 
