@@ -61,15 +61,15 @@ export function Layout() {
 
 	useSearchCommand();
 
-	useEffect(() => {
-		const handleOnline = () => {
-			if (user) {
-				syncService.sync();
-			}
-		};
-		window.addEventListener('online', handleOnline);
-		return () => window.removeEventListener('online', handleOnline);
-	}, [user]);
+	// useEffect(() => {
+	// 	const handleOnline = () => {
+	// 		if (user) {
+	// 			syncService.sync();
+	// 		}
+	// 	};
+	// 	window.addEventListener('online', handleOnline);
+	// 	return () => window.removeEventListener('online', handleOnline);
+	// }, [user]);
 
 	useEffect(() => {
 		if (initialized && user) {

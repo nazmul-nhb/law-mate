@@ -11,11 +11,10 @@ export const noteRepository = {
 	async getAll(): Promise<Note[]> {
 		try {
 			const { user } = useAuthStore.getState();
-			const userId = user?.id || null;
 
 			const notes = await idb
 				.from('notes')
-				.where((note) => !note.deleted_at && note.user_id === userId)
+				.where((note) => !note.deleted_at && note.user_id === user?.id)
 				.orderBy('updated_at', 'desc')
 				.findAll();
 
@@ -163,11 +162,10 @@ export const noteRepository = {
 	async getDeleted(): Promise<Note[]> {
 		try {
 			const { user } = useAuthStore.getState();
-			const userId = user?.id || null;
 
 			const notes = await idb
 				.from('notes')
-				.where((note) => !!note.deleted_at && note.user_id === userId)
+				.where((note) => !!note.deleted_at && note.user_id === user?.id)
 				.orderBy('deleted_at', 'desc')
 				.findAll();
 
@@ -209,11 +207,10 @@ export const noteRepository = {
 	async getAllForSearch(): Promise<Note[]> {
 		try {
 			const { user } = useAuthStore.getState();
-			const userId = user?.id || null;
 
 			return await idb
 				.from('notes')
-				.where((note) => !note.deleted_at && note.user_id === userId)
+				.where((note) => !note.deleted_at && note.user_id === user?.id)
 				.findAll();
 		} catch (error) {
 			throw new DatabaseError('getAllForSearch notes', error);

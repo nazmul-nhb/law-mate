@@ -77,11 +77,11 @@ export const useAuthStore = create<AuthState>()(
 		}),
 		{
 			name: 'law-mate-auth-store',
-			partialize: ({ user, profile, isLoading, initialized }) => ({
+			partialize: ({ user, profile, initialized, isLoading }) => ({
 				user,
 				profile,
-				isLoading,
 				initialized,
+				isLoading,
 			}),
 
 			// storage: {
