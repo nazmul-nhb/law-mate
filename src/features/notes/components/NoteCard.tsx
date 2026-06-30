@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 import { truncateString } from 'toolbox-x';
 import { formatDateRelative } from 'toolbox-x/date';
 import { isNonEmptyString } from 'toolbox-x/guards';
+import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/ui.store';
 import type { Note } from '@/types/note.types';
@@ -53,9 +54,9 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
 						{note.title || t('notes.untitled')}
 					</h3>
 					{isNonEmptyString(note.description) && (
-						<p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-							{truncateString(note.description, 150)}
-						</p>
+						<div className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+							<MarkdownPreview content={truncateString(note.description, 150)} />
+						</div>
 					)}
 					<p className="mt-2 text-xs text-muted-foreground">
 						{formatDateRelative(note.updated_at)}

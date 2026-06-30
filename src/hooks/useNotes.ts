@@ -1,5 +1,6 @@
 import type { $UUID } from 'locality-idb';
 import { useCallback, useEffect, useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import { noteRepository } from '@/repositories/note.repository';
 import { syncService } from '@/services/sync.service';
 import type { CreateNoteInput, EditNoteInput, Note } from '@/types/note.types';
@@ -18,6 +19,7 @@ export function useNotes(): UseNotesReturn {
 	const [notes, setNotes] = useState<Note[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const { user } = useAuth();
 
 	const refresh = useCallback(async () => {
 		try {
@@ -40,12 +42,18 @@ export function useNotes(): UseNotesReturn {
 		};
 	}, [refresh]);
 
+	const isSyncable = window.navigator.onLine && !!user;
+
 	const createNote = useCallback(
 		async (input: CreateNoteInput): Promise<Note | null> => {
 			try {
 				const note = await noteRepository.create(input);
 				await refresh();
-				await syncService.sync();
+
+				if (isSyncable) {
+					await syncService.sync();
+				}
+
 				return note;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to create note';
@@ -53,7 +61,7 @@ export function useNotes(): UseNotesReturn {
 				return null;
 			}
 		},
-		[refresh]
+		[refresh, isSyncable]
 	);
 
 	const updateNote = useCallback(
@@ -61,7 +69,11 @@ export function useNotes(): UseNotesReturn {
 			try {
 				await noteRepository.update(id, input);
 				await refresh();
-				syncService.sync();
+
+				if (isSyncable) {
+					await syncService.sync();
+				}
+
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to update note';
@@ -69,7 +81,7 @@ export function useNotes(): UseNotesReturn {
 				return false;
 			}
 		},
-		[refresh]
+		[refresh, isSyncable]
 	);
 
 	const deleteNote = useCallback(
@@ -77,7 +89,11 @@ export function useNotes(): UseNotesReturn {
 			try {
 				await noteRepository.softDelete(id);
 				await refresh();
-				await syncService.sync();
+
+				if (isSyncable) {
+					await syncService.sync();
+				}
+
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to delete note';
@@ -85,7 +101,7 @@ export function useNotes(): UseNotesReturn {
 				return false;
 			}
 		},
-		[refresh]
+		[refresh, isSyncable]
 	);
 
 	return { notes, isLoading, error, refresh, createNote, updateNote, deleteNote };

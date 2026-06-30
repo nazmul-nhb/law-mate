@@ -1,4 +1,7 @@
+import type { $UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
+import { getFromLocalStorage, removeFromLocalStorage } from 'toolbox-x/dom';
+import { DELETE_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
@@ -15,18 +18,28 @@ export const syncService = {
 			return;
 		}
 
-		if (!navigator.onLine) {
-			console.info('Skipping sync: Device is offline.');
-			return;
-		}
-
 		const { setIsSyncing } = useUIStore.getState();
 		setIsSyncing(true);
 
 		try {
+			// Process pending permanent deletes first
+			const pending = getFromLocalStorage<$UUID[]>(DELETE_QUEUE_KEY) || [];
+
+			if (pending.length > 0 && window.navigator.onLine) {
+				try {
+					const { error } = await supabase.from('notes').delete().in('id', pending);
+
+					if (!error) {
+						removeFromLocalStorage(DELETE_QUEUE_KEY);
+					} else {
+						console.warn('Failed to sync pending permanent deletes:', error);
+					}
+				} catch (err) {
+					console.error('Failed to sync pending permanent deletes:', err);
+				}
+			}
 			// 1. Fetch all local notes (including soft-deleted) that belong to this user
-			const allLocalNotes = await idb.from('notes').findAll();
-			const localNotes = allLocalNotes.filter((note) => note.user_id === user.id);
+			const localNotes = await idb.from('notes').where('user_id', user.id).findAll();
 
 			// 2. Fetch all remote notes from Supabase
 			const { data: remoteNotes, error: remoteError } = await supabase
@@ -83,19 +96,17 @@ export const syncService = {
 					// Exists on both: resolve conflict
 					let action: 'push' | 'pull' | 'noop' = 'noop';
 
-					// Rule 1: deleted_at comparison (Deleted always wins)
-					if (remoteNote.deleted_at && !localNote.deleted_at) {
-						action = 'pull';
-					} else if (localNote.deleted_at && !remoteNote.deleted_at) {
+					// Rule 1: version comparison (Highest version wins)
+					if (localNote.version > remoteNote.version) {
 						action = 'push';
-					} else if (remoteNote.deleted_at && localNote.deleted_at) {
-						action = 'noop'; // Both are deleted
+					} else if (remoteNote.version > localNote.version) {
+						action = 'pull';
 					} else {
-						// Rule 2: version comparison (Highest version wins)
-						if (localNote.version > remoteNote.version) {
-							action = 'push';
-						} else if (remoteNote.version > localNote.version) {
+						// Rule 2: deleted_at comparison (Deleted tie-breaker)
+						if (remoteNote.deleted_at && !localNote.deleted_at) {
 							action = 'pull';
+						} else if (localNote.deleted_at && !remoteNote.deleted_at) {
+							action = 'push';
 						} else {
 							// Rule 3: updated_at comparison (Most recent wins)
 							const localTime = new Date(localNote.updated_at).getTime();

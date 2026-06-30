@@ -1,7 +1,10 @@
 import type { $UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
+import { getFromLocalStorage, saveToLocalStorage } from 'toolbox-x/dom';
+import { DELETE_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
 import { DatabaseError, NotFoundError, ValidationError } from '@/lib/errors';
+import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
 import type { CreateNoteInput, EditNoteInput, Note, UpdateNote } from '@/types/note.types';
 
@@ -190,10 +193,36 @@ export const noteRepository = {
 				);
 			}
 
+			// 1. Delete locally from IndexedDB
 			await idb
 				.delete('notes')
 				.where((note) => note.id === id)
 				.run();
+
+			// 2. Delete from Supabase or queue if offline
+			const { user } = useAuthStore.getState();
+			if (user) {
+				if (window.navigator.onLine) {
+					try {
+						const { error } = await supabase.from('notes').delete().eq('id', id);
+						if (error) throw error;
+						return; // Success
+					} catch (err) {
+						console.warn(
+							'Failed to delete note from Supabase immediately, queuing for sync:',
+							err
+						);
+					}
+				}
+
+				// Offline or error: queue for sync
+				const pending = getFromLocalStorage<$UUID[]>(DELETE_QUEUE_KEY) || [];
+
+				if (!pending.includes(id)) {
+					pending.push(id);
+					saveToLocalStorage(DELETE_QUEUE_KEY, pending);
+				}
+			}
 		} catch (error) {
 			if (error instanceof NotFoundError || error instanceof ValidationError) {
 				throw error;

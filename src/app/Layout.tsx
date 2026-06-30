@@ -22,8 +22,8 @@ import type { I18Values } from '@/i18n';
 import { cn } from '@/lib/utils';
 import { syncService } from '@/services/sync.service';
 import { useAuthStore } from '@/stores/auth.store';
-import { useUIStore } from '@/stores/ui.store';
 import { useSettingsStore } from '@/stores/settings.store';
+import { useUIStore } from '@/stores/ui.store';
 
 type NavItem = {
 	path: string;
@@ -62,16 +62,6 @@ export function Layout() {
 	const autoSync = useSettingsStore((state) => state.autoSync);
 
 	useSearchCommand();
-
-	// useEffect(() => {
-	// 	const handleOnline = () => {
-	// 		if (user) {
-	// 			syncService.sync();
-	// 		}
-	// 	};
-	// 	window.addEventListener('online', handleOnline);
-	// 	return () => window.removeEventListener('online', handleOnline);
-	// }, [user]);
 
 	useEffect(() => {
 		if (initialized && user && autoSync) {

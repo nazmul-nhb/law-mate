@@ -20,7 +20,7 @@ export function UserNav() {
 
 	const handleSync = async (e: React.MouseEvent) => {
 		e.preventDefault();
-		if (user) {
+		if (user && window.navigator.onLine) {
 			await syncService.sync();
 		}
 	};
@@ -74,7 +74,10 @@ export function UserNav() {
 						<Settings className="mr-2 size-4" />
 						<span>{t('nav.settings')}</span>
 					</DropdownMenuItem>
-					<DropdownMenuItem disabled={isSyncing} onClick={handleSync}>
+					<DropdownMenuItem
+						disabled={isSyncing || !user || !window.navigator.onLine}
+						onClick={handleSync}
+					>
 						{isSyncing ? (
 							<Loader2 className="mr-2 size-4 animate-spin text-primary" />
 						) : (

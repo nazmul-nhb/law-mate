@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { truncateString } from 'toolbox-x';
+import { MarkdownPreview } from '@/components/MarkdownPreview';
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -66,9 +67,11 @@ export function SearchCommand() {
 										{note.title || t('notes.untitled')}
 									</p>
 									{note.description && (
-										<p className="truncate text-xs text-muted-foreground">
-											{truncateString(note.description)}
-										</p>
+										<div className="truncate text-xs text-muted-foreground">
+											<MarkdownPreview
+												content={truncateString(note.description)}
+											/>
+										</div>
 									)}
 								</div>
 							</CommandItem>

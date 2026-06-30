@@ -1,5 +1,6 @@
 import type { $UUID } from 'locality-idb';
 import { useCallback, useEffect, useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import { noteRepository } from '@/repositories/note.repository';
 import { syncService } from '@/services/sync.service';
 import type { Note } from '@/types/note.types';
@@ -17,6 +18,7 @@ export function useTrash(): UseTrashReturn {
 	const [deletedNotes, setDeletedNotes] = useState<Note[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const { user } = useAuth();
 
 	const refresh = useCallback(async () => {
 		try {
@@ -39,12 +41,18 @@ export function useTrash(): UseTrashReturn {
 		};
 	}, [refresh]);
 
+	const isSyncable = window.navigator.onLine && !!user;
+
 	const restoreNote = useCallback(
 		async (id: $UUID): Promise<boolean> => {
 			try {
 				await noteRepository.restore(id);
 				await refresh();
-				await syncService.sync();
+
+				if (isSyncable) {
+					await syncService.sync();
+				}
+
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to restore note';
@@ -52,7 +60,7 @@ export function useTrash(): UseTrashReturn {
 				return false;
 			}
 		},
-		[refresh]
+		[refresh, isSyncable]
 	);
 
 	const permanentDeleteNote = useCallback(
@@ -60,7 +68,11 @@ export function useTrash(): UseTrashReturn {
 			try {
 				await noteRepository.permanentDelete(id);
 				await refresh();
-				await syncService.sync();
+
+				if (isSyncable) {
+					await syncService.sync();
+				}
+
 				return true;
 			} catch (err) {
 				const message =
@@ -69,7 +81,7 @@ export function useTrash(): UseTrashReturn {
 				return false;
 			}
 		},
-		[refresh]
+		[refresh, isSyncable]
 	);
 
 	return { deletedNotes, isLoading, error, refresh, restoreNote, permanentDeleteNote };
