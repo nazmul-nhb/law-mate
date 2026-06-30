@@ -1,9 +1,10 @@
+import type { $UUID } from 'locality-idb';
 import { create } from 'zustand';
 
 interface NoteDialogState {
 	open: boolean;
 	/** When set, the dialog is in edit mode for this note ID. */
-	noteId?: string;
+	noteId?: $UUID;
 }
 
 interface UIState {
@@ -15,7 +16,7 @@ interface UIState {
 	toggleSearch: () => void;
 	setMobileMenuOpen: (open: boolean) => void;
 	setIsSyncing: (isSyncing: boolean) => void;
-	openNoteDialog: (noteId?: string) => void;
+	openNoteDialog: (noteId?: $UUID) => void;
 	closeNoteDialog: () => void;
 }
 

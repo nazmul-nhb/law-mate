@@ -4,8 +4,9 @@ import { getFromLocalStorage } from 'toolbox-x/dom';
 import { DEFAULT_LANGUAGE } from '@/constants/app';
 import bn from '@/i18n/bn';
 import en from '@/i18n/en';
+import type { Language } from '@/types/common.types';
 
-const storedLanguage = getFromLocalStorage<'en' | 'bn'>('law-mate-language');
+const storedLanguage = getFromLocalStorage<Language>('law-mate-language');
 
 i18n.use(initReactI18next).init({
 	resources: { bn, en },

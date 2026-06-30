@@ -1,16 +1,7 @@
 import type { Session, User } from '@supabase/supabase-js';
 import { create } from 'zustand';
 import { supabase } from '@/lib/supabase';
-
-export interface Profile {
-	id: string;
-	email: string;
-	full_name: string | null;
-	avatar_url: string | null;
-	role: 'admin' | 'user';
-	status: 'active' | 'blocked' | 'deleted';
-	created_at: string;
-}
+import type { Profile } from '@/types/profile.types';
 
 interface AuthState {
 	user: User | null;

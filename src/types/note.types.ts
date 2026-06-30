@@ -11,13 +11,7 @@ export type InsertNote = InferInsertType<typeof schema.notes>;
 export type UpdateNote = InferUpdateType<typeof schema.notes>;
 
 /** User-provided fields when creating a note. */
-export interface CreateNoteInput {
-	title: string;
-	description: string;
-}
+export type CreateNoteInput = Pick<InsertNote, 'title' | 'description'>;
 
 /** User-provided fields when editing a note. */
-export interface EditNoteInput {
-	title?: string;
-	description?: string;
-}
+export type EditNoteInput = Partial<CreateNoteInput>;

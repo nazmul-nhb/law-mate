@@ -1,6 +1,7 @@
 import type { User } from '@supabase/supabase-js';
 import { useEffect } from 'react';
-import { db } from '@/database/db';
+import { googleClientId } from '@/constants/env';
+import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
 
@@ -56,7 +57,7 @@ export function useAuth() {
 				}
 
 				// Adopt any local anonymous notes created while signed out
-				const updated = await db
+				const updated = await idb
 					.update('notes')
 					.set({ user_id: u.id })
 					.where((n) => !n.user_id)
@@ -105,7 +106,6 @@ export function useAuth() {
 	useEffect(() => {
 		if (isLoading || !initialized || user) return;
 
-		const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 		if (!googleClientId) {
 			return;
 		}

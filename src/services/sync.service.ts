@@ -1,6 +1,5 @@
-import type { Timestamp, UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
-import { db } from '@/database/db';
+import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
 import { useSettingsStore } from '@/stores/settings.store';
@@ -9,7 +8,8 @@ import type { Note } from '@/types/note.types';
 
 export const syncService = {
 	async sync(): Promise<void> {
-		const user = useAuthStore.getState().user;
+		const { user } = useAuthStore.getState();
+
 		if (!user) {
 			console.info('Skipping sync: User not authenticated.');
 			return;
@@ -20,12 +20,12 @@ export const syncService = {
 			return;
 		}
 
-		const setIsSyncing = useUIStore.getState().setIsSyncing;
+		const { setIsSyncing } = useUIStore.getState();
 		setIsSyncing(true);
 
 		try {
 			// 1. Fetch all local notes (including soft-deleted) that belong to this user
-			const allLocalNotes = await db.from('notes').findAll();
+			const allLocalNotes = await idb.from('notes').findAll();
 			const localNotes = allLocalNotes.filter((note) => note.user_id === user.id);
 
 			// 2. Fetch all remote notes from Supabase
@@ -68,7 +68,7 @@ export const syncService = {
 					});
 
 					if (!insertError) {
-						await db
+						await idb
 							.update('notes')
 							.set({ last_synced_at: syncTime, user_id: user.id })
 							.where((n) => n.id === localNote.id)
@@ -122,7 +122,7 @@ export const syncService = {
 						});
 
 						if (!updateError) {
-							await db
+							await idb
 								.update('notes')
 								.set({ last_synced_at: syncTime, user_id: user.id })
 								.where((n) => n.id === localNote.id)
@@ -134,7 +134,7 @@ export const syncService = {
 							);
 						}
 					} else if (action === 'pull') {
-						await db
+						await idb
 							.update('notes')
 							.set({
 								title: remoteNote.title,
@@ -150,7 +150,7 @@ export const syncService = {
 							.run();
 					} else {
 						// noop: just update sync time locally
-						await db
+						await idb
 							.update('notes')
 							.set({ last_synced_at: syncTime, user_id: user.id })
 							.where((n) => n.id === localNote.id)
@@ -164,16 +164,16 @@ export const syncService = {
 				if (!localMap.has(remoteNote.id)) {
 					// Remote only: download to local
 					// We only download if it's not deleted, or we can download it as soft-deleted as well
-					await db
+					await idb
 						.insert('notes')
 						.values({
-							id: remoteNote.id as UUID<'v4'>,
+							id: remoteNote.id,
 							user_id: user.id,
 							title: remoteNote.title,
 							description: remoteNote.description,
-							created_at: remoteNote.created_at as Timestamp,
-							updated_at: remoteNote.updated_at as Timestamp,
-							deleted_at: (remoteNote.deleted_at as Timestamp) || undefined,
+							created_at: remoteNote.created_at,
+							updated_at: remoteNote.updated_at,
+							deleted_at: remoteNote.deleted_at || undefined,
 							last_synced_at: syncTime,
 							version: remoteNote.version,
 						})

@@ -14,7 +14,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { noteRepository } from '@/repositories/note.repository';
 import { useUIStore } from '@/stores/ui.store';
-import type { Note } from '@/types/note.types';
 
 interface NoteDialogProps {
 	onSaved?: () => void;
@@ -33,7 +32,7 @@ export function NoteDialog({ onSaved }: NoteDialogProps = {}) {
 	// Load existing note data when editing
 	useEffect(() => {
 		if (noteDialog.open && noteDialog.noteId) {
-			noteRepository.getById(noteDialog.noteId).then((note: Note) => {
+			noteRepository.getById(noteDialog.noteId).then((note) => {
 				setTitle(note.title);
 				setDescription(note.description ?? '');
 			});
@@ -46,6 +45,11 @@ export function NoteDialog({ onSaved }: NoteDialogProps = {}) {
 	const handleSave = async () => {
 		if (!title.trim()) {
 			setError(t('notes.title.placeholder'));
+			return;
+		}
+
+		if (!description.trim()) {
+			setError(t('notes.description.placeholder'));
 			return;
 		}
 

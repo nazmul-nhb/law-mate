@@ -2,7 +2,7 @@ const bn = {
 	translation: {
 		// App
 		'app.name': 'আইন বন্ধু',
-		'app.tagline': 'আপনার আইনের নোটগুলো সংগঠিত রাখুন',
+		'app.tagline': 'আপনার আইন সম্পর্কিত নোটগুলো গুছিয়ে রাখুন',
 
 		// Navigation
 		'nav.notes': 'নোটসমূহ',
@@ -21,16 +21,16 @@ const bn = {
 		'notes.title.label': 'শিরোনাম',
 		'notes.title.placeholder': 'নোটের শিরোনাম লিখুন...',
 		'notes.description.label': 'বিবরণ',
-		'notes.description.placeholder': 'মার্কডাউনে লিখুন...',
+		'notes.description.placeholder': 'নোটের বিবরণ লিখুন...',
 		'notes.deleted.success': 'নোটটি ট্র্যাশে সরানো হয়েছে',
 		'notes.saved.success': 'নোটটি সংরক্ষিত হয়েছে',
-		'notes.untitled': 'শিরোনামহীন',
+		'notes.untitled': 'শিরোনাম নেই',
 		'notes.no.description': 'কোনো বিবরণ নেই',
 
 		// Markdown Editor
 		'editor.write': 'লিখুন',
 		'editor.preview': 'প্রিভিউ',
-		'editor.preview.empty': 'প্রিভিউ করার কিছু নেই',
+		'editor.preview.empty': 'প্রিভিউ করার মত কিছু নেই',
 		'editor.bold': 'বোল্ড',
 		'editor.italic': 'ইটালিক',
 		'editor.heading': 'শিরোনাম',

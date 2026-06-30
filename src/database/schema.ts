@@ -1,5 +1,4 @@
 import { column, defineSchema } from 'locality-idb';
-import { getTimestamp } from 'toolbox-x/date';
 
 export const schema = defineSchema({
 	notes: {
@@ -8,7 +7,7 @@ export const schema = defineSchema({
 		title: column.text(),
 		description: column.text(),
 		created_at: column.timestamp(),
-		updated_at: column.timestamp().onUpdate(() => getTimestamp()),
+		updated_at: column.timestamp(),
 		deleted_at: column.timestamp().optional(),
 		last_synced_at: column.timestamp().optional(),
 		version: column.int().default(1),
