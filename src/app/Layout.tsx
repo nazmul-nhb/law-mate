@@ -57,7 +57,7 @@ export function Layout() {
 	const { t } = useTranslation();
 	const setSearchOpen = useUIStore((s) => s.setSearchOpen);
 	const { user, initialized } = useAuth();
-	const { profile } = useAuthStore();
+	const { profile, signOut } = useAuthStore();
 
 	useSearchCommand();
 
@@ -88,7 +88,7 @@ export function Layout() {
 					</p>
 					<button
 						className="rounded-md bg-destructive text-destructive-foreground hover:bg-destructive/90 px-4 py-2 text-sm font-semibold transition-colors cursor-pointer"
-						onClick={() => useAuthStore.getState().signOut()}
+						onClick={async () => await signOut()}
 						type="button"
 					>
 						{t('settings.sign.out')}
@@ -136,14 +136,14 @@ export function Layout() {
 											className="size-6 object-contain"
 											src="/law-mate.png"
 										/>
-										<span className="sm:inline hidden">
+										<span className="inline sm:hidden">
 											{t('app.name')}
 										</span>
 									</SheetTitle>
 								</SheetHeader>
-								<nav className="mt-4 space-y-1 px-4">
+								<nav className="flex flex-col gap-1 px-4">
 									{navItems.map((item) => (
-										<SheetClose key={item.path} render={<div />}>
+										<SheetClose key={item.path}>
 											<NavItem {...item} />
 										</SheetClose>
 									))}

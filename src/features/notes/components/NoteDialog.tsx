@@ -92,13 +92,13 @@ export function NoteDialog({ onSaved }: NoteDialogProps = {}) {
 
 	return (
 		<Dialog onOpenChange={handleOpenChange} open={noteDialog.open}>
-			<DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+			<DialogContent className="max-h-[90vh] overflow-y-auto max-w-[99%] md:max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>{isEditing ? t('notes.edit') : t('notes.create')}</DialogTitle>
 				</DialogHeader>
 
-				<div className="space-y-4 py-2">
-					<div className="space-y-2">
+				<div className="space-y-4 py-2 max-w-full">
+					<div className="space-y-2 max-w-full">
 						<Label htmlFor="note-title">{t('notes.title.label')}</Label>
 						<Input
 							autoFocus

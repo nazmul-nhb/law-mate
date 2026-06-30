@@ -64,7 +64,7 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
 
 				<button
 					aria-label={t('notes.delete')}
-					className="shrink-0 rounded p-1.5 text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+					className="shrink-0 rounded p-1.5 text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive"
 					onClick={handleDelete}
 					type="button"
 				>
