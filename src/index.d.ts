@@ -1,4 +1,4 @@
-import type en from './en';
+import type en from './i18n/en';
 
 declare module 'i18next' {
 	interface CustomTypeOptions {

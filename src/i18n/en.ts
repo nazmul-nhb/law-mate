@@ -58,6 +58,7 @@ const en = {
 
 		// Settings
 		'settings.title': 'Settings',
+		'settings.auth': 'Account',
 		'settings.language': 'Language',
 		'settings.language.bn': 'বাংলা',
 		'settings.language.en': 'English',

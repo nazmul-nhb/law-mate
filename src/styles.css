@@ -135,4 +135,8 @@
 	[role="button"]:not(:disabled) {
 		cursor: pointer;
 	}
+
+	button {
+		user-select: none;
+	}
 }

@@ -31,7 +31,7 @@ export function SyncSetting() {
 		<div className="space-y-3">
 			<Label className="text-sm font-medium">{t('settings.sync')}</Label>
 			<div className="flex flex-col gap-3 rounded-md border border-border bg-muted/30 p-4 sm:flex-row sm:items-center sm:justify-between">
-				<div className="flex items-center gap-3">
+				<div className="flex sm:flex-row flex-col sm:items-center gap-3">
 					{isSynced ? (
 						isSyncing ? (
 							<Loader2 className="size-5 text-primary animate-spin" />

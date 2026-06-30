@@ -180,7 +180,7 @@ export function Layout() {
 							type="button"
 						>
 							<div className="flex items-center justify-center gap-1 h-8 rounded-md border border-input px-2 py-1 text-xs text-muted-foreground">
-								<Search className="size-5 mr-2" />
+								<Search className="size-5 mr-1" />
 								<kbd className="font-mono pt-1">⌘ + K</kbd>
 							</div>
 						</button>

@@ -33,6 +33,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import {
 	Table,
 	TableBody,
 	TableCell,
@@ -44,6 +51,8 @@ import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
 import type { Profile } from '@/types/profile.types';
+
+const PAGE_LIMITS = [5, 10, 20, 30, 40, 50].map((val) => ({ value: val, label: String(val) }));
 
 export function AdminPage() {
 	const { t } = useTranslation();
@@ -423,17 +432,21 @@ export function AdminPage() {
 						<span className="text-xs text-muted-foreground whitespace-nowrap">
 							Rows per page:
 						</span>
-						<select
-							className="h-8 rounded-md border border-input bg-background px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-							onChange={(e) => table.setPageSize(Number(e.target.value))}
-							value={table.getState().pagination.pageSize}
+						<Select
+							onValueChange={(val) => table.setPageSize(Number(val))}
+							value={String(table.getState().pagination.pageSize)}
 						>
-							{[5, 10, 20, 30, 40, 50].map((size) => (
-								<option key={size} value={size}>
-									{size}
-								</option>
-							))}
-						</select>
+							<SelectTrigger className="h-8 w-17.5 text-xs">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{PAGE_LIMITS.map((limit) => (
+									<SelectItem key={limit.value} value={String(limit.value)}>
+										{limit.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 					</div>
 				</div>
 

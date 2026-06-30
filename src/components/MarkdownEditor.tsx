@@ -102,9 +102,9 @@ export function MarkdownEditor({
 	);
 
 	return (
-		<div className={cn('rounded-md border border-input', className)}>
+		<div className={cn('rounded-md border border-input w-full max-w-full', className)}>
 			{/* Tab bar + toolbar */}
-			<div className="flex items-center justify-between border-b border-border px-2">
+			<div className="flex flex-wrap items-center justify-between border-b border-border px-2 gap-2 py-1 sm:py-0">
 				<div className="flex">
 					<button
 						className={cn(
@@ -133,7 +133,7 @@ export function MarkdownEditor({
 				</div>
 
 				{activeTab === 'write' && (
-					<div className="flex items-center gap-0.5">
+					<div className="flex flex-wrap items-center gap-0.5">
 						{TOOLBAR_ACTIONS.map((action) => (
 							<TooltipSimple content={t(action.labelKey)} key={action.labelKey}>
 								<button

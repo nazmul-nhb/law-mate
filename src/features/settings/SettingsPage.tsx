@@ -17,7 +17,9 @@ export function SettingsPage() {
 
 			<div className="space-y-6 rounded-lg border border-border bg-card p-6">
 				<div className="flex items-center justify-between">
-					<span className="text-sm font-medium text-foreground">Authentication</span>
+					<span className="text-sm font-medium text-foreground">
+						{t('settings.auth')}
+					</span>
 					<AuthButton />
 				</div>
 				<Separator />
