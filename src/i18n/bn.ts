@@ -169,6 +169,18 @@ const bn = {
 		'legal.terms.changes.title': 'শর্তাবলীর পরিবর্তন',
 		'legal.terms.changes.body':
 			'আমরা যেকোনো সময় এই শর্তাবলী সংশোধন করার অধিকার সংরক্ষণ করি। পরিবর্তনের পরে অ্যাপ্লিকেশনের অব্যাহত ব্যবহার সংশোধিত শর্তাবলী গ্রহণ বলে গণ্য হবে।',
+
+		// Not Found
+		'notfound.title': 'পাতাটি পাওয়া যায়নি',
+		'notfound.description': 'আপনি যে পাতাটি খুঁজছেন তা অস্তিত্বহীন বা সরানো হয়েছে।',
+		'notfound.back.home': 'নোটসমূহে যান',
+		'notfound.back.prev': 'পেছনে যান',
+
+		// Error Boundary
+		'error.title': 'কিছু একটা ভুল হয়েছে',
+		'error.description': 'একটি অপ্রত্যাশিত ত্রুটি ঘটেছে। অনুগ্রহ করে পৃষ্ঠাটি পুনরায় লোড করার চেষ্টা করুন।',
+		'error.details': 'ত্রুটির বিবরণ',
+		'error.reload': 'অ্যাপ্লিকেশন পুনরায় লোড করুন',
 	} satisfies I18Values,
 };
 

@@ -38,7 +38,7 @@ export function SearchCommand() {
 	};
 
 	return (
-		<CommandDialog onOpenChange={setSearchOpen} open={isSearchOpen}>
+		<CommandDialog className="top-1/5" onOpenChange={setSearchOpen} open={isSearchOpen}>
 			<CommandInput
 				onValueChange={setQuery}
 				placeholder={t('search.placeholder')}

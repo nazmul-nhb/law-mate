@@ -21,7 +21,9 @@ import {
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { formatDate } from 'toolbox-x/date';
 import { EmptyState } from '@/components/EmptyState';
+import UserAvatar from '@/components/UserAvatar';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -162,17 +164,11 @@ export function AdminPage() {
 					return (
 						<div className="flex items-center gap-3">
 							<div className="size-8 shrink-0 overflow-hidden rounded-full border border-border bg-muted">
-								{u.avatar_url ? (
-									<img
-										alt={u.full_name || ''}
-										className="aspect-square size-full object-cover"
-										src={u.avatar_url}
-									/>
-								) : (
-									<div className="flex size-full items-center justify-center text-xs font-bold">
-										{(u.full_name || u.email).charAt(0).toUpperCase()}
-									</div>
-								)}
+								<UserAvatar
+									className="size-full"
+									image={u.avatar_url}
+									name={u.full_name || u.email}
+								/>
 							</div>
 							<div className="flex flex-col min-w-0">
 								<span className="font-medium text-foreground truncate">
@@ -201,7 +197,7 @@ export function AdminPage() {
 					);
 				},
 				cell: ({ row }) => {
-					const role = row.getValue('role') as string;
+					const { role } = row.original;
 					return (
 						<span
 							className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium border ${
@@ -231,7 +227,7 @@ export function AdminPage() {
 					);
 				},
 				cell: ({ row }) => {
-					const status = row.getValue('status') as string;
+					const { status } = row.original;
 					return (
 						<span
 							className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium border ${
@@ -262,11 +258,9 @@ export function AdminPage() {
 					);
 				},
 				cell: ({ row }) => {
-					const createdAt = row.getValue('created_at') as string;
-					return new Date(createdAt).toLocaleDateString(undefined, {
-						year: 'numeric',
-						month: 'short',
-						day: 'numeric',
+					return formatDate({
+						date: row.original.created_at,
+						format: 'dd, mmm DD, YYYY',
 					});
 				},
 			},

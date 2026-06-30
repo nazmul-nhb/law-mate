@@ -13,8 +13,8 @@ const sizes = {
 } as const;
 
 type AvatarProps = {
-	image: Maybe<string>;
-	name: Maybe<string>;
+	image: Maybe<string | null>;
+	name: Maybe<string | null>;
 	size?: keyof typeof sizes;
 	className?: string;
 };

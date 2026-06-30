@@ -91,7 +91,7 @@ const en = {
 		'admin.stats.active': 'Active',
 		'admin.stats.blocked': 'Blocked',
 		'admin.stats.deleted': 'Deleted',
-		'admin.search.placeholder': 'Search users by name or email...',
+		'admin.search.placeholder': 'Search by name or email...',
 		'admin.table.user': 'User',
 		'admin.table.role': 'Role',
 		'admin.table.status': 'Status',
@@ -168,6 +168,19 @@ const en = {
 		'legal.terms.changes.title': 'Changes to Terms',
 		'legal.terms.changes.body':
 			'We reserve the right to modify these terms at any time. Continued use of the application after changes constitutes acceptance of the revised terms.',
+
+		// Not Found
+		'notfound.title': 'Page Not Found',
+		'notfound.description':
+			'The page you are looking for does not exist or has been moved.',
+		'notfound.back.home': 'Go to Notes',
+		'notfound.back.prev': 'Go Back',
+
+		// Error Boundary
+		'error.title': 'Something went wrong',
+		'error.description': 'An unexpected error has occurred. Please try reloading the page.',
+		'error.details': 'Error Details',
+		'error.reload': 'Reload Application',
 	},
 };
 
