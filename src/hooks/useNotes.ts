@@ -1,3 +1,4 @@
+import type { $UUID } from 'locality-idb';
 import { useCallback, useEffect, useState } from 'react';
 import { noteRepository } from '@/repositories/note.repository';
 import { syncService } from '@/services/sync.service';
@@ -9,8 +10,8 @@ interface UseNotesReturn {
 	error: string | null;
 	refresh: () => Promise<void>;
 	createNote: (input: CreateNoteInput) => Promise<Note | null>;
-	updateNote: (id: string, input: EditNoteInput) => Promise<boolean>;
-	deleteNote: (id: string) => Promise<boolean>;
+	updateNote: (id: $UUID, input: EditNoteInput) => Promise<boolean>;
+	deleteNote: (id: $UUID) => Promise<boolean>;
 }
 
 export function useNotes(): UseNotesReturn {
@@ -56,7 +57,7 @@ export function useNotes(): UseNotesReturn {
 	);
 
 	const updateNote = useCallback(
-		async (id: string, input: EditNoteInput): Promise<boolean> => {
+		async (id: $UUID, input: EditNoteInput): Promise<boolean> => {
 			try {
 				await noteRepository.update(id, input);
 				await refresh();
@@ -72,7 +73,7 @@ export function useNotes(): UseNotesReturn {
 	);
 
 	const deleteNote = useCallback(
-		async (id: string): Promise<boolean> => {
+		async (id: $UUID): Promise<boolean> => {
 			try {
 				await noteRepository.softDelete(id);
 				await refresh();

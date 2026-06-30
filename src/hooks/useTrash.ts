@@ -1,3 +1,4 @@
+import type { $UUID } from 'locality-idb';
 import { useCallback, useEffect, useState } from 'react';
 import { noteRepository } from '@/repositories/note.repository';
 import { syncService } from '@/services/sync.service';
@@ -8,8 +9,8 @@ interface UseTrashReturn {
 	isLoading: boolean;
 	error: string | null;
 	refresh: () => Promise<void>;
-	restoreNote: (id: string) => Promise<boolean>;
-	permanentDeleteNote: (id: string) => Promise<boolean>;
+	restoreNote: (id: $UUID) => Promise<boolean>;
+	permanentDeleteNote: (id: $UUID) => Promise<boolean>;
 }
 
 export function useTrash(): UseTrashReturn {
@@ -39,7 +40,7 @@ export function useTrash(): UseTrashReturn {
 	}, [refresh]);
 
 	const restoreNote = useCallback(
-		async (id: string): Promise<boolean> => {
+		async (id: $UUID): Promise<boolean> => {
 			try {
 				await noteRepository.restore(id);
 				await refresh();
@@ -55,7 +56,7 @@ export function useTrash(): UseTrashReturn {
 	);
 
 	const permanentDeleteNote = useCallback(
-		async (id: string): Promise<boolean> => {
+		async (id: $UUID): Promise<boolean> => {
 			try {
 				await noteRepository.permanentDelete(id);
 				await refresh();

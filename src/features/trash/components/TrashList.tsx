@@ -1,3 +1,4 @@
+import type { $UUID } from 'locality-idb';
 import { RotateCcw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,13 +17,13 @@ import type { Note } from '@/types/note.types';
 
 interface TrashListProps {
 	notes: Note[];
-	onRestore: (id: string) => Promise<boolean>;
-	onPermanentDelete: (id: string) => Promise<boolean>;
+	onRestore: (id: $UUID) => Promise<boolean>;
+	onPermanentDelete: (id: $UUID) => Promise<boolean>;
 }
 
 export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProps) {
 	const { t } = useTranslation();
-	const [confirmId, setConfirmId] = useState<string | null>(null);
+	const [confirmId, setConfirmId] = useState<$UUID | null>(null);
 
 	const handleConfirmDelete = async () => {
 		if (!confirmId) return;

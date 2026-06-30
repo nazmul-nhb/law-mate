@@ -1,3 +1,4 @@
+import type { $UUID } from 'locality-idb';
 import { Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -10,7 +11,7 @@ import type { Note } from '@/types/note.types';
 
 interface NoteCardProps {
 	note: Note;
-	onDelete: (id: string) => void;
+	onDelete: (id: $UUID) => void;
 }
 
 export function NoteCard({ note, onDelete }: NoteCardProps) {

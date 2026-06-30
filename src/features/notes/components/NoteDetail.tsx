@@ -1,3 +1,4 @@
+import type { $UUID } from 'locality-idb';
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +21,7 @@ import type { Note } from '@/types/note.types';
 
 export function NoteDetail() {
 	const { t } = useTranslation();
-	const { id } = useParams<{ id: string }>();
+	const { id } = useParams<{ id: $UUID }>();
 	const navigate = useNavigate();
 	const openNoteDialog = useUIStore((s) => s.openNoteDialog);
 	const [note, setNote] = useState<Note | null>(null);
