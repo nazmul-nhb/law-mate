@@ -43,7 +43,7 @@ export function UserNav() {
 				<DropdownMenuTrigger className="relative flex size-8 shrink-0 overflow-hidden rounded-full border border-border outline-hidden cursor-pointer hover:opacity-90 transition-opacity">
 					<UserAvatar className="size-full" image={avatarUrl} name={name} />
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end" className="w-56">
+				<DropdownMenuContent align="end" className="w-56 space-y-1">
 					<div className="px-2.5 py-2 text-xs font-medium text-muted-foreground">
 						<div className="flex flex-col space-y-1">
 							<p className="text-sm font-semibold text-foreground leading-none truncate">

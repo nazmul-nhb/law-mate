@@ -198,15 +198,7 @@ export function Layout() {
 						&copy; {language === 'bn' ? digitToBangla(year) : year} {t('app.name')}{' '}
 						- {t('footer.rights')}
 					</div>
-					<div className="flex items-center gap-4">
-						<a
-							className="hover:text-foreground transition-colors"
-							href="https://nazmul-nhb.dev"
-							rel="noopener"
-							target="_blank"
-						>
-							{t('footer.created.by')}
-						</a>
+					<div className="flex sm:items-center justify-center gap-4 flex-wrap">
 						<NavLink
 							className="hover:text-foreground transition-colors"
 							to="/privacy"
@@ -219,6 +211,14 @@ export function Layout() {
 						>
 							{t('footer.terms')}
 						</NavLink>
+						<a
+							className="hover:text-foreground transition-colors"
+							href="https://nazmul-nhb.dev"
+							rel="noopener"
+							target="_blank"
+						>
+							{t('footer.created.by')}
+						</a>
 					</div>
 				</div>
 			</footer>

@@ -78,8 +78,8 @@ export function SyncSetting() {
 				</div>
 
 				{isSynced ? (
-					<div className="flex items-center gap-3">
-						<div className="flex items-center space-x-2">
+					<div className="flex items-center gap-2 flex-wrap">
+						<div className="flex items-center gap-1 flex-wrap">
 							<Label className="text-sm" htmlFor="auto-sync">
 								{t('settings.sync.auto')}
 							</Label>

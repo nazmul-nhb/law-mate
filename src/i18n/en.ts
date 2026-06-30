@@ -47,7 +47,7 @@ const en = {
 
 		// Trash
 		'trash.title': 'Trash',
-		'trash.empty': 'Trash is empty',
+		'trash.empty': 'Trash is Empty',
 		'trash.empty.description': 'Deleted notes will appear here',
 		'trash.restore': 'Restore',
 		'trash.delete.permanent': 'Delete Permanently',
