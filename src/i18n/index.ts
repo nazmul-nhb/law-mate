@@ -1,16 +1,14 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { getFromLocalStorage } from 'toolbox-x/dom';
-import { DEFAULT_LANGUAGE } from '@/constants/app';
 import bn from '@/i18n/bn';
 import en from '@/i18n/en';
-import type { Language } from '@/types/common.types';
+import { useSettingsStore } from '@/stores/settings.store';
 
-const storedLanguage = getFromLocalStorage<Language>('law-mate-language');
+const { language } = useSettingsStore.getState();
 
 i18n.use(initReactI18next).init({
 	resources: { bn, en },
-	lng: storedLanguage || DEFAULT_LANGUAGE,
+	lng: language,
 	fallbackLng: 'en',
 	interpolation: {
 		escapeValue: false,

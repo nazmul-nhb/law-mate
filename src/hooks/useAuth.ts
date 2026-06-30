@@ -8,10 +8,9 @@ import { useAuthStore } from '@/stores/auth.store';
 export function useAuth() {
 	const {
 		user,
-		session,
 		isLoading,
 		initialized,
-		setSession,
+		setUser,
 		setProfile,
 		setIsLoading,
 		setInitialized,
@@ -54,6 +53,7 @@ export function useAuth() {
 
 				if (finalProfile) {
 					setProfile(finalProfile);
+					setUser(u);
 				}
 
 				// Adopt any local anonymous notes created while signed out
@@ -73,11 +73,12 @@ export function useAuth() {
 
 		// Get initial session
 		supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
-			setSession(initialSession);
+			// setSession(initialSession);
 			if (initialSession?.user) {
 				await assureUserProfile(initialSession.user);
 			} else {
 				setProfile(null);
+				setUser(null);
 			}
 			setIsLoading(false);
 			setInitialized(true);
@@ -87,11 +88,12 @@ export function useAuth() {
 		const {
 			data: { subscription },
 		} = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
-			setSession(currentSession);
+			// setSession(currentSession);
 			if (currentSession?.user) {
 				await assureUserProfile(currentSession.user);
 			} else {
 				setProfile(null);
+				setUser(null);
 			}
 			setIsLoading(false);
 			setInitialized(true);
@@ -100,7 +102,7 @@ export function useAuth() {
 		return () => {
 			subscription.unsubscribe();
 		};
-	}, [setSession, setProfile, setIsLoading, setInitialized]);
+	}, [setProfile, setUser, setIsLoading, setInitialized]);
 
 	// Initialize Google One Tap if GIS SDK is loaded and client ID exists
 	useEffect(() => {
@@ -154,7 +156,7 @@ export function useAuth() {
 
 	return {
 		user,
-		session,
+		// session,
 		isLoading,
 		initialized,
 		signInWithGoogle,

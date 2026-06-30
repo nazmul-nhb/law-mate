@@ -30,8 +30,6 @@ export const useUIStore = create<UIState>((set) => ({
 	toggleSearch: () => set((state) => ({ isSearchOpen: !state.isSearchOpen })),
 	setMobileMenuOpen: (open) => set({ isMobileMenuOpen: open }),
 	setIsSyncing: (isSyncing) => set({ isSyncing }),
-
 	openNoteDialog: (noteId) => set({ noteDialog: { open: true, noteId } }),
-
 	closeNoteDialog: () => set({ noteDialog: { open: false, noteId: undefined } }),
 }));

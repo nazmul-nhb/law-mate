@@ -27,3 +27,6 @@ dist-ssr
 *.md
 !README.md
 .estimator
+.env
+
+__test.ts

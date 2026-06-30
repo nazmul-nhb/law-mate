@@ -42,7 +42,8 @@ import {
 } from '@/components/ui/table';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { supabase } from '@/lib/supabase';
-import { type Profile, useAuthStore } from '@/stores/auth.store';
+import { useAuthStore } from '@/stores/auth.store';
+import type { Profile } from '@/types/profile.types';
 
 export function AdminPage() {
 	const { t } = useTranslation();

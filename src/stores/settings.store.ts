@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { DEFAULT_LANGUAGE, DEFAULT_THEME } from '@/constants/app';
+import { persist } from 'zustand/middleware';
+import { DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_THEME } from '@/constants/app';
 import type { Language, Theme } from '@/types/common.types';
 
 interface SettingsState {
@@ -13,62 +14,27 @@ interface SettingsState {
 	setLastSyncedAt: (time: string | null) => void;
 }
 
-const getStoredTheme = (): Theme => {
-	const stored = localStorage.getItem('law-mate-theme');
-	if (stored === 'light' || stored === 'dark' || stored === 'system') {
-		return stored;
-	}
-	return DEFAULT_THEME;
-};
+export const useSettingsStore = create<SettingsState>()(
+	persist(
+		(set) => ({
+			theme: DEFAULT_THEME,
+			language: DEFAULT_LANGUAGE,
+			fontSize: DEFAULT_FONT_SIZE,
+			lastSyncedAt: null,
 
-const getStoredLanguage = (): Language => {
-	const stored = localStorage.getItem('law-mate-language');
-	if (stored === 'bn' || stored === 'en') {
-		return stored;
-	}
-	return DEFAULT_LANGUAGE;
-};
-
-const getStoredFontSize = (): number => {
-	const stored = localStorage.getItem('law-mate-font-size');
-	if (stored) {
-		const parsed = Number.parseInt(stored, 10);
-		if (!Number.isNaN(parsed)) return parsed;
-	}
-	return 16; // default font size
-};
-
-const getStoredLastSyncedAt = (): string | null => {
-	return localStorage.getItem('law-mate-last-synced-at');
-};
-
-export const useSettingsStore = create<SettingsState>((set) => ({
-	theme: getStoredTheme(),
-	language: getStoredLanguage(),
-	fontSize: getStoredFontSize(),
-	lastSyncedAt: getStoredLastSyncedAt(),
-
-	setTheme: (theme) => {
-		localStorage.setItem('law-mate-theme', theme);
-		set({ theme });
-	},
-
-	setLanguage: (language) => {
-		localStorage.setItem('law-mate-language', language);
-		set({ language });
-	},
-
-	setFontSize: (fontSize) => {
-		localStorage.setItem('law-mate-font-size', String(fontSize));
-		set({ fontSize });
-	},
-
-	setLastSyncedAt: (lastSyncedAt) => {
-		if (lastSyncedAt) {
-			localStorage.setItem('law-mate-last-synced-at', lastSyncedAt);
-		} else {
-			localStorage.removeItem('law-mate-last-synced-at');
+			setTheme: (theme) => set({ theme }),
+			setLanguage: (language) => set({ language }),
+			setFontSize: (fontSize) => set({ fontSize }),
+			setLastSyncedAt: (lastSyncedAt) => set({ lastSyncedAt }),
+		}),
+		{
+			name: 'law-mate-settings-store',
+			partialize: ({ theme, language, fontSize, lastSyncedAt }) => ({
+				theme,
+				language,
+				fontSize,
+				lastSyncedAt,
+			}),
 		}
-		set({ lastSyncedAt });
-	},
-}));
+	)
+);
