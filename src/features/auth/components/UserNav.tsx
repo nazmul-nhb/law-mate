@@ -1,6 +1,7 @@
 import { Cloud, FileText, Loader2, LogOut, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import UserAvatar from '@/components/UserAvatar';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -35,24 +36,12 @@ export function UserNav() {
 
 	if (user) {
 		const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
-		const name =
-			user.user_metadata?.full_name || user.user_metadata?.name || user.email || '';
-		const initial = name.charAt(0).toUpperCase();
+		const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email;
 
 		return (
 			<DropdownMenu>
 				<DropdownMenuTrigger className="relative flex size-8 shrink-0 overflow-hidden rounded-full border border-border outline-hidden cursor-pointer hover:opacity-90 transition-opacity">
-					{avatarUrl ? (
-						<img
-							alt={name}
-							className="aspect-square size-full object-cover"
-							src={avatarUrl}
-						/>
-					) : (
-						<div className="flex size-full items-center justify-center bg-muted text-xs font-semibold text-muted-foreground">
-							{initial}
-						</div>
-					)}
+					<UserAvatar className="size-full" image={avatarUrl} name={name} />
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end" className="w-56">
 					<div className="px-2.5 py-2 text-xs font-medium text-muted-foreground">
