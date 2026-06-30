@@ -21,7 +21,7 @@ const en = {
 		'notes.title.label': 'Title',
 		'notes.title.placeholder': 'Enter note title...',
 		'notes.description.label': 'Description',
-		'notes.description.placeholder': 'Write in note description...',
+		'notes.description.placeholder': 'Write note description...',
 		'notes.deleted.success': 'Note moved to trash',
 		'notes.saved.success': 'Note saved successfully',
 		'notes.untitled': 'Untitled',
