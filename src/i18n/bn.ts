@@ -86,6 +86,9 @@ const bn = {
 		// Admin
 		'nav.admin': 'এডমিন',
 		'admin.title': 'এডমিন কনসোল',
+		'admin.offline.title': 'ইন্টারনেট কানেকশন নেই',
+		'admin.offline.description':
+			'দয়া করে আপনার ডিভাইসটি ইন্টারনেটের সাথে সংযুক্ত করে আবার চেষ্টা করুন।',
 		'admin.stats.total': 'মোট ব্যবহারকারী',
 		'admin.stats.active': 'সক্রিয়',
 		'admin.stats.blocked': 'ব্লকড',

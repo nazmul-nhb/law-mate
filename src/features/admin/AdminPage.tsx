@@ -16,10 +16,12 @@ import {
 	ShieldAlert,
 	UserCheck,
 	UserX,
+	WifiOffIcon,
 } from 'lucide-react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { EmptyState } from '@/components/EmptyState';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -50,7 +52,7 @@ import {
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
-import type { Profile } from '@/types/profile.types';
+import type { Profile, ProfileStatus } from '@/types/profile.types';
 
 const PAGE_LIMITS = [5, 10, 20, 30, 40, 50].map((val) => ({ value: val, label: String(val) }));
 
@@ -69,7 +71,7 @@ export function AdminPage() {
 	// Action confirmation states
 	const [pendingAction, setPendingAction] = React.useState<{
 		userId: string;
-		action: 'blocked' | 'deleted';
+		action: Exclude<ProfileStatus, 'active'>;
 	} | null>(null);
 
 	// Fetch users list
@@ -96,19 +98,19 @@ export function AdminPage() {
 
 	// Redirect non-admins
 	React.useEffect(() => {
-		if (profile && profile.role !== 'admin') {
+		if (profile?.role !== 'admin') {
 			navigate('/');
 		}
 	}, [profile, navigate]);
 
 	React.useEffect(() => {
-		if (profile?.role === 'admin') {
+		if (navigator.onLine && profile?.role === 'admin') {
 			fetchUsers();
 		}
 	}, [profile, fetchUsers]);
 
 	const handleStatusUpdate = React.useCallback(
-		async (userId: string, newStatus: 'active' | 'blocked' | 'deleted') => {
+		async (userId: string, newStatus: ProfileStatus) => {
 			try {
 				setIsUpdating(userId);
 				const { error } = await supabase
@@ -385,192 +387,218 @@ export function AdminPage() {
 				<h1 className="text-xl font-bold text-foreground">{t('admin.title')}</h1>
 			</div>
 
-			{/* Statistics Cards */}
-			<div className="grid gap-4 sm:grid-cols-4">
-				<div className="rounded-lg border border-border bg-card p-4">
-					<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-						{t('admin.stats.total')}
-					</p>
-					<p className="mt-2 text-2xl font-bold text-foreground">{totalUsers}</p>
-				</div>
-				<div className="rounded-lg border border-border bg-card p-4">
-					<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-						{t('admin.stats.active')}
-					</p>
-					<p className="mt-2 text-2xl font-bold text-emerald-500">{activeUsers}</p>
-				</div>
-				<div className="rounded-lg border border-border bg-card p-4">
-					<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-						{t('admin.stats.blocked')}
-					</p>
-					<p className="mt-2 text-2xl font-bold text-rose-500">{blockedUsers}</p>
-				</div>
-				<div className="rounded-lg border border-border bg-card p-4">
-					<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-						{t('admin.stats.deleted')}
-					</p>
-					<p className="mt-2 text-2xl font-bold text-muted-foreground">
-						{deletedUsers}
-					</p>
-				</div>
-			</div>
-
-			{/* Controls and Table */}
-			<div className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6">
-				<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-					<div className="relative max-w-sm w-full">
-						<Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
-						<Input
-							className="pl-9"
-							onChange={(e) => setGlobalFilter(e.target.value)}
-							placeholder={t('admin.search.placeholder')}
-							value={globalFilter}
-						/>
+			{navigator.onLine ? (
+				<React.Fragment>
+					{/* Statistics Cards */}
+					<div className="grid gap-4 sm:grid-cols-4">
+						<div className="rounded-lg border border-border bg-card p-4">
+							<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+								{t('admin.stats.total')}
+							</p>
+							<p className="mt-2 text-2xl font-bold text-foreground">
+								{totalUsers}
+							</p>
+						</div>
+						<div className="rounded-lg border border-border bg-card p-4">
+							<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+								{t('admin.stats.active')}
+							</p>
+							<p className="mt-2 text-2xl font-bold text-emerald-500">
+								{activeUsers}
+							</p>
+						</div>
+						<div className="rounded-lg border border-border bg-card p-4">
+							<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+								{t('admin.stats.blocked')}
+							</p>
+							<p className="mt-2 text-2xl font-bold text-rose-500">
+								{blockedUsers}
+							</p>
+						</div>
+						<div className="rounded-lg border border-border bg-card p-4">
+							<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+								{t('admin.stats.deleted')}
+							</p>
+							<p className="mt-2 text-2xl font-bold text-muted-foreground">
+								{deletedUsers}
+							</p>
+						</div>
 					</div>
 
-					<div className="flex items-center gap-2">
-						<span className="text-xs text-muted-foreground whitespace-nowrap">
-							Rows per page:
-						</span>
-						<Select
-							onValueChange={(val) => table.setPageSize(Number(val))}
-							value={String(table.getState().pagination.pageSize)}
-						>
-							<SelectTrigger className="h-8 w-17.5 text-xs">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent>
-								{PAGE_LIMITS.map((limit) => (
-									<SelectItem key={limit.value} value={String(limit.value)}>
-										{limit.label}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-				</div>
+					{/* Controls and Table */}
+					<div className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6">
+						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+							<div className="relative max-w-sm w-full">
+								<Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+								<Input
+									className="pl-9"
+									onChange={(e) => setGlobalFilter(e.target.value)}
+									placeholder={t('admin.search.placeholder')}
+									value={globalFilter}
+								/>
+							</div>
 
-				{isLoading ? (
-					<div className="flex h-32 items-center justify-center">
-						<Loader2 className="size-6 animate-spin text-muted-foreground" />
-					</div>
-				) : (
-					<div className="rounded-md border border-border">
-						<Table>
-							<TableHeader>
-								{table.getHeaderGroups().map((headerGroup) => (
-									<TableRow key={headerGroup.id}>
-										{headerGroup.headers.map((header) => (
-											<TableHead className="px-4 py-3" key={header.id}>
-												{header.isPlaceholder
-													? null
-													: flexRender(
-															header.column.columnDef.header,
-															header.getContext()
-														)}
-											</TableHead>
+							<div className="flex items-center gap-2">
+								<span className="text-xs text-muted-foreground whitespace-nowrap">
+									Rows per page:
+								</span>
+								<Select
+									onValueChange={(val) => table.setPageSize(Number(val))}
+									value={String(table.getState().pagination.pageSize)}
+								>
+									<SelectTrigger className="h-8 w-17.5 text-xs">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										{PAGE_LIMITS.map((limit) => (
+											<SelectItem
+												key={limit.value}
+												value={String(limit.value)}
+											>
+												{limit.label}
+											</SelectItem>
 										))}
-									</TableRow>
-								))}
-							</TableHeader>
-							<TableBody>
-								{table.getRowModel().rows?.length ? (
-									table.getRowModel().rows.map((row) => (
-										<TableRow
-											data-state={row.getIsSelected() && 'selected'}
-											key={row.id}
-										>
-											{row.getVisibleCells().map((cell) => (
-												<TableCell
-													className="px-4 py-3.5"
-													key={cell.id}
+									</SelectContent>
+								</Select>
+							</div>
+						</div>
+
+						{isLoading ? (
+							<div className="flex h-32 items-center justify-center">
+								<Loader2 className="size-6 animate-spin text-muted-foreground" />
+							</div>
+						) : (
+							<div className="rounded-md border border-border">
+								<Table>
+									<TableHeader>
+										{table.getHeaderGroups().map((headerGroup) => (
+											<TableRow key={headerGroup.id}>
+												{headerGroup.headers.map((header) => (
+													<TableHead
+														className="px-4 py-3"
+														key={header.id}
+													>
+														{header.isPlaceholder
+															? null
+															: flexRender(
+																	header.column.columnDef
+																		.header,
+																	header.getContext()
+																)}
+													</TableHead>
+												))}
+											</TableRow>
+										))}
+									</TableHeader>
+									<TableBody>
+										{table.getRowModel().rows?.length ? (
+											table.getRowModel().rows.map((row) => (
+												<TableRow
+													data-state={
+														row.getIsSelected() && 'selected'
+													}
+													key={row.id}
 												>
-													{flexRender(
-														cell.column.columnDef.cell,
-														cell.getContext()
-													)}
+													{row.getVisibleCells().map((cell) => (
+														<TableCell
+															className="px-4 py-3.5"
+															key={cell.id}
+														>
+															{flexRender(
+																cell.column.columnDef.cell,
+																cell.getContext()
+															)}
+														</TableCell>
+													))}
+												</TableRow>
+											))
+										) : (
+											<TableRow>
+												<TableCell
+													className="h-24 text-center"
+													colSpan={columns.length}
+												>
+													No results.
 												</TableCell>
-											))}
-										</TableRow>
-									))
-								) : (
-									<TableRow>
-										<TableCell
-											className="h-24 text-center"
-											colSpan={columns.length}
-										>
-											No results.
-										</TableCell>
-									</TableRow>
-								)}
-							</TableBody>
-						</Table>
-					</div>
-				)}
+											</TableRow>
+										)}
+									</TableBody>
+								</Table>
+							</div>
+						)}
 
-				{/* Pagination Controls */}
-				{!isLoading && (
-					<div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
-						<div className="text-xs text-muted-foreground">
-							Page {table.getState().pagination.pageIndex + 1} of{' '}
-							{table.getPageCount()} ({table.getFilteredRowModel().rows.length}{' '}
-							total users)
-						</div>
-						<div className="flex items-center space-x-2">
-							<Button
-								disabled={!table.getCanPreviousPage()}
-								onClick={() => table.previousPage()}
-								size="sm"
-								variant="outline"
-							>
-								Previous
-							</Button>
-							<Button
-								disabled={!table.getCanNextPage()}
-								onClick={() => table.nextPage()}
-								size="sm"
-								variant="outline"
-							>
-								Next
-							</Button>
-						</div>
+						{/* Pagination Controls */}
+						{!isLoading && (
+							<div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
+								<div className="text-xs text-muted-foreground">
+									Page {table.getState().pagination.pageIndex + 1} of{' '}
+									{table.getPageCount()} (
+									{table.getFilteredRowModel().rows.length} total users)
+								</div>
+								<div className="flex items-center space-x-2">
+									<Button
+										disabled={!table.getCanPreviousPage()}
+										onClick={() => table.previousPage()}
+										size="sm"
+										variant="outline"
+									>
+										Previous
+									</Button>
+									<Button
+										disabled={!table.getCanNextPage()}
+										onClick={() => table.nextPage()}
+										size="sm"
+										variant="outline"
+									>
+										Next
+									</Button>
+								</div>
+							</div>
+						)}
 					</div>
-				)}
-			</div>
 
-			{/* Confirm Action AlertDialog */}
-			<AlertDialog
-				onOpenChange={(open) => !open && setPendingAction(null)}
-				open={!!pendingAction}
-			>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>
-							{pendingAction?.action === 'blocked'
-								? t('admin.action.block')
-								: t('admin.action.delete')}
-						</AlertDialogTitle>
-						<AlertDialogDescription>
-							{pendingAction?.action === 'blocked'
-								? t('admin.confirm.block')
-								: t('admin.confirm.delete')}
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel>{t('notes.cancel')}</AlertDialogCancel>
-						<AlertDialogAction
-							className={
-								pendingAction?.action === 'blocked'
-									? 'bg-rose-600 hover:bg-rose-700 text-white cursor-pointer'
-									: 'bg-destructive hover:bg-destructive/90 text-destructive-foreground cursor-pointer'
-							}
-							onClick={handleConfirmAction}
-						>
-							{t('common.confirm')}
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
+					{/* Confirm Action AlertDialog */}
+					<AlertDialog
+						onOpenChange={(open) => !open && setPendingAction(null)}
+						open={!!pendingAction}
+					>
+						<AlertDialogContent>
+							<AlertDialogHeader>
+								<AlertDialogTitle>
+									{pendingAction?.action === 'blocked'
+										? t('admin.action.block')
+										: t('admin.action.delete')}
+								</AlertDialogTitle>
+								<AlertDialogDescription>
+									{pendingAction?.action === 'blocked'
+										? t('admin.confirm.block')
+										: t('admin.confirm.delete')}
+								</AlertDialogDescription>
+							</AlertDialogHeader>
+							<AlertDialogFooter>
+								<AlertDialogCancel>{t('notes.cancel')}</AlertDialogCancel>
+								<AlertDialogAction
+									className={
+										pendingAction?.action === 'blocked'
+											? 'bg-rose-600 hover:bg-rose-700 text-white cursor-pointer'
+											: 'bg-destructive hover:bg-destructive/90 text-destructive-foreground cursor-pointer'
+									}
+									onClick={handleConfirmAction}
+								>
+									{t('common.confirm')}
+								</AlertDialogAction>
+							</AlertDialogFooter>
+						</AlertDialogContent>
+					</AlertDialog>
+				</React.Fragment>
+			) : (
+				<EmptyState
+					description={t('admin.offline.description')}
+					i18nIsDynamicList
+					icon={WifiOffIcon}
+					title={t('admin.offline.title')}
+				/>
+			)}
 		</div>
 	);
 }
