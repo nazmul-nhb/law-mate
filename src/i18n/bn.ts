@@ -1,4 +1,4 @@
-import type { I18Keys } from '@/i18n';
+import type { I18Values } from '@/i18n';
 
 const bn = {
 	translation: {
@@ -110,7 +110,7 @@ const bn = {
 		'common.confirm': 'নিশ্চিত করুন',
 		'common.close': 'বন্ধ করুন',
 		'common.or': 'অথবা',
-	} satisfies Record<I18Keys, string>,
+	} satisfies I18Values,
 };
 
 export default bn;

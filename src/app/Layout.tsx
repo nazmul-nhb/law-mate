@@ -18,20 +18,19 @@ import { UserNav } from '@/features/auth/components/UserNav';
 import { NoteDialog } from '@/features/notes/components/NoteDialog';
 import { useAuth, useAuthInit } from '@/hooks/useAuth';
 import { useSearchCommand } from '@/hooks/useSearchCommand';
+import type { I18Values } from '@/i18n';
 import { cn } from '@/lib/utils';
 import { syncService } from '@/services/sync.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { useUIStore } from '@/stores/ui.store';
 
-function NavItem({
-	path,
-	labelKey,
-	icon: Icon,
-}: {
+type NavItem = {
 	path: string;
-	labelKey: string;
+	labelKey: keyof I18Values;
 	icon: React.ElementType;
-}) {
+};
+
+function NavItem({ path, labelKey, icon: Icon }: NavItem) {
 	const { t } = useTranslation();
 
 	return (
@@ -103,10 +102,10 @@ export function Layout() {
 		{ path: '/', labelKey: 'nav.notes', icon: FileText },
 		{ path: '/trash', labelKey: 'nav.trash', icon: Trash2 },
 		{ path: '/settings', labelKey: 'nav.settings', icon: Settings },
-		...(profile?.role === 'admin'
+		...((profile?.role === 'admin'
 			? [{ path: '/admin', labelKey: 'nav.admin', icon: Shield }]
-			: []),
-	];
+			: []) satisfies Array<NavItem>),
+	] satisfies Array<NavItem>;
 
 	return (
 		<div className="flex min-h-screen flex-col">

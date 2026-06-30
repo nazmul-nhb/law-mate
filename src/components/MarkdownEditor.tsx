@@ -3,6 +3,7 @@ import { type RefObject, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
+import type { I18Values } from '@/i18n';
 import { cn } from '@/lib/utils';
 
 interface MarkdownEditorProps {
@@ -14,13 +15,13 @@ interface MarkdownEditorProps {
 
 interface ToolbarAction {
 	icon: React.ElementType;
-	labelKey: string;
+	labelKey: keyof I18Values;
 	prefix: string;
 	suffix: string;
 	block?: boolean;
 }
 
-const TOOLBAR_ACTIONS: ToolbarAction[] = [
+const TOOLBAR_ACTIONS = [
 	{ icon: Bold, labelKey: 'editor.bold', prefix: '**', suffix: '**' },
 	{ icon: Italic, labelKey: 'editor.italic', prefix: '_', suffix: '_' },
 	{ icon: Heading2, labelKey: 'editor.heading', prefix: '## ', suffix: '', block: true },
@@ -35,7 +36,7 @@ const TOOLBAR_ACTIONS: ToolbarAction[] = [
 		block: true,
 	},
 	{ icon: Quote, labelKey: 'editor.quote', prefix: '> ', suffix: '', block: true },
-];
+] satisfies Array<ToolbarAction>;
 
 function applyAction(
 	textareaRef: RefObject<HTMLTextAreaElement | null>,
