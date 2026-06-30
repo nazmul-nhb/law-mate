@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 import { syncService } from '@/services/sync.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { useUIStore } from '@/stores/ui.store';
+import { useSettingsStore } from '@/stores/settings.store';
 
 type NavItem = {
 	path: string;
@@ -58,6 +59,7 @@ export function Layout() {
 	const setSearchOpen = useUIStore((s) => s.setSearchOpen);
 	const { user, initialized } = useAuth();
 	const { profile, signOut } = useAuthStore();
+	const autoSync = useSettingsStore((state) => state.autoSync);
 
 	useSearchCommand();
 
@@ -72,10 +74,10 @@ export function Layout() {
 	// }, [user]);
 
 	useEffect(() => {
-		if (initialized && user) {
+		if (initialized && user && autoSync) {
 			syncService.sync();
 		}
-	}, [initialized, user]);
+	}, [initialized, user, autoSync]);
 
 	if (profile?.status === 'blocked') {
 		return (

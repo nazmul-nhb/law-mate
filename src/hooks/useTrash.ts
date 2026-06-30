@@ -44,7 +44,7 @@ export function useTrash(): UseTrashReturn {
 			try {
 				await noteRepository.restore(id);
 				await refresh();
-				syncService.sync();
+				await syncService.sync();
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to restore note';
@@ -60,7 +60,7 @@ export function useTrash(): UseTrashReturn {
 			try {
 				await noteRepository.permanentDelete(id);
 				await refresh();
-				syncService.sync();
+				await syncService.sync();
 				return true;
 			} catch (err) {
 				const message =

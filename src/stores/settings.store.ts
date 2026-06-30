@@ -8,10 +8,12 @@ interface SettingsState {
 	language: Language;
 	fontSize: number;
 	lastSyncedAt: string | null;
+	autoSync: boolean;
 	setTheme: (theme: Theme) => void;
 	setLanguage: (language: Language) => void;
 	setFontSize: (size: number) => void;
 	setLastSyncedAt: (time: string | null) => void;
+	setAutoSync: (autoSync: boolean) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -21,19 +23,22 @@ export const useSettingsStore = create<SettingsState>()(
 			language: DEFAULT_LANGUAGE,
 			fontSize: DEFAULT_FONT_SIZE,
 			lastSyncedAt: null,
+			autoSync: false,
 
 			setTheme: (theme) => set({ theme }),
 			setLanguage: (language) => set({ language }),
 			setFontSize: (fontSize) => set({ fontSize }),
 			setLastSyncedAt: (lastSyncedAt) => set({ lastSyncedAt }),
+			setAutoSync: (autoSync) => set({ autoSync }),
 		}),
 		{
 			name: 'law-mate-settings-store',
-			partialize: ({ theme, language, fontSize, lastSyncedAt }) => ({
+			partialize: ({ theme, language, fontSize, lastSyncedAt, autoSync }) => ({
 				theme,
 				language,
 				fontSize,
 				lastSyncedAt,
+				autoSync,
 			}),
 		}
 	)

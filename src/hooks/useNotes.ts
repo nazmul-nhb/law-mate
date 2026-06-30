@@ -45,7 +45,7 @@ export function useNotes(): UseNotesReturn {
 			try {
 				const note = await noteRepository.create(input);
 				await refresh();
-				syncService.sync();
+				await syncService.sync();
 				return note;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to create note';
@@ -77,7 +77,7 @@ export function useNotes(): UseNotesReturn {
 			try {
 				await noteRepository.softDelete(id);
 				await refresh();
-				syncService.sync();
+				await syncService.sync();
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to delete note';
