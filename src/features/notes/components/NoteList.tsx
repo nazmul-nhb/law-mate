@@ -1,9 +1,9 @@
+import type { $UUID } from 'locality-idb';
 import { FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '@/components/EmptyState';
 import { NoteCard } from '@/features/notes/components/NoteCard';
 import type { Note } from '@/types/note.types';
-import type { $UUID } from 'locality-idb';
 
 interface NoteListProps {
 	notes: Note[];

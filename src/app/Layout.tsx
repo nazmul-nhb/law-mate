@@ -136,7 +136,9 @@ export function Layout() {
 											className="size-6 object-contain"
 											src="/law-mate.png"
 										/>
-										{t('app.name')}
+										<span className="sm:inline hidden">
+											{t('app.name')}
+										</span>
 									</SheetTitle>
 								</SheetHeader>
 								<nav className="mt-4 space-y-1 px-4">
@@ -158,7 +160,7 @@ export function Layout() {
 								className="size-6 object-contain"
 								src="/law-mate.png"
 							/>
-							{t('app.name')}
+							<span className="sm:inline hidden">{t('app.name')}</span>
 						</NavLink>
 					</div>
 

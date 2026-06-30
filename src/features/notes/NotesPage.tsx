@@ -1,3 +1,4 @@
+import type { $UUID } from 'locality-idb';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +14,6 @@ import {
 import { NoteList } from '@/features/notes/components/NoteList';
 import { useNotes } from '@/hooks/useNotes';
 import { useUIStore } from '@/stores/ui.store';
-import type { $UUID } from 'locality-idb';
 
 export function NotesPage() {
 	const { t } = useTranslation();
