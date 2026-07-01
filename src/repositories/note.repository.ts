@@ -102,11 +102,7 @@ export const noteRepository = {
 				updateData.description = input.description;
 			}
 
-			await idb
-				.update('notes')
-				.set(updateData)
-				.where((note) => note.id === id)
-				.run();
+			await idb.update('notes').set(updateData).where('id', id).run();
 		} catch (error) {
 			if (error instanceof NotFoundError || error instanceof ValidationError) {
 				throw error;
@@ -130,7 +126,7 @@ export const noteRepository = {
 					deleted_at: getTimestamp(),
 					version: existing.version + 1,
 				})
-				.where((note) => note.id === id)
+				.where('id', id)
 				.run();
 		} catch (error) {
 			if (error instanceof NotFoundError) throw error;
@@ -153,7 +149,7 @@ export const noteRepository = {
 					deleted_at: undefined,
 					version: existing.version + 1,
 				})
-				.where((note) => note.id === id)
+				.where('id', id)
 				.run();
 		} catch (error) {
 			if (error instanceof NotFoundError) throw error;
@@ -194,10 +190,7 @@ export const noteRepository = {
 			}
 
 			// 1. Delete locally from IndexedDB
-			await idb
-				.delete('notes')
-				.where((note) => note.id === id)
-				.run();
+			await idb.delete('notes').where('id', id).run();
 
 			// 2. Delete from Supabase or queue if offline
 			const { user } = useAuthStore.getState();

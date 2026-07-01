@@ -1,6 +1,6 @@
 import type { $UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
-import { getFromLocalStorage, removeFromLocalStorage } from 'toolbox-x/dom';
+import { getFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from 'toolbox-x/dom';
 import { DELETE_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
@@ -18,6 +18,11 @@ export const syncService = {
 			return;
 		}
 
+		if (!window.navigator.onLine) {
+			console.info('Skipping sync: Device is offline.');
+			return;
+		}
+
 		const { setIsSyncing } = useUIStore.getState();
 
 		setIsSyncing(true);
@@ -31,7 +36,14 @@ export const syncService = {
 					const { error } = await supabase.from('notes').delete().in('id', pending);
 
 					if (!error) {
-						removeFromLocalStorage(DELETE_QUEUE_KEY);
+						const currentQueue =
+							getFromLocalStorage<$UUID[]>(DELETE_QUEUE_KEY) || [];
+						const remaining = currentQueue.filter((id) => !pending.includes(id));
+						if (remaining.length > 0) {
+							saveToLocalStorage(DELETE_QUEUE_KEY, remaining);
+						} else {
+							removeFromLocalStorage(DELETE_QUEUE_KEY);
+						}
 					} else {
 						console.warn('Failed to sync pending permanent deletes:', error);
 					}
@@ -67,8 +79,6 @@ export const syncService = {
 			for (const localNote of localNotes) {
 				const remoteNote = remoteMap.get(localNote.id);
 
-				console.log({ localNote, remoteNote });
-
 				if (!remoteNote) {
 					// Local only: upload to remote
 					const { error: insertError } = await supabase.from('notes').upsert({
@@ -78,7 +88,7 @@ export const syncService = {
 						description: localNote.description,
 						created_at: localNote.created_at,
 						updated_at: localNote.updated_at,
-						deleted_at: localNote.deleted_at,
+						deleted_at: localNote.deleted_at ?? null,
 						version: localNote.version,
 						last_synced_at: syncTime,
 					});
@@ -130,7 +140,7 @@ export const syncService = {
 							description: localNote.description,
 							created_at: localNote.created_at,
 							updated_at: localNote.updated_at,
-							deleted_at: localNote.deleted_at,
+							deleted_at: localNote.deleted_at ?? null,
 							version: localNote.version,
 							last_synced_at: syncTime,
 						});
