@@ -4,7 +4,7 @@ import { useTitle } from 'nhb-hooks';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
-import { formatDateRelative } from 'toolbox-x/date';
+import { formatDateRelativeNative } from 'toolbox-x/date';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { noteRepository } from '@/repositories/note.repository';
+import { useSettingsStore } from '@/stores/settings.store';
 import { useUIStore } from '@/stores/ui.store';
 import type { Nullable } from '@/types/common.types';
 import type { Note } from '@/types/note.types';
@@ -29,6 +30,7 @@ export function NoteDetail() {
 	const [note, setNote] = useState<Nullable<Note>>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+	const language = useSettingsStore((s) => s.language);
 
 	const fetchNote = useCallback(async () => {
 		if (!id) return;
@@ -126,7 +128,9 @@ export function NoteDetail() {
 					{note.title || t('notes.untitled')}
 				</h1>
 				<p className="mt-2 text-xs text-muted-foreground">
-					{formatDateRelative(note.updated_at)}
+					{`${t('notes.edited')}: ${formatDateRelativeNative(note.updated_at, {
+						locale: language,
+					})}`}
 				</p>
 
 				{note.description ? (

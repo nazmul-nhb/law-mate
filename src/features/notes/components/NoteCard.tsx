@@ -3,10 +3,11 @@ import { Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { truncateString } from 'toolbox-x';
-import { formatDateRelative } from 'toolbox-x/date';
+import { formatDateRelativeNative } from 'toolbox-x/date';
 import { isNonEmptyString } from 'toolbox-x/guards';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { cn } from '@/lib/utils';
+import { useSettingsStore } from '@/stores/settings.store';
 import { useUIStore } from '@/stores/ui.store';
 import type { Note } from '@/types/note.types';
 
@@ -19,6 +20,7 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const openNoteDialog = useUIStore((s) => s.openNoteDialog);
+	const language = useSettingsStore((s) => s.language);
 
 	const handleClick = () => {
 		navigate(`/note/${note.id}`);
@@ -46,7 +48,7 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
 				if (e.key === 'Enter') handleClick();
 			}}
 		>
-			<div className="flex items-start justify-between gap-2">
+			<div className="relative">
 				<div className="min-w-0 flex-1">
 					<h3 className="truncate text-sm font-semibold text-foreground">
 						{note.title || t('notes.untitled')}
@@ -57,13 +59,16 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
 						</div>
 					)}
 					<p className="mt-2 text-xs text-muted-foreground">
-						{formatDateRelative(note.updated_at)}
+						<span>{`${t('notes.edited')}: ${formatDateRelativeNative(
+							note.updated_at,
+							{ locale: language }
+						)}`}</span>
 					</p>
 				</div>
 
 				<button
 					aria-label={t('notes.delete')}
-					className="shrink-0 rounded p-1.5 text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive"
+					className="absolute top-0 right-0 rounded p-1.5 hover:text-destructive/80 transition-all hover:bg-destructive/10 text-destructive"
 					onClick={handleDelete}
 					type="button"
 				>

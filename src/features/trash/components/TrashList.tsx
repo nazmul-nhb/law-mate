@@ -1,8 +1,8 @@
 import type { $UUID } from 'locality-idb';
 import { RotateCcw, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatDateRelative } from 'toolbox-x/date';
+import { formatDateRelativeNative } from 'toolbox-x/date';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -13,6 +13,7 @@ import {
 	DialogTitle,
 } from '@/components/ui/dialog';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
+import { useSettingsStore } from '@/stores/settings.store';
 import type { Nullable } from '@/types/common.types';
 import type { Note } from '@/types/note.types';
 
@@ -26,6 +27,8 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 	const { t } = useTranslation();
 	const [confirmId, setConfirmId] = useState<Nullable<$UUID>>(null);
 
+	const language = useSettingsStore((s) => s.language);
+
 	const handleConfirmDelete = async () => {
 		if (!confirmId) return;
 		await onPermanentDelete(confirmId);
@@ -33,8 +36,8 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 	};
 
 	return (
-		<>
-			<div className="space-y-2">
+		<Fragment>
+			<div className="grid md:grid-cols-2 gap-2">
 				{notes.map((note) => (
 					<div
 						className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
@@ -44,9 +47,17 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 							<h3 className="truncate text-sm font-medium text-foreground">
 								{note.title || t('notes.untitled')}
 							</h3>
-							<p className="mt-0.5 text-xs text-muted-foreground">
-								{note.deleted_at && formatDateRelative(note.deleted_at)}
-							</p>
+							{note.deleted_at ? (
+								<p className="mt-0.5 text-xs text-muted-foreground">
+									{t('notes.deleted.success')}
+									{': '}
+									<span className="font-semibold">
+										{formatDateRelativeNative(note.deleted_at, {
+											locale: language,
+										})}
+									</span>
+								</p>
+							) : null}
 						</div>
 
 						<div className="flex items-center gap-1">
@@ -56,7 +67,7 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 									onClick={() => onRestore(note.id)}
 									type="button"
 								>
-									<RotateCcw className="size-4" />
+									<RotateCcw className="size-5" />
 								</button>
 							</TooltipSimple>
 							<TooltipSimple content={t('trash.delete.permanent')}>
@@ -65,7 +76,7 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 									onClick={() => setConfirmId(note.id)}
 									type="button"
 								>
-									<Trash2 className="size-4" />
+									<Trash2 className="size-5" />
 								</button>
 							</TooltipSimple>
 						</div>
@@ -90,6 +101,6 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</>
+		</Fragment>
 	);
 }

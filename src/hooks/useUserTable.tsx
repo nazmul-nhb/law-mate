@@ -56,8 +56,8 @@ export function useUserTable(options: UserTableOptions): UserTable {
 	const [sorting, setSorting] = useState<SortingState>([]);
 
 	// Columns definition
-	const columns = useMemo<ColumnDef<Profile>[]>(
-		() => [
+	const columns = useMemo<ColumnDef<Profile>[]>(() => {
+		return [
 			{
 				accessorKey: 'full_name',
 				header: ({ column }) => {
@@ -257,9 +257,8 @@ export function useUserTable(options: UserTableOptions): UserTable {
 					);
 				},
 			},
-		],
-		[t, profile?.id, isUpdating, handleStatusUpdate, setPendingAction]
-	);
+		];
+	}, [t, profile?.id, isUpdating, handleStatusUpdate, setPendingAction]);
 
 	// Setup TanStack Table
 	const table = useReactTable({

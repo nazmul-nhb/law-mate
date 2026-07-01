@@ -19,6 +19,7 @@ const bn = {
 		'notes.empty.description': 'নতুন নোট তৈরি করতে নিচের বাটনে ক্লিক করুন',
 		'notes.create': 'নতুন নোট',
 		'notes.edit': 'নোট সম্পাদনা',
+		'notes.edited': 'সম্পাদনা করা হয়েছে',
 		'notes.delete': 'মুছে ফেলুন',
 		'notes.save': 'সংরক্ষণ করুন',
 		'notes.cancel': 'বাতিল',

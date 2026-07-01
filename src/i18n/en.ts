@@ -17,6 +17,7 @@ const en = {
 		'notes.empty.description': 'Click the button below to create your first note',
 		'notes.create': 'New Note',
 		'notes.edit': 'Edit Note',
+		'notes.edited': 'Last edited',
 		'notes.delete': 'Delete',
 		'notes.save': 'Save',
 		'notes.cancel': 'Cancel',
