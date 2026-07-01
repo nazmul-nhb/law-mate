@@ -58,7 +58,7 @@ const bn = {
 		'trash.delete.permanent': 'স্থায়ীভাবে মুছুন',
 		'trash.restore.success': 'নোটটি পুনরুদ্ধার করা হয়েছে',
 		'trash.delete.success': 'নোটটি স্থায়ীভাবে মুছে ফেলা হয়েছে',
-		'trash.confirm.delete': 'আপনি কি নিশ্চিত? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।',
+		'trash.confirm.delete': 'আপনি কি নিশ্চিত? এই প্রক্রিয়াটি পুনরুদ্ধারযোগ্য নয়।',
 		'trash.confirm.soft.delete': 'আপনি কি নিশ্চিত যে এই নোটটি ট্র্যাশে পাঠাতে চান?',
 
 		// Settings

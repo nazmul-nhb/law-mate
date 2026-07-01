@@ -19,6 +19,7 @@ export const syncService = {
 		}
 
 		const { setIsSyncing } = useUIStore.getState();
+
 		setIsSyncing(true);
 
 		try {
@@ -51,7 +52,7 @@ export const syncService = {
 			}
 
 			const remoteMap = new Map<string, Note>();
-			for (const rn of (remoteNotes || []) as Note[]) {
+			for (const rn of remoteNotes || []) {
 				remoteMap.set(rn.id, rn);
 			}
 
@@ -65,6 +66,8 @@ export const syncService = {
 			// 3. Process notes in local map
 			for (const localNote of localNotes) {
 				const remoteNote = remoteMap.get(localNote.id);
+
+				console.log({ localNote, remoteNote });
 
 				if (!remoteNote) {
 					// Local only: upload to remote
@@ -84,7 +87,7 @@ export const syncService = {
 						await idb
 							.update('notes')
 							.set({ last_synced_at: syncTime, user_id: user.id })
-							.where((n) => n.id === localNote.id)
+							.where('id', localNote.id)
 							.run();
 					} else {
 						console.error(
@@ -136,7 +139,7 @@ export const syncService = {
 							await idb
 								.update('notes')
 								.set({ last_synced_at: syncTime, user_id: user.id })
-								.where((n) => n.id === localNote.id)
+								.where('id', localNote.id)
 								.run();
 						} else {
 							console.error(
@@ -157,14 +160,14 @@ export const syncService = {
 								last_synced_at: syncTime,
 								user_id: user.id,
 							})
-							.where((n) => n.id === localNote.id)
+							.where('id', localNote.id)
 							.run();
 					} else {
 						// noop: just update sync time locally
 						await idb
 							.update('notes')
 							.set({ last_synced_at: syncTime, user_id: user.id })
-							.where((n) => n.id === localNote.id)
+							.where('id', localNote.id)
 							.run();
 					}
 				}
