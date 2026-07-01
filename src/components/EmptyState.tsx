@@ -20,7 +20,7 @@ export function EmptyState({ icon: Icon, title, description, action }: EmptyStat
 					<p className="text-sm text-muted-foreground">{description}</p>
 				)}
 			</div>
-			{action && <div className="mt-2">{action}</div>}
+			{action ? <div className="mt-2">{action}</div> : null}
 		</div>
 	);
 }

@@ -1,4 +1,5 @@
 import { Cloud, CloudOff, Loader2 } from 'lucide-react';
+import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from 'toolbox-x/date';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,8 @@ export function SyncSetting() {
 	const handleAutoSync = () => {
 		setAutoSync(!autoSync);
 	};
+
+	const syncId = useId();
 
 	return (
 		<div className="space-y-3">
@@ -74,12 +77,12 @@ export function SyncSetting() {
 				{isSynced ? (
 					<div className="flex items-center gap-2 flex-wrap">
 						<div className="flex items-center gap-1 flex-wrap">
-							<Label className="text-sm" htmlFor="auto-sync">
+							<Label className="text-sm" htmlFor={syncId}>
 								{t('settings.sync.auto')}
 							</Label>
 							<Switch
 								checked={autoSync}
-								id="auto-sync"
+								id={syncId}
 								onCheckedChange={handleAutoSync}
 								size="default"
 							/>

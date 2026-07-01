@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarkdownEditor } from '@/components/MarkdownEditor';
 import { Button } from '@/components/ui/button';
@@ -91,6 +91,8 @@ export function NoteDialog({ onSaved }: NoteDialogProps = {}) {
 		}
 	};
 
+	const idForTitle = useId();
+
 	return (
 		<Dialog onOpenChange={handleOpenChange} open={noteDialog.open}>
 			<DialogContent className="max-h-[90vh] overflow-y-auto max-w-[99%] md:max-w-2xl">
@@ -100,10 +102,10 @@ export function NoteDialog({ onSaved }: NoteDialogProps = {}) {
 
 				<div className="space-y-4 py-2 max-w-full">
 					<div className="space-y-2 max-w-full">
-						<Label htmlFor="note-title">{t('notes.title.label')}</Label>
+						<Label htmlFor={idForTitle}>{t('notes.title.label')}</Label>
 						<Input
 							autoFocus
-							id="note-title"
+							id={idForTitle}
 							onChange={(e) => setTitle(e.target.value)}
 							placeholder={t('notes.title.placeholder')}
 							value={title}
@@ -115,7 +117,7 @@ export function NoteDialog({ onSaved }: NoteDialogProps = {}) {
 						<MarkdownEditor onChange={setDescription} value={description} />
 					</div>
 
-					{error && <p className="text-sm text-destructive">{error}</p>}
+					{error ? <p className="text-sm text-destructive">{error}</p> : null}
 				</div>
 
 				<DialogFooter>

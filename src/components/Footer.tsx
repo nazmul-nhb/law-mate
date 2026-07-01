@@ -13,8 +13,8 @@ export default function Footer() {
 		<footer className="border-t border-border bg-background/50">
 			<div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-4 py-6 text-xs text-muted-foreground sm:flex-row">
 				<div>
-					&copy; {language === 'bn' ? digitToBangla(year) : year} {t('app.name')} -{' '}
-					{t('footer.rights')}
+					&copy; {language === 'bn' ? digitToBangla(year) : String(year)}{' '}
+					{t('app.name')} - {t('footer.rights')}
 				</div>
 				<div className="flex sm:items-center justify-center gap-4 flex-wrap">
 					<NavLink className="hover:text-foreground transition-colors" to="/privacy">

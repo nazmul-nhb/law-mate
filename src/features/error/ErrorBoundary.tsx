@@ -32,7 +32,7 @@ function ErrorFallback({ error, onReset }: { error: Nullable<Error>; onReset: ()
 					<p className="text-sm text-muted-foreground">{t('error.description')}</p>
 				</div>
 
-				{error && (
+				{error ? (
 					<details className="text-left bg-muted border border-border p-3 rounded-md text-xs font-mono max-h-40 overflow-auto">
 						<summary className="cursor-pointer font-semibold text-muted-foreground select-none">
 							{t('error.details')}
@@ -41,7 +41,7 @@ function ErrorFallback({ error, onReset }: { error: Nullable<Error>; onReset: ()
 							{String(error)}
 						</pre>
 					</details>
-				)}
+				) : null}
 
 				<Button
 					className="w-full flex items-center justify-center gap-2 cursor-pointer"

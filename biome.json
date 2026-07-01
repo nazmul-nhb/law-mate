@@ -43,7 +43,7 @@
 		"rules": {
 			"preset": "recommended",
 			"performance": {
-				"noJsxPropsBind": "info"
+				"noJsxPropsBind": "off"
 			},
 			"a11y": {
 				"useButtonType": "info",
