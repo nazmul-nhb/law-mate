@@ -8,9 +8,11 @@ import {
 	type Table,
 	useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Shield, ShieldAlert, UserCheck, UserX } from 'lucide-react';
+import Fuse from 'fuse.js';
+import { ArrowUpDown, Shield, ShieldAlert, User, UserCheck, UserX } from 'lucide-react';
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toPascalCase } from 'toolbox-x/change-case';
 import { formatDate } from 'toolbox-x/date';
 import UserAvatar from '@/components/UserAvatar';
 import { Button } from '@/components/ui/button';
@@ -54,6 +56,19 @@ export function useUserTable(options: UserTableOptions): UserTable {
 	} = options;
 
 	const [sorting, setSorting] = useState<SortingState>([]);
+
+	// Pre-compute fuzzy matched user IDs using Fuse.js
+	const filteredUserIds = useMemo(() => {
+		if (!globalFilter.trim()) return null;
+
+		const fuse = new Fuse(users, {
+			keys: ['full_name', 'email'],
+			threshold: 0.25,
+			ignoreLocation: true,
+		});
+
+		return new Set(fuse.search(globalFilter).map((r) => r.item.id));
+	}, [users, globalFilter]);
 
 	// Columns definition
 	const columns = useMemo<ColumnDef<Profile>[]>(() => {
@@ -116,11 +131,15 @@ export function useUserTable(options: UserTableOptions): UserTable {
 							className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium border ${
 								role === 'admin'
 									? 'bg-primary/5 text-primary border-primary/20'
-									: 'bg-muted text-muted-foreground border-transparent'
+									: 'bg-muted text-muted-foreground border-primary/20'
 							}`}
 						>
-							{role === 'admin' && <Shield className="size-3" />}
-							{role}
+							{role === 'admin' ? (
+								<Shield className="size-2.5" />
+							) : (
+								<User className="size-2.5" />
+							)}
+							{toPascalCase(role)}
 						</span>
 					);
 				},
@@ -151,7 +170,7 @@ export function useUserTable(options: UserTableOptions): UserTable {
 										: 'bg-muted text-muted-foreground border-transparent'
 							}`}
 						>
-							{status}
+							{toPascalCase(status)}
 						</span>
 					);
 				},
@@ -202,7 +221,7 @@ export function useUserTable(options: UserTableOptions): UserTable {
 										disabled={isUpdating === u.id}
 										onClick={() => handleStatusUpdate(u.id, 'active')}
 										size="icon-sm"
-										variant="ghost"
+										variant="secondary"
 									>
 										<UserCheck className="size-4 text-emerald-500" />
 									</Button>
@@ -218,9 +237,9 @@ export function useUserTable(options: UserTableOptions): UserTable {
 											})
 										}
 										size="icon-sm"
-										variant="ghost"
+										variant="destructive"
 									>
-										<ShieldAlert className="size-4 text-rose-500" />
+										<ShieldAlert className="size-4 text-red-300" />
 									</Button>
 								</TooltipSimple>
 							)}
@@ -231,7 +250,7 @@ export function useUserTable(options: UserTableOptions): UserTable {
 										disabled={isUpdating === u.id}
 										onClick={() => handleStatusUpdate(u.id, 'active')}
 										size="icon-sm"
-										variant="ghost"
+										variant="secondary"
 									>
 										<UserCheck className="size-4 text-muted-foreground" />
 									</Button>
@@ -247,9 +266,9 @@ export function useUserTable(options: UserTableOptions): UserTable {
 											})
 										}
 										size="icon-sm"
-										variant="ghost"
+										variant="destructive"
 									>
-										<UserX className="size-4 text-muted-foreground" />
+										<UserX className="size-4 text-red-200" />
 									</Button>
 								</TooltipSimple>
 							)}
@@ -270,6 +289,10 @@ export function useUserTable(options: UserTableOptions): UserTable {
 		},
 		onSortingChange: setSorting,
 		onGlobalFilterChange: setGlobalFilter,
+		globalFilterFn: (row) => {
+			if (!filteredUserIds) return true;
+			return filteredUserIds.has(row.original.id);
+		},
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
