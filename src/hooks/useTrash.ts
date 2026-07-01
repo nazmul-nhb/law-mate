@@ -3,12 +3,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { noteRepository } from '@/repositories/note.repository';
 import { syncService } from '@/services/sync.service';
+import type { Nullable } from '@/types/common.types';
 import type { Note } from '@/types/note.types';
 
 interface UseTrashReturn {
 	deletedNotes: Note[];
 	isLoading: boolean;
-	error: string | null;
+	error: Nullable<string>;
 	refresh: () => Promise<void>;
 	restoreNote: (id: $UUID) => Promise<boolean>;
 	permanentDeleteNote: (id: $UUID) => Promise<boolean>;
@@ -17,7 +18,7 @@ interface UseTrashReturn {
 export function useTrash(): UseTrashReturn {
 	const [deletedNotes, setDeletedNotes] = useState<Note[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<Nullable<string>>(null);
 	const { user } = useAuth();
 
 	const refresh = useCallback(async () => {

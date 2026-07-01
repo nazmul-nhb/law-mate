@@ -1,18 +1,18 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_THEME } from '@/constants/app';
-import type { Language, Theme } from '@/types/common.types';
+import type { Language, Nullable, Theme } from '@/types/common.types';
 
 interface SettingsState {
 	theme: Theme;
 	language: Language;
 	fontSize: number;
-	lastSyncedAt: string | null;
+	lastSyncedAt: Nullable<string>;
 	autoSync: boolean;
 	setTheme: (theme: Theme) => void;
 	setLanguage: (language: Language) => void;
 	setFontSize: (size: number) => void;
-	setLastSyncedAt: (time: string | null) => void;
+	setLastSyncedAt: (time: Nullable<string>) => void;
 	setAutoSync: (autoSync: boolean) => void;
 }
 

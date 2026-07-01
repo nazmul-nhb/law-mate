@@ -18,6 +18,7 @@ import {
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { noteRepository } from '@/repositories/note.repository';
 import { useUIStore } from '@/stores/ui.store';
+import type { Nullable } from '@/types/common.types';
 import type { Note } from '@/types/note.types';
 
 export function NoteDetail() {
@@ -25,7 +26,7 @@ export function NoteDetail() {
 	const { id } = useParams<{ id: $UUID }>();
 	const navigate = useNavigate();
 	const openNoteDialog = useUIStore((s) => s.openNoteDialog);
-	const [note, setNote] = useState<Note | null>(null);
+	const [note, setNote] = useState<Nullable<Note>>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 

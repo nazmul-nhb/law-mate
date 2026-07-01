@@ -2,8 +2,8 @@
 
 import { User } from 'lucide-react';
 import { getColorForInitial } from 'toolbox-x/colors';
-import type { Maybe } from 'toolbox-x/types';
 import { cn } from '@/lib/utils';
+import type { Uncertain } from '@/types/common.types';
 
 const sizes = {
 	xs: 'size-6',
@@ -13,8 +13,8 @@ const sizes = {
 } as const;
 
 type AvatarProps = {
-	image: Maybe<string | null>;
-	name: Maybe<string | null>;
+	image: Uncertain<string>;
+	name: Uncertain<string>;
 	size?: keyof typeof sizes;
 	className?: string;
 };

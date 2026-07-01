@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { noteRepository } from '@/repositories/note.repository';
 import { useUIStore } from '@/stores/ui.store';
+import type { Nullable } from '@/types/common.types';
 
 interface NoteDialogProps {
 	onSaved?: () => void;
@@ -25,7 +26,7 @@ export function NoteDialog({ onSaved }: NoteDialogProps = {}) {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
 	const [isSaving, setIsSaving] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<Nullable<string>>(null);
 
 	const isEditing = !!noteDialog.noteId;
 

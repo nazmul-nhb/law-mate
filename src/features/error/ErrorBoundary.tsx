@@ -3,6 +3,7 @@ import { useTitle } from 'nhb-hooks';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import type { Nullable } from '@/types/common.types';
 
 interface Props {
 	children: ReactNode;
@@ -10,10 +11,10 @@ interface Props {
 
 interface State {
 	hasError: boolean;
-	error: Error | null;
+	error: Nullable<Error>;
 }
 
-function ErrorFallback({ error, onReset }: { error: Error | null; onReset: () => void }) {
+function ErrorFallback({ error, onReset }: { error: Nullable<Error>; onReset: () => void }) {
 	const { t } = useTranslation();
 
 	useTitle(t('error.title'));

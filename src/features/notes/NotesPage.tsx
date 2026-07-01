@@ -15,12 +15,13 @@ import {
 import { NoteList } from '@/features/notes/components/NoteList';
 import { useNotes } from '@/hooks/useNotes';
 import { useUIStore } from '@/stores/ui.store';
+import type { Nullable } from '@/types/common.types';
 
 export function NotesPage() {
 	const { t } = useTranslation();
 	const { notes, isLoading, error, refresh, deleteNote } = useNotes();
 	const openNoteDialog = useUIStore((s) => s.openNoteDialog);
-	const [deleteConfirmId, setDeleteConfirmId] = useState<$UUID | null>(null);
+	const [deleteConfirmId, setDeleteConfirmId] = useState<Nullable<$UUID>>(null);
 
 	useTitle(t('app.tagline'), { position: 'after' });
 

@@ -2,17 +2,18 @@ import type { User } from '@supabase/supabase-js';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { supabase } from '@/lib/supabase';
+import type { Nullable } from '@/types/common.types';
 import type { Profile } from '@/types/profile.types';
 
 interface AuthState {
-	user: User | null;
-	// session: Session | null;
-	profile: Profile | null;
+	user: Nullable<User>;
+	// session: Nullable<Session> ;
+	profile: Nullable<Profile>;
 	isLoading: boolean;
 	initialized: boolean;
-	setUser: (user: User | null) => void;
-	// setSession: (session: Session | null) => void;
-	setProfile: (profile: Profile | null) => void;
+	setUser: (user: Nullable<User>) => void;
+	// setSession: (session: Nullable<Session> ) => void;
+	setProfile: (profile: Nullable<Profile>) => void;
 	setIsLoading: (isLoading: boolean) => void;
 	setInitialized: (initialized: boolean) => void;
 	signInWithGoogle: () => Promise<void>;

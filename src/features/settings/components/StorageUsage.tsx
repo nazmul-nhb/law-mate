@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { formatBytes } from '@/lib/utils';
+import type { Nullable } from '@/types/common.types';
 
 export function StorageUsage() {
 	const { t } = useTranslation();
-	const [usage, setUsage] = useState<{ used: number; quota: number } | null>(null);
+	const [usage, setUsage] = useState<Nullable<{ used: number; quota: number }>>(null);
 
 	useEffect(() => {
 		if ('storage' in navigator && 'estimate' in navigator.storage) {

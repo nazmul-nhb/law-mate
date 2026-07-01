@@ -3,14 +3,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { noteRepository } from '@/repositories/note.repository';
 import { syncService } from '@/services/sync.service';
+import type { Nullable } from '@/types/common.types';
 import type { CreateNoteInput, EditNoteInput, Note } from '@/types/note.types';
 
 interface UseNotesReturn {
 	notes: Note[];
 	isLoading: boolean;
-	error: string | null;
+	error: Nullable<string>;
 	refresh: () => Promise<void>;
-	createNote: (input: CreateNoteInput) => Promise<Note | null>;
+	createNote: (input: CreateNoteInput) => Promise<Nullable<Note>>;
 	updateNote: (id: $UUID, input: EditNoteInput) => Promise<boolean>;
 	deleteNote: (id: $UUID) => Promise<boolean>;
 }
@@ -18,7 +19,7 @@ interface UseNotesReturn {
 export function useNotes(): UseNotesReturn {
 	const [notes, setNotes] = useState<Note[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<Nullable<string>>(null);
 	const { user } = useAuth();
 
 	const refresh = useCallback(async () => {
@@ -45,7 +46,7 @@ export function useNotes(): UseNotesReturn {
 	const isSyncable = window.navigator.onLine && !!user;
 
 	const createNote = useCallback(
-		async (input: CreateNoteInput): Promise<Note | null> => {
+		async (input: CreateNoteInput): Promise<Nullable<Note>> => {
 			try {
 				const note = await noteRepository.create(input);
 				await refresh();

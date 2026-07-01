@@ -5,6 +5,7 @@ import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import type { I18Keys } from '@/i18n';
 import { cn } from '@/lib/utils';
+import type { Nullable } from '@/types/common.types';
 
 interface MarkdownEditorProps {
 	value: string;
@@ -39,7 +40,7 @@ const TOOLBAR_ACTIONS = [
 ] satisfies Array<ToolbarAction>;
 
 function applyAction(
-	textareaRef: RefObject<HTMLTextAreaElement | null>,
+	textareaRef: RefObject<Nullable<HTMLTextAreaElement>>,
 	value: string,
 	onChange: (value: string) => void,
 	action: ToolbarAction

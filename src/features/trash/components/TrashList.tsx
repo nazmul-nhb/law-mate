@@ -13,6 +13,7 @@ import {
 	DialogTitle,
 } from '@/components/ui/dialog';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
+import type { Nullable } from '@/types/common.types';
 import type { Note } from '@/types/note.types';
 
 interface TrashListProps {
@@ -23,7 +24,7 @@ interface TrashListProps {
 
 export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProps) {
 	const { t } = useTranslation();
-	const [confirmId, setConfirmId] = useState<$UUID | null>(null);
+	const [confirmId, setConfirmId] = useState<Nullable<$UUID>>(null);
 
 	const handleConfirmDelete = async () => {
 		if (!confirmId) return;
