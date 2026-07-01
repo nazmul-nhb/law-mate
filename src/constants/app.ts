@@ -8,6 +8,7 @@ export const DB_NAME = 'law-mate-db';
 export const DB_VERSION = 1;
 
 export const DELETE_QUEUE_KEY = 'law-mate-pending-permanent-deletes';
+export const TERMS_PRIVACY_LAST_MODIFIED = '2026-07-01';
 
 export const DEFAULT_LANGUAGE = 'bn';
 export const SUPPORTED_LANGUAGES = ['bn', 'en'] as const;

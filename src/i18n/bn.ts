@@ -1,3 +1,5 @@
+import { digitToBangla } from 'toolbox-x';
+import { TERMS_PRIVACY_LAST_MODIFIED } from '@/constants/app';
 import type { I18Values } from '@/i18n';
 
 const bn = {
@@ -124,7 +126,7 @@ const bn = {
 
 		// Legal
 		'legal.last.updated': 'সর্বশেষ আপডেট',
-		'legal.last.updated.date': '২৬-০৭-০১',
+		'legal.last.updated.date': digitToBangla(TERMS_PRIVACY_LAST_MODIFIED),
 		'legal.privacy.title': 'গোপনীয়তা নীতি',
 		'legal.privacy.intro.title': 'ভূমিকা',
 		'legal.privacy.intro.body':

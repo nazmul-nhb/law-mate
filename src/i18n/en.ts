@@ -1,3 +1,5 @@
+import { TERMS_PRIVACY_LAST_MODIFIED } from '@/constants/app';
+
 const en = {
 	translation: {
 		// App
@@ -122,7 +124,7 @@ const en = {
 
 		// Legal
 		'legal.last.updated': 'Last updated',
-		'legal.last.updated.date': '2026-07-01',
+		'legal.last.updated.date': TERMS_PRIVACY_LAST_MODIFIED,
 		'legal.privacy.title': 'Privacy Policy',
 		'legal.privacy.intro.title': 'Introduction',
 		'legal.privacy.intro.body':

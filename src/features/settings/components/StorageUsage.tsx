@@ -1,13 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
-
-function formatBytes(bytes: number): string {
-	if (bytes === 0) return '0 B';
-	const units = ['B', 'KB', 'MB', 'GB'];
-	const i = Math.floor(Math.log(bytes) / Math.log(1024));
-	return `${(bytes / 1024 ** i).toFixed(1)} ${units[i]}`;
-}
+import { formatBytes } from '@/lib/utils';
 
 export function StorageUsage() {
 	const { t } = useTranslation();

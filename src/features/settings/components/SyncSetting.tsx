@@ -1,6 +1,5 @@
 import { Cloud, CloudOff, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { digitToBangla } from 'toolbox-x';
 import { formatDate } from 'toolbox-x/date';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -14,7 +13,7 @@ export function SyncSetting() {
 	const { t } = useTranslation();
 	const { user } = useAuth();
 	const { isSyncing } = useUIStore();
-	const { lastSyncedAt, autoSync, setAutoSync, language } = useSettingsStore();
+	const { lastSyncedAt, autoSync, setAutoSync } = useSettingsStore();
 
 	const isSynced = window.navigator.onLine && !!user;
 
@@ -27,10 +26,6 @@ export function SyncSetting() {
 	const handleAutoSync = () => {
 		setAutoSync(!autoSync);
 	};
-
-	const formattedSyncTime = lastSyncedAt
-		? formatDate({ date: lastSyncedAt, format: 'DD-MM-YYYY hh:mm:ss A' })
-		: null;
 
 	return (
 		<div className="space-y-3">
@@ -64,14 +59,13 @@ export function SyncSetting() {
 								t('settings.sync.not.connected')
 							)}
 						</p>
-						{user && formattedSyncTime && !isSyncing && (
+						{user && lastSyncedAt && !isSyncing && (
 							<p className="text-xs text-muted-foreground mt-0.5">
 								{t('settings.sync.label')}:{' '}
-								{language === 'bn'
-									? digitToBangla(formattedSyncTime)
-											.replace('PM', 'অপরাহ্ন')
-											.replace('AM', 'পূর্বাহ্ন')
-									: formattedSyncTime}
+								{formatDate({
+									date: lastSyncedAt,
+									format: 'DD-MM-YYYY hh:mm:ss A',
+								})}
 							</p>
 						)}
 					</div>
