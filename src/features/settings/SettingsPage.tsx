@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Separator } from '@/components/ui/separator';
 import { APP_VERSION } from '@/constants/app';
 import { AuthButton } from '@/features/auth/components/AuthButton';
+import { DatabaseExplorer } from '@/features/settings/components/DatabaseExplorer';
+import { ExportImportSetting } from '@/features/settings/components/ExportImportSetting';
 import { FontSizeSetting } from '@/features/settings/components/FontSizeSetting';
 import { LanguageSetting } from '@/features/settings/components/LanguageSetting';
 import { StorageUsage } from '@/features/settings/components/StorageUsage';
@@ -35,6 +37,10 @@ export function SettingsPage() {
 				<SyncSetting />
 				<Separator />
 				<StorageUsage />
+				<Separator />
+				<ExportImportSetting />
+				<Separator />
+				<DatabaseExplorer />
 				<Separator />
 				<div className="flex items-center justify-between">
 					<span className="text-sm font-medium text-foreground">

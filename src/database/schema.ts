@@ -1,6 +1,6 @@
 import { column, defineSchema } from 'locality-idb';
 
-export const schema = defineSchema({
+export const lawMateSchema = defineSchema({
 	notes: {
 		id: column.uuid().pk(),
 		user_id: column.text().optional().index(),
