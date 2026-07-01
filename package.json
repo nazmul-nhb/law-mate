@@ -1,7 +1,7 @@
 {
   "name": "law-mate",
   "private": true,
-  "version": "1.6.10",
+  "version": "1.6.11",
   "type": "module",
   "description": "LawMate - Keep Your Notes about Law Sections Organized.",
   "author": {
@@ -41,6 +41,7 @@
     "react-markdown": "^10.1.0",
     "react-router": "^8.0.1",
     "remark-gfm": "^4.0.1",
+    "remove-markdown": "^0.6.4",
     "shadcn": "^4.12.0",
     "tailwind-merge": "^3.6.0",
     "toolbox-x": "^2.4.6",

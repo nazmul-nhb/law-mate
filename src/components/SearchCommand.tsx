@@ -2,7 +2,7 @@ import { FileText, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { truncateString } from 'toolbox-x';
+import { isNonEmptyString } from 'toolbox-x/guards';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
 import {
 	CommandDialog,
@@ -57,6 +57,7 @@ export function SearchCommand() {
 					<CommandGroup>
 						{results.map((note) => (
 							<CommandItem
+								className="cursor-pointer"
 								key={note.id}
 								onSelect={() => handleSelect(note.id)}
 								value={`${note.title} ${note.description ?? ''}`}
@@ -66,10 +67,12 @@ export function SearchCommand() {
 									<p className="truncate text-sm font-medium">
 										{note.title || t('notes.untitled')}
 									</p>
-									{note.description && (
-										<div className="truncate text-xs text-muted-foreground">
+									{isNonEmptyString(note.description) && (
+										<div className="truncate line-clamp-1 text-xs text-muted-foreground">
 											<MarkdownPreview
-												content={truncateString(note.description)}
+												content={note.description}
+												removeMarkdown
+												replaceNewLine
 											/>
 										</div>
 									)}

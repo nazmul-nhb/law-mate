@@ -12,6 +12,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { useSettingsStore } from '@/stores/settings.store';
 import type { Nullable } from '@/types/common.types';
@@ -48,7 +49,7 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 								{note.title || t('notes.untitled')}
 							</h3>
 							{note.deleted_at ? (
-								<p className="mt-0.5 text-xs text-muted-foreground">
+								<p className="mt-2 text-xs text-muted-foreground font-mono">
 									{t('notes.deleted.success')}
 									{': '}
 									<span className="font-semibold">
@@ -63,16 +64,17 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 						<div className="flex items-center gap-1">
 							<TooltipSimple content={t('trash.restore')}>
 								<button
-									className="rounded p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
+									className="rounded p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
 									onClick={() => onRestore(note.id)}
 									type="button"
 								>
 									<RotateCcw className="size-5" />
 								</button>
 							</TooltipSimple>
+							<Separator orientation="vertical" />
 							<TooltipSimple content={t('trash.delete.permanent')}>
 								<button
-									className="rounded p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+									className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
 									onClick={() => setConfirmId(note.id)}
 									type="button"
 								>
