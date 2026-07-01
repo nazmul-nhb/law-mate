@@ -8,6 +8,7 @@ import { PrivacyPage } from '@/features/legal/PrivacyPage';
 import { TermsPage } from '@/features/legal/TermsPage';
 import { NoteDetail } from '@/features/notes/components/NoteDetail';
 import { NotesPage } from '@/features/notes/NotesPage';
+import { IDBExplorerPage } from '@/features/settings/IDBExplorerPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { TrashPage } from '@/features/trash/TrashPage';
 
@@ -25,7 +26,12 @@ export default function App() {
 								element={<Navigate replace to="/settings" />}
 								path="setting"
 							/>
+							<Route
+								element={<Navigate replace to="/settings/idb-explorer" />}
+								path="idb-explorer"
+							/>
 							<Route element={<SettingsPage />} path="settings" />
+							<Route element={<IDBExplorerPage />} path="settings/idb-explorer" />
 							<Route element={<AdminPage />} path="admin" />
 							<Route element={<PrivacyPage />} path="privacy" />
 							<Route element={<TermsPage />} path="terms" />

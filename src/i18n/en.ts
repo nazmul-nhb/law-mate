@@ -181,7 +181,8 @@ const en = {
 
 		// Error Boundary
 		'error.title': 'Something went wrong',
-		'error.description': 'An unexpected error has occurred. Please try reloading the page or going back to the dashboard.',
+		'error.description':
+			'An unexpected error has occurred. Please try reloading the page or going back to the dashboard.',
 		'error.details': 'Error Details',
 		'error.reload': 'Reload Application',
 
@@ -217,8 +218,10 @@ const en = {
 		'settings.data.explore.title': 'Local Database Notes',
 		'settings.data.explore.clear.all': 'Clear All Local Data',
 		'settings.data.explore.delete.selected': 'Delete Selected',
-		'settings.data.explore.confirm.clear': 'Are you sure you want to clear all tables in IndexedDB? This action is permanent.',
-		'settings.data.explore.confirm.delete': 'Are you sure you want to delete the selected notes?',
+		'settings.data.explore.confirm.clear':
+			'Are you sure you want to clear all tables in IndexedDB? This action is permanent.',
+		'settings.data.explore.confirm.delete':
+			'Are you sure you want to delete the selected notes?',
 		'settings.data.explore.col.id': 'ID',
 		'settings.data.explore.col.title': 'Title',
 		'settings.data.explore.col.owner': 'Owner ID',

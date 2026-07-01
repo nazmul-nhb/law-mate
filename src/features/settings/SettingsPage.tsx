@@ -4,8 +4,9 @@ import { Separator } from '@/components/ui/separator';
 import { APP_VERSION } from '@/constants/app';
 import { AuthButton } from '@/features/auth/components/AuthButton';
 import { DatabaseExplorer } from '@/features/settings/components/DatabaseExplorer';
-import { ExportImportSetting } from '@/features/settings/components/ExportImportSetting';
+import { ExportSetting } from '@/features/settings/components/ExportSetting';
 import { FontSizeSetting } from '@/features/settings/components/FontSizeSetting';
+import { ImportSetting } from '@/features/settings/components/ImportSetting';
 import { LanguageSetting } from '@/features/settings/components/LanguageSetting';
 import { StorageUsage } from '@/features/settings/components/StorageUsage';
 import { SyncSetting } from '@/features/settings/components/SyncSetting';
@@ -38,7 +39,15 @@ export function SettingsPage() {
 				<Separator />
 				<StorageUsage />
 				<Separator />
-				<ExportImportSetting />
+				<div className="space-y-4">
+					<h2 className="text-md font-semibold text-foreground">
+						{t('settings.data.title')}
+					</h2>
+					<div className="grid gap-4 sm:grid-cols-2">
+						<ExportSetting />
+						<ImportSetting />
+					</div>
+				</div>
 				<Separator />
 				<DatabaseExplorer />
 				<Separator />

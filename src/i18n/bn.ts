@@ -181,7 +181,8 @@ const bn = {
 
 		// Error Boundary
 		'error.title': 'কিছু একটা ভুল হয়েছে',
-		'error.description': 'একটি অপ্রত্যাশিত ত্রুটি ঘটেছে। অনুগ্রহ করে পৃষ্ঠাটি পুনরায় লোড করার চেষ্টা করুন বা ড্যাশবোর্ডে ফিরে যান।',
+		'error.description':
+			'একটি অপ্রত্যাশিত ত্রুটি ঘটেছে। অনুগ্রহ করে পৃষ্ঠাটি পুনরায় লোড করার চেষ্টা করুন বা ড্যাশবোর্ডে ফিরে যান।',
 		'error.details': 'ত্রুটির বিবরণ',
 		'error.reload': 'অ্যাপ্লিকেশন পুনরায় লোড করুন',
 
@@ -198,7 +199,8 @@ const bn = {
 		'settings.data.import.mode.merge': 'মার্জ (বিদ্যমান নোট এড়িয়ে যান)',
 		'settings.data.import.mode.upsert': 'আপসার্ট (বিদ্যমান নোট প্রতিস্থাপন করুন)',
 		'settings.data.import.mode.replace': 'রিপ্লেস (সব মুছে ইম্পোর্ট করুন)',
-		'settings.data.import.dropzone': 'JSON ফাইলটি এখানে ড্র্যাগ অ্যান্ড ড্রপ করুন অথবা নির্বাচন করতে ক্লিক করুন',
+		'settings.data.import.dropzone':
+			'JSON ফাইলটি এখানে ড্র্যাগ অ্যান্ড ড্রপ করুন অথবা নির্বাচন করতে ক্লিক করুন',
 		'settings.data.import.preview': 'ইম্পোর্ট প্রিভিউ',
 		'settings.data.import.confirm': 'আপনি কি ইম্পোর্ট প্রক্রিয়াটি শুরু করতে চান?',
 		'settings.data.import.success': 'ডেটা সফলভাবে ইম্পোর্ট করা হয়েছে',
@@ -217,8 +219,10 @@ const bn = {
 		'settings.data.explore.title': 'লোকাল ডাটাবেস নোটসমূহ',
 		'settings.data.explore.clear.all': 'সমস্ত লোকাল ডেটা মুছুন',
 		'settings.data.explore.delete.selected': 'নির্বাচিতগুলো মুছুন',
-		'settings.data.explore.confirm.clear': 'আপনি কি নিশ্চিত যে IndexedDB এর সমস্ত ডেটা মুছে ফেলতে চান? এটি স্থায়ীভাবে মুছে যাবে।',
-		'settings.data.explore.confirm.delete': 'আপনি কি নিশ্চিত যে নির্বাচিত নোটগুলো মুছে ফেলতে চান?',
+		'settings.data.explore.confirm.clear':
+			'আপনি কি নিশ্চিত যে IndexedDB এর সমস্ত ডেটা মুছে ফেলতে চান? এটি স্থায়ীভাবে মুছে যাবে।',
+		'settings.data.explore.confirm.delete':
+			'আপনি কি নিশ্চিত যে নির্বাচিত নোটগুলো মুছে ফেলতে চান?',
 		'settings.data.explore.col.id': 'আইডি',
 		'settings.data.explore.col.title': 'শিরোনাম',
 		'settings.data.explore.col.owner': 'মালিক আইডি',
