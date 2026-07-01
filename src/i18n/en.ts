@@ -195,7 +195,7 @@ const en = {
 		'settings.data.export.button': 'Export to JSON',
 		'settings.data.import.label': 'Import Data',
 		'settings.data.import.desc': 'Restore your notes from a previously exported JSON file.',
-		'settings.data.import.mode': 'Import Mode',
+		'settings.data.import.mode': 'Mode',
 		'settings.data.import.mode.merge': 'Merge (Skip existing)',
 		'settings.data.import.mode.upsert': 'Upsert (Overwrite existing)',
 		'settings.data.import.mode.replace': 'Replace (Delete all, then import)',

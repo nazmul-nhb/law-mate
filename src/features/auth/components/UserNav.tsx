@@ -1,4 +1,4 @@
-import { Cloud, FileText, Loader2, LogOut, Settings } from 'lucide-react';
+import { Cloud, Database, FileText, Loader2, LogOut, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import UserAvatar from '@/components/UserAvatar';
@@ -43,7 +43,7 @@ export function UserNav() {
 				<DropdownMenuTrigger className="relative flex size-8 shrink-0 overflow-hidden rounded-full border border-border outline-hidden cursor-pointer hover:opacity-90 transition-opacity">
 					<UserAvatar className="size-full" image={avatarUrl} name={name} />
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="end" className="w-56 space-y-1">
+				<DropdownMenuContent align="end" className="w-56 space-y- select-none">
 					<div className="px-2.5 py-2 text-xs font-medium text-muted-foreground">
 						<div className="flex flex-col space-y-1">
 							<p className="text-sm font-semibold text-foreground leading-none truncate">
@@ -73,6 +73,10 @@ export function UserNav() {
 							<Cloud className="mr-2 size-4 text-emerald-500" />
 						)}
 						<span>{t('settings.sync.manual')}</span>
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => navigate('/settings/idb-explorer')}>
+						<Database className="mr-2 size-4" />
+						<span>{t('settings.data.explore.label')}</span>
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem onClick={signOut} variant="destructive">

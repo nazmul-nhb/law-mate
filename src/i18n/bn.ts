@@ -195,7 +195,7 @@ const bn = {
 		'settings.data.export.button': 'JSON ফাইলে এক্সপোর্ট',
 		'settings.data.import.label': 'ডেটা ইম্পোর্ট',
 		'settings.data.import.desc': 'পূর্বে এক্সপোর্ট করা কোনো JSON ফাইল থেকে নোট পুনরুদ্ধার করুন।',
-		'settings.data.import.mode': 'ইম্পোর্ট মোড',
+		'settings.data.import.mode': 'মোড',
 		'settings.data.import.mode.merge': 'মার্জ (বিদ্যমান নোট এড়িয়ে যান)',
 		'settings.data.import.mode.upsert': 'আপসার্ট (বিদ্যমান নোট প্রতিস্থাপন করুন)',
 		'settings.data.import.mode.replace': 'রিপ্লেস (সব মুছে ইম্পোর্ট করুন)',
