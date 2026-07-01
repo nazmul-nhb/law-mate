@@ -148,7 +148,7 @@ const bn = {
 			'আমরা প্রমাণীকরণের জন্য Google OAuth এবং ক্লাউড স্টোরেজ ও সিঙ্ক্রোনাইজেশনের জন্য Supabase ব্যবহার করি। এই সেবাগুলোর নিজস্ব গোপনীয়তা নীতি রয়েছে যা আপনার ডেটা পরিচালনা নিয়ন্ত্রণ করে।',
 		'legal.privacy.contact.title': 'যোগাযোগ করুন',
 		'legal.privacy.contact.body':
-			'এই গোপনীয়তা নীতি সম্পর্কে কোনো প্রশ্ন থাকলে, অনুগ্রহ করে GitHub-এ প্রকল্পের রিপোজিটরির অথবা এই URL-এর (https://nazmul-nhb.dev/) মাধ্যমে আমাদের সাথে যোগাযোগ করুন।',
+			'এই গোপনীয়তা নীতি সম্পর্কে কোনো প্রশ্ন থাকলে, অনুগ্রহ করে GitHub রিপোজিটরি (https://github.com/nazmul-nhb/law-mate/) অথবা এই URL-এর (https://nazmul-nhb.dev/) মাধ্যমে আমাদের সাথে যোগাযোগ করুন।',
 		'legal.terms.title': 'সেবার শর্তাবলী',
 		'legal.terms.acceptance.title': 'শর্তাবলী গ্রহণ',
 		'legal.terms.acceptance.body':

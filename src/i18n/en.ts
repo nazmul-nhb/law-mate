@@ -147,7 +147,7 @@ const en = {
 			'We use Google OAuth for authentication and Supabase for cloud storage and synchronization. These services have their own privacy policies that govern their handling of your data.',
 		'legal.privacy.contact.title': 'Contact Us',
 		'legal.privacy.contact.body':
-			'If you have any questions about this Privacy Policy, please contact us via the project repository on GitHub. or this URL (https://nazmul-nhb.dev/)',
+			'If you have any questions about this Privacy Policy, please contact us via the project repository on GitHub (https://github.com/nazmul-nhb/law-mate/) or this URL (https://nazmul-nhb.dev/)',
 		'legal.terms.title': 'Terms of Service',
 		'legal.terms.acceptance.title': 'Acceptance of Terms',
 		'legal.terms.acceptance.body':

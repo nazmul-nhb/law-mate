@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
-import { TooltipProvider } from '@/components/ui/tooltip';
 import '@/i18n';
+import { TitleProvider } from 'nhb-hooks';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { useSettingsStore } from '@/stores/settings.store';
 
 function ThemeApplier() {
@@ -39,11 +41,19 @@ function FontSizeApplier() {
 }
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
+	const { t } = useTranslation();
+
 	return (
-		<TooltipProvider>
-			<ThemeApplier />
-			<FontSizeApplier />
-			{children}
-		</TooltipProvider>
+		<TitleProvider
+			config={{
+				siteTitle: t('app.name'),
+			}}
+		>
+			<TooltipProvider>
+				<ThemeApplier />
+				<FontSizeApplier />
+				{children}
+			</TooltipProvider>
+		</TitleProvider>
 	);
 }

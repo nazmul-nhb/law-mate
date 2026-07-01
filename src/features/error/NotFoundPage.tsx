@@ -1,4 +1,5 @@
 import { ArrowLeft, FileQuestion, Home } from 'lucide-react';
+import { useTitle } from 'nhb-hooks';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,8 @@ import { Button } from '@/components/ui/button';
 export function NotFoundPage() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+
+	useTitle(t('notfound.title'));
 
 	return (
 		<div className="flex min-h-[70vh] flex-col items-center justify-center text-center px-4">

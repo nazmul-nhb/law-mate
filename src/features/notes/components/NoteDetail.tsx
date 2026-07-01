@@ -1,5 +1,6 @@
 import type { $UUID } from 'locality-idb';
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
+import { useTitle } from 'nhb-hooks';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
@@ -52,6 +53,8 @@ export function NoteDetail() {
 		window.addEventListener('note-updated', handleUpdated);
 		return () => window.removeEventListener('note-updated', handleUpdated);
 	}, [fetchNote]);
+
+	useTitle(note?.title || t('app.tagline'));
 
 	const handleEdit = () => {
 		if (!note) return;

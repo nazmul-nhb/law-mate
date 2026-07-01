@@ -18,7 +18,8 @@ import {
 	UserX,
 	WifiOffIcon,
 } from 'lucide-react';
-import * as React from 'react';
+import { useTitle } from 'nhb-hooks';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { formatDate } from 'toolbox-x/date';
@@ -62,22 +63,22 @@ export function AdminPage() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { profile } = useAuthStore();
-	const [users, setUsers] = React.useState<Profile[]>([]);
-	const [isLoading, setIsLoading] = React.useState(true);
-	const [isUpdating, setIsUpdating] = React.useState<string | null>(null);
+	const [users, setUsers] = useState<Profile[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [isUpdating, setIsUpdating] = useState<string | null>(null);
 
 	// Table states
-	const [sorting, setSorting] = React.useState<SortingState>([]);
-	const [globalFilter, setGlobalFilter] = React.useState('');
+	const [sorting, setSorting] = useState<SortingState>([]);
+	const [globalFilter, setGlobalFilter] = useState('');
 
 	// Action confirmation states
-	const [pendingAction, setPendingAction] = React.useState<{
+	const [pendingAction, setPendingAction] = useState<{
 		userId: string;
 		action: Exclude<ProfileStatus, 'active'>;
 	} | null>(null);
 
 	// Fetch users list
-	const fetchUsers = React.useCallback(async () => {
+	const fetchUsers = useCallback(async () => {
 		if (!navigator.onLine) {
 			setIsLoading(false);
 			return;
@@ -98,42 +99,41 @@ export function AdminPage() {
 		}
 	}, []);
 
+	useTitle(t('admin.title'));
+
 	// Redirect non-admins
-	React.useEffect(() => {
+	useEffect(() => {
 		if (profile?.role !== 'admin') {
 			navigate('/');
 		}
 	}, [profile, navigate]);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (navigator.onLine && profile?.role === 'admin') {
 			fetchUsers();
 		}
 	}, [profile, fetchUsers]);
 
-	const handleStatusUpdate = React.useCallback(
-		async (userId: string, newStatus: ProfileStatus) => {
-			try {
-				setIsUpdating(userId);
-				const { error } = await supabase
-					.from('profiles')
-					.update({ status: newStatus })
-					.eq('id', userId);
+	const handleStatusUpdate = useCallback(async (userId: string, newStatus: ProfileStatus) => {
+		try {
+			setIsUpdating(userId);
+			const { error } = await supabase
+				.from('profiles')
+				.update({ status: newStatus })
+				.eq('id', userId);
 
-				if (error) throw error;
+			if (error) throw error;
 
-				// Update local state instantly
-				setUsers((prev) =>
-					prev.map((u) => (u.id === userId ? { ...u, status: newStatus } : u))
-				);
-			} catch (error) {
-				console.error('Failed to update user status:', error);
-			} finally {
-				setIsUpdating(null);
-			}
-		},
-		[]
-	);
+			// Update local state instantly
+			setUsers((prev) =>
+				prev.map((u) => (u.id === userId ? { ...u, status: newStatus } : u))
+			);
+		} catch (error) {
+			console.error('Failed to update user status:', error);
+		} finally {
+			setIsUpdating(null);
+		}
+	}, []);
 
 	const handleConfirmAction = async () => {
 		if (!pendingAction) return;
@@ -143,7 +143,7 @@ export function AdminPage() {
 	};
 
 	// Columns definition
-	const columns = React.useMemo<ColumnDef<Profile>[]>(
+	const columns = useMemo<ColumnDef<Profile>[]>(
 		() => [
 			{
 				accessorKey: 'full_name',
@@ -382,7 +382,7 @@ export function AdminPage() {
 			</div>
 
 			{navigator.onLine ? (
-				<React.Fragment>
+				<Fragment>
 					{/* Statistics Cards */}
 					<div className="grid gap-4 sm:grid-cols-4">
 						<div className="rounded-lg border border-border bg-card p-4">
@@ -584,7 +584,7 @@ export function AdminPage() {
 							</AlertDialogFooter>
 						</AlertDialogContent>
 					</AlertDialog>
-				</React.Fragment>
+				</Fragment>
 			) : (
 				<EmptyState
 					description={t('admin.offline.description')}

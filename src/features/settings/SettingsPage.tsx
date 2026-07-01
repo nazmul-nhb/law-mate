@@ -1,3 +1,4 @@
+import { useTitle } from 'nhb-hooks';
 import { useTranslation } from 'react-i18next';
 import { Separator } from '@/components/ui/separator';
 import { APP_VERSION } from '@/constants/app';
@@ -10,6 +11,8 @@ import { ThemeSetting } from '@/features/settings/components/ThemeSetting';
 
 export function SettingsPage() {
 	const { t } = useTranslation();
+
+	useTitle(t('settings.title'));
 
 	return (
 		<div className="mx-auto max-w-2xl">

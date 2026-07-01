@@ -1,7 +1,10 @@
+import { useTitle } from 'nhb-hooks';
 import { useTranslation } from 'react-i18next';
 
 export function PrivacyPage() {
 	const { t } = useTranslation();
+
+	useTitle(t('legal.privacy.title'));
 
 	return (
 		<div className="mx-auto max-w-2xl space-y-6">

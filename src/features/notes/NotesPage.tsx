@@ -1,5 +1,6 @@
 import type { $UUID } from 'locality-idb';
 import { Plus } from 'lucide-react';
+import { useTitle } from 'nhb-hooks';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,8 @@ export function NotesPage() {
 	const { notes, isLoading, error, refresh, deleteNote } = useNotes();
 	const openNoteDialog = useUIStore((s) => s.openNoteDialog);
 	const [deleteConfirmId, setDeleteConfirmId] = useState<$UUID | null>(null);
+
+	useTitle(t('app.tagline'), { position: 'after' });
 
 	if (isLoading) {
 		return (
