@@ -158,12 +158,13 @@ export function AdminPage() {
 				<Fragment>
 					{/* Statistics Cards */}
 					<div className="grid gap-4 sm:grid-cols-4">
+						{/* ! TODO: CAN create reusable component */}
 						<div className="rounded-lg border border-border bg-card p-4">
 							<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
 								{t('admin.stats.total')}
 							</p>
 							<p className="mt-2 text-2xl font-bold text-foreground">
-								{totalUsers}
+								{localizeNumber(totalUsers)}
 							</p>
 						</div>
 						<div className="rounded-lg border border-border bg-card p-4">
@@ -171,7 +172,7 @@ export function AdminPage() {
 								{t('admin.stats.active')}
 							</p>
 							<p className="mt-2 text-2xl font-bold text-emerald-500">
-								{activeUsers}
+								{localizeNumber(activeUsers)}
 							</p>
 						</div>
 						<div className="rounded-lg border border-border bg-card p-4">
@@ -179,7 +180,7 @@ export function AdminPage() {
 								{t('admin.stats.blocked')}
 							</p>
 							<p className="mt-2 text-2xl font-bold text-rose-500">
-								{blockedUsers}
+								{localizeNumber(blockedUsers)}
 							</p>
 						</div>
 						<div className="rounded-lg border border-border bg-card p-4">
@@ -187,7 +188,7 @@ export function AdminPage() {
 								{t('admin.stats.deleted')}
 							</p>
 							<p className="mt-2 text-2xl font-bold text-muted-foreground">
-								{deletedUsers}
+								{localizeNumber(deletedUsers)}
 							</p>
 						</div>
 					</div>
@@ -214,7 +215,11 @@ export function AdminPage() {
 									value={String(table.getState().pagination.pageSize)}
 								>
 									<SelectTrigger className="h-8 w-17.5 text-xs">
-										<SelectValue />
+										<SelectValue>
+											{localizeNumber(
+												table.getState().pagination.pageSize
+											)}
+										</SelectValue>
 									</SelectTrigger>
 									<SelectContent>
 										{PAGE_LIMITS.map((limit) => (
@@ -222,7 +227,7 @@ export function AdminPage() {
 												key={limit.value}
 												value={String(limit.value)}
 											>
-												{limit.label}
+												{localizeNumber(limit.label)}
 											</SelectItem>
 										))}
 									</SelectContent>

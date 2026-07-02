@@ -230,7 +230,10 @@ const en = {
 		'settings.data.explore.confirm.clear':
 			'Are you sure you want to clear all tables in IndexedDB? This action is permanent.',
 		'settings.data.explore.confirm.delete':
-			'Are you sure you want to delete the selected notes?',
+			'Are you sure you want to delete the selected notes permanently?',
+		'settings.data.explore.confirm.delete.single':
+			'Are you sure you want to delete this note permanently?',
+		'settings.data.explore.delete.single': 'Delete Note',
 		'settings.data.explore.col.id': 'ID',
 		'settings.data.explore.col.title': 'Title',
 		'settings.data.explore.col.owner': 'Owner ID',

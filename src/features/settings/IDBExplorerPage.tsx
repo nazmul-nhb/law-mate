@@ -1,9 +1,11 @@
 import { flexRender } from '@tanstack/react-table';
+import type { $UUID } from 'locality-idb';
 import { AlertTriangle, ArrowLeft, Database, RefreshCw, Search } from 'lucide-react';
 import { useTitle } from 'nhb-hooks';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -48,8 +50,16 @@ export function IDBExplorerPage() {
 	const [notes, setNotes] = useState<Note[]>([]);
 	const [globalFilter, setGlobalFilter] = useState('');
 	const [viewingNote, setViewingNote] = useState<Nullable<Note>>(null);
-	const [confirmClear, setConfirmClear] = useState(false);
-	const [confirmDelete, setConfirmDelete] = useState(false);
+	const [confirmConfig, setConfirmConfig] =
+		useState<
+			Nullable<{
+				title: string;
+				description: string;
+				onConfirm: () => void | Promise<void>;
+				variant?: 'default' | 'destructive';
+				icon?: React.ReactNode;
+			}>
+		>(null);
 
 	const localizeNumber = useSettingsStore((s) => s.localizeNumber);
 
@@ -71,14 +81,24 @@ export function IDBExplorerPage() {
 		globalFilter,
 		setGlobalFilter,
 		onView: (note) => setViewingNote(note),
-		onDelete: async (id) => {
-			try {
-				await idb.delete('notes').where('id', id).run();
-				window.dispatchEvent(new CustomEvent('note-updated'));
-				await fetchAllNotes();
-			} catch (err) {
-				console.error('Failed to delete note:', err);
-			}
+		onDelete: (id) => {
+			setConfirmConfig({
+				title: t('settings.data.explore.delete.single'),
+				description: t('settings.data.explore.confirm.delete.single'),
+				icon: <AlertTriangle className="size-5 text-destructive" />,
+				onConfirm: async () => {
+					try {
+						await idb
+							.delete('notes')
+							.where('id', id as $UUID)
+							.run();
+						window.dispatchEvent(new CustomEvent('note-updated'));
+						await fetchAllNotes();
+					} catch (err) {
+						console.error('Failed to delete note:', err);
+					}
+				},
+			});
 		},
 	});
 
@@ -91,7 +111,6 @@ export function IDBExplorerPage() {
 			window.dispatchEvent(new CustomEvent('note-updated'));
 			await fetchAllNotes();
 			table.resetRowSelection();
-			setConfirmDelete(false);
 		} catch (err) {
 			console.error('Failed to delete notes:', err);
 		}
@@ -103,7 +122,6 @@ export function IDBExplorerPage() {
 			window.dispatchEvent(new CustomEvent('note-updated'));
 			await fetchAllNotes();
 			table.resetRowSelection();
-			setConfirmClear(false);
 		} catch (err) {
 			console.error('Failed to clear database:', err);
 		}
@@ -158,15 +176,32 @@ export function IDBExplorerPage() {
 						<Button
 							className="cursor-pointer h-9 shrink-0"
 							disabled={selectedRows.length === 0}
-							onClick={() => setConfirmDelete(true)}
+							onClick={() => {
+								setConfirmConfig({
+									title: t('settings.data.explore.delete.selected'),
+									description: t('settings.data.explore.confirm.delete'),
+									icon: <AlertTriangle className="size-5 text-destructive" />,
+									onConfirm: handleDeleteSelected,
+								});
+							}}
 							size="sm"
 							variant="destructive"
 						>
-							{t('settings.data.explore.delete.selected')} ({selectedRows.length})
+							{t('settings.data.explore.delete.selected')} (
+							{localizeNumber(selectedRows.length)})
 						</Button>
 						<Button
 							className="cursor-pointer h-9 shrink-0"
-							onClick={() => setConfirmClear(true)}
+							onClick={() => {
+								setConfirmConfig({
+									title: t('settings.data.explore.clear.all'),
+									description: t('settings.data.explore.confirm.clear'),
+									icon: (
+										<AlertTriangle className="size-5 text-destructive animate-pulse" />
+									),
+									onConfirm: handleClearAll,
+								});
+							}}
 							size="sm"
 							variant="destructive"
 						>
@@ -181,7 +216,9 @@ export function IDBExplorerPage() {
 								value={String(table.getState().pagination.pageSize)}
 							>
 								<SelectTrigger className="h-8 w-17.5 text-xs">
-									<SelectValue />
+									<SelectValue>
+										{localizeNumber(table.getState().pagination.pageSize)}
+									</SelectValue>
 								</SelectTrigger>
 								<SelectContent>
 									{PAGE_LIMITS.map((limit) => (
@@ -189,7 +226,7 @@ export function IDBExplorerPage() {
 											key={limit.value}
 											value={String(limit.value)}
 										>
-											{limit.label}
+											{localizeNumber(limit.label)}
 										</SelectItem>
 									))}
 								</SelectContent>
@@ -331,59 +368,16 @@ export function IDBExplorerPage() {
 				</DialogContent>
 			</Dialog>
 
-			{/* Confirm Delete Dialog */}
-			<Dialog onOpenChange={setConfirmDelete} open={confirmDelete}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<DialogTitle className="flex items-center gap-2">
-							<AlertTriangle className="size-5 text-destructive" />
-							{t('settings.data.explore.delete.selected')}
-						</DialogTitle>
-						<DialogDescription>
-							{t('settings.data.explore.confirm.delete')}
-						</DialogDescription>
-					</DialogHeader>
-					<DialogFooter className="gap-2 sm:gap-0">
-						<Button onClick={() => setConfirmDelete(false)} variant="outline">
-							{t('notes.cancel')}
-						</Button>
-						<Button
-							className="cursor-pointer"
-							onClick={handleDeleteSelected}
-							variant="destructive"
-						>
-							{t('common.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
-
-			{/* Confirm Clear Dialog */}
-			<Dialog onOpenChange={setConfirmClear} open={confirmClear}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<DialogTitle className="flex items-center gap-2">
-							<AlertTriangle className="size-5 text-destructive" />
-							{t('settings.data.explore.clear.all')}
-						</DialogTitle>
-						<DialogDescription>
-							{t('settings.data.explore.confirm.clear')}
-						</DialogDescription>
-					</DialogHeader>
-					<DialogFooter className="gap-2 sm:gap-0">
-						<Button onClick={() => setConfirmClear(false)} variant="outline">
-							{t('notes.cancel')}
-						</Button>
-						<Button
-							className="cursor-pointer"
-							onClick={handleClearAll}
-							variant="destructive"
-						>
-							{t('common.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+			{/* Confirmation Dialog */}
+			<ConfirmDialog
+				description={confirmConfig?.description || ''}
+				icon={confirmConfig?.icon}
+				onConfirm={confirmConfig?.onConfirm || (() => {})}
+				onOpenChange={(open) => !open && setConfirmConfig(null)}
+				open={!!confirmConfig}
+				title={confirmConfig?.title || ''}
+				variant={confirmConfig?.variant}
+			/>
 		</div>
 	);
 }

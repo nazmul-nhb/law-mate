@@ -4,15 +4,7 @@ import { useTitle } from 'nhb-hooks';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { digitToBangla } from 'toolbox-x';
-import { Button } from '@/components/ui/button';
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from '@/components/ui/dialog';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { NoteList } from '@/features/notes/components/NoteList';
 import { useNotes } from '@/hooks/useNotes';
 import { useSettingsStore } from '@/stores/settings.store';
@@ -87,27 +79,13 @@ export function NotesPage() {
 			/>
 
 			{/* Soft delete confirmation dialog */}
-			<Dialog
+			<ConfirmDialog
+				description={t('trash.confirm.soft.delete')}
+				onConfirm={handleConfirmDelete}
 				onOpenChange={(open) => !open && setDeleteConfirmId(null)}
 				open={!!deleteConfirmId}
-			>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<DialogTitle>{t('notes.delete')}</DialogTitle>
-					</DialogHeader>
-					<p className="text-sm text-muted-foreground">
-						{t('trash.confirm.soft.delete')}
-					</p>
-					<DialogFooter>
-						<DialogClose render={<Button variant="outline" />}>
-							{t('notes.cancel')}
-						</DialogClose>
-						<Button onClick={handleConfirmDelete} variant="destructive">
-							{t('common.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+				title={t('notes.delete')}
+			/>
 
 			{/* Mobile FAB */}
 			<button

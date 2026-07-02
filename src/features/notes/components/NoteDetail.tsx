@@ -5,16 +5,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { formatDateRelativeNative } from 'toolbox-x/date';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
-import { Button } from '@/components/ui/button';
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from '@/components/ui/dialog';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { noteRepository } from '@/repositories/note.repository';
 import { useSettingsStore } from '@/stores/settings.store';
@@ -145,24 +137,13 @@ export function NoteDetail() {
 			</article>
 
 			{/* Soft delete confirmation dialog */}
-			<Dialog onOpenChange={setIsDeleteOpen} open={isDeleteOpen}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<DialogTitle>{t('notes.delete')}</DialogTitle>
-					</DialogHeader>
-					<p className="text-sm text-muted-foreground">
-						{t('trash.confirm.soft.delete')}
-					</p>
-					<DialogFooter>
-						<DialogClose render={<Button variant="outline" />}>
-							{t('notes.cancel')}
-						</DialogClose>
-						<Button onClick={handleDelete} variant="destructive">
-							{t('common.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+			<ConfirmDialog
+				description={t('trash.confirm.soft.delete')}
+				onConfirm={handleDelete}
+				onOpenChange={setIsDeleteOpen}
+				open={isDeleteOpen}
+				title={t('notes.delete')}
+			/>
 		</div>
 	);
 }

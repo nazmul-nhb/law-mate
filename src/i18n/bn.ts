@@ -230,7 +230,10 @@ const bn = {
 		'settings.data.explore.confirm.clear':
 			'আপনি কি নিশ্চিত যে IndexedDB এর সমস্ত ডেটা মুছে ফেলতে চান? এটি স্থায়ীভাবে মুছে যাবে।',
 		'settings.data.explore.confirm.delete':
-			'আপনি কি নিশ্চিত যে নির্বাচিত নোটগুলো মুছে ফেলতে চান?',
+			'আপনি কি নিশ্চিত যে নির্বাচিত নোটগুলো চিরস্থায়ীভাবে মুছে ফেলতে চান?',
+		'settings.data.explore.confirm.delete.single':
+			'আপনি কি নিশ্চিত যে এই নোটটি চিরস্থায়ীভাবে মুছে ফেলতে চান?',
+		'settings.data.explore.delete.single': 'নোটটি মুছুন',
 		'settings.data.explore.col.id': 'আইডি',
 		'settings.data.explore.col.title': 'শিরোনাম',
 		'settings.data.explore.col.owner': 'মালিক আইডি',

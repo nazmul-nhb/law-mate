@@ -3,15 +3,7 @@ import { RotateCcw, Trash2 } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDateRelativeNative } from 'toolbox-x/date';
-import { Button } from '@/components/ui/button';
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from '@/components/ui/dialog';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Separator } from '@/components/ui/separator';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { useSettingsStore } from '@/stores/settings.store';
@@ -84,22 +76,13 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 			</div>
 
 			{/* Confirm permanent delete dialog */}
-			<Dialog onOpenChange={(open) => !open && setConfirmId(null)} open={!!confirmId}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<DialogTitle>{t('trash.delete.permanent')}</DialogTitle>
-					</DialogHeader>
-					<p className="text-sm text-muted-foreground">{t('trash.confirm.delete')}</p>
-					<DialogFooter>
-						<DialogClose render={<Button variant="outline" />}>
-							{t('notes.cancel')}
-						</DialogClose>
-						<Button onClick={handleConfirmDelete} variant="destructive">
-							{t('common.confirm')}
-						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+			<ConfirmDialog
+				description={t('trash.confirm.delete')}
+				onConfirm={handleConfirmDelete}
+				onOpenChange={(open) => !open && setConfirmId(null)}
+				open={!!confirmId}
+				title={t('trash.delete.permanent')}
+			/>
 		</Fragment>
 	);
 }
