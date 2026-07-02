@@ -74,7 +74,7 @@ export function NoteDialog({ onSaved }: NoteDialogProps = {}) {
 			setTitle('');
 			setDescription('');
 			window.dispatchEvent(new CustomEvent('note-updated'));
-			if (onSaved) onSaved();
+			onSaved?.();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : t('common.error'));
 		} finally {

@@ -65,7 +65,7 @@ export function Layout() {
 			<SearchCommand />
 
 			{/* Global Note create/edit dialog */}
-			<NoteDialog onSaved={() => {}} />
+			<NoteDialog />
 		</div>
 	);
 }

@@ -1,3 +1,4 @@
+import { AlertTriangle } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -47,12 +48,14 @@ export function ConfirmDialog({
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
 					<DialogTitle className="flex items-center gap-2">
-						{icon}
+						{icon ?? (
+							<AlertTriangle className="size-5 text-destructive animate-pulse" />
+						)}
 						{title}
 					</DialogTitle>
 					<DialogDescription>{description}</DialogDescription>
 				</DialogHeader>
-				<DialogFooter className="gap-2 sm:gap-0">
+				<DialogFooter className="gap-2 sm:gap-3">
 					<Button
 						disabled={isLoading}
 						onClick={() => onOpenChange(false)}

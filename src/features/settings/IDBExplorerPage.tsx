@@ -1,6 +1,6 @@
 import { flexRender } from '@tanstack/react-table';
 import type { $UUID } from 'locality-idb';
-import { AlertTriangle, ArrowLeft, Database, RefreshCw, Search } from 'lucide-react';
+import { ArrowLeft, Database, RefreshCw, Search } from 'lucide-react';
 import { useTitle } from 'nhb-hooks';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -57,7 +57,6 @@ export function IDBExplorerPage() {
 				description: string;
 				onConfirm: () => void | Promise<void>;
 				variant?: 'default' | 'destructive';
-				icon?: React.ReactNode;
 			}>
 		>(null);
 
@@ -85,7 +84,6 @@ export function IDBExplorerPage() {
 			setConfirmConfig({
 				title: t('settings.data.explore.delete.single'),
 				description: t('settings.data.explore.confirm.delete.single'),
-				icon: <AlertTriangle className="size-5 text-destructive" />,
 				onConfirm: async () => {
 					try {
 						await idb
@@ -180,7 +178,6 @@ export function IDBExplorerPage() {
 								setConfirmConfig({
 									title: t('settings.data.explore.delete.selected'),
 									description: t('settings.data.explore.confirm.delete'),
-									icon: <AlertTriangle className="size-5 text-destructive" />,
 									onConfirm: handleDeleteSelected,
 								});
 							}}
@@ -196,9 +193,6 @@ export function IDBExplorerPage() {
 								setConfirmConfig({
 									title: t('settings.data.explore.clear.all'),
 									description: t('settings.data.explore.confirm.clear'),
-									icon: (
-										<AlertTriangle className="size-5 text-destructive animate-pulse" />
-									),
 									onConfirm: handleClearAll,
 								});
 							}}
@@ -371,7 +365,6 @@ export function IDBExplorerPage() {
 			{/* Confirmation Dialog */}
 			<ConfirmDialog
 				description={confirmConfig?.description || ''}
-				icon={confirmConfig?.icon}
 				onConfirm={confirmConfig?.onConfirm || (() => {})}
 				onOpenChange={(open) => !open && setConfirmConfig(null)}
 				open={!!confirmConfig}
