@@ -1,4 +1,5 @@
 import type { InferInsertType, InferSelectType, InferUpdateType } from 'locality-idb';
+import type { PropertyRequired } from 'toolbox-x/types/utils';
 import type { LawMateSchema } from '@/types/common.types';
 
 export type NoteSchema = LawMateSchema['notes'];
@@ -7,7 +8,7 @@ export type NoteSchema = LawMateSchema['notes'];
 export type Note = InferSelectType<NoteSchema>;
 
 /** Data required to insert a new note. */
-export type InsertNote = InferInsertType<NoteSchema>;
+export type InsertNote = PropertyRequired<InferInsertType<NoteSchema>, 'law_id'>;
 
 /** Partial data for updating an existing note. */
 export type UpdateNote = InferUpdateType<NoteSchema>;

@@ -1,4 +1,4 @@
-import type { ExportData, ExportedTableData, ImportOptions } from 'locality-idb';
+import type { $UUID, ExportData, ExportedTableData, ImportMode } from 'locality-idb';
 import { AlertCircle, CheckCircle2, Info, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +30,6 @@ import { cn } from '@/lib/utils';
 import type { IDBTableNames, LawMateSchema, Nullable } from '@/types/common.types';
 import type { Note } from '@/types/note.types';
 
-type ImportMode = NonNullable<ImportOptions<IDBTableNames>['mode']>;
 type ImportableData =
 	| ExportData<IDBTableNames, LawMateSchema>
 	| ExportedTableData<IDBTableNames, LawMateSchema>;
@@ -66,7 +65,7 @@ export function ImportSetting() {
 
 	const generatePreview = async (importedNotes: Partial<Note>[], mode: ImportMode) => {
 		const currentNotes = await idb.from('notes').findAll();
-		const currentIds = new Set<string>(currentNotes.map((n) => String(n.id)));
+		const currentIds = new Set<$UUID>(currentNotes.map((n) => n.id));
 
 		let insert = 0;
 		let update = 0;
@@ -133,7 +132,6 @@ export function ImportSetting() {
 		try {
 			await idb.$import(importedData as ExportData<IDBTableNames, LawMateSchema>, {
 				mode: importMode,
-				tables: ['notes'],
 			});
 			window.dispatchEvent(new CustomEvent('note-updated'));
 			setSuccess(true);

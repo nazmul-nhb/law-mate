@@ -1,4 +1,5 @@
 import type { PropertyRequired } from 'toolbox-x/types/utils';
+import type { InsertLaw, Law, UpdateLaw } from '@/types/laws.types';
 import type { InsertNote, Note, UpdateNote } from '@/types/note.types';
 import type { Profile } from '@/types/profile.types';
 
@@ -9,6 +10,12 @@ export type Database = {
 				Row: Note;
 				Insert: InsertNote;
 				Update: UpdateNote;
+				Relationships: [];
+			};
+			laws: {
+				Row: Law;
+				Insert: InsertLaw;
+				Update: UpdateLaw;
 				Relationships: [];
 			};
 			profiles: {
