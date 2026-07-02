@@ -224,7 +224,7 @@ const en = {
 		'settings.data.explore.label': 'IndexedDB Explorer',
 		'settings.data.explore.desc': 'Explore all local notes saved in your browser.',
 		'settings.data.explore.button': 'Explore Database',
-		'settings.data.explore.title': 'Local Database Notes',
+		'settings.data.explore.title': 'Local Database',
 		'settings.data.explore.clear.all': 'Clear All Local Data',
 		'settings.data.explore.delete.selected': 'Delete Selected',
 		'settings.data.explore.confirm.clear':

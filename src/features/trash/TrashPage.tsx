@@ -1,9 +1,11 @@
 import { Trash2 } from 'lucide-react';
 import { useTitle } from 'nhb-hooks';
 import { useTranslation } from 'react-i18next';
+import { digitToBangla } from 'toolbox-x';
 import { EmptyState } from '@/components/EmptyState';
 import { TrashList } from '@/features/trash/components/TrashList';
 import { useTrash } from '@/hooks/useTrash';
+import { useSettingsStore } from '@/stores/settings.store';
 
 export function TrashPage() {
 	const { t } = useTranslation();
@@ -17,6 +19,8 @@ export function TrashPage() {
 	} = useTrash();
 
 	useTitle(t('trash.title'));
+
+	const lang = useSettingsStore((s) => s.language);
 
 	if (isLoading) {
 		return (
@@ -41,9 +45,14 @@ export function TrashPage() {
 		);
 	}
 
+	const deletedCount = (deletedNotes || []).length;
+
 	return (
 		<div>
-			<h1 className="mb-6 text-xl font-bold text-foreground">{t('trash.title')}</h1>
+			<h1 className="mb-6 text-xl font-bold text-foreground">
+				{t('trash.title')} (
+				{lang === 'bn' ? digitToBangla(deletedCount) : String(deletedCount)})
+			</h1>
 
 			{deletedNotes.length === 0 ? (
 				<EmptyState

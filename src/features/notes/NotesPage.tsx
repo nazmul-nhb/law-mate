@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react';
 import { useTitle } from 'nhb-hooks';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { digitToBangla } from 'toolbox-x';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -14,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { NoteList } from '@/features/notes/components/NoteList';
 import { useNotes } from '@/hooks/useNotes';
+import { useSettingsStore } from '@/stores/settings.store';
 import { useUIStore } from '@/stores/ui.store';
 import type { Nullable } from '@/types/common.types';
 
@@ -24,6 +26,8 @@ export function NotesPage() {
 	const [deleteConfirmId, setDeleteConfirmId] = useState<Nullable<$UUID>>(null);
 
 	useTitle(t('app.tagline'), { position: 'after' });
+
+	const lang = useSettingsStore((s) => s.language);
 
 	if (isLoading) {
 		return (
@@ -55,11 +59,16 @@ export function NotesPage() {
 		}
 	};
 
+	const totalNotes = (notes || []).length;
+
 	return (
 		<div>
 			{/* Header */}
 			<div className="mb-6 flex items-center justify-between">
-				<h1 className="text-xl font-bold text-foreground">{t('notes.title')}</h1>
+				<h1 className="text-xl font-bold text-foreground">
+					{t('notes.title')} (
+					{lang === 'bn' ? digitToBangla(totalNotes) : String(totalNotes)})
+				</h1>
 				<button
 					className="flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
 					onClick={() => openNoteDialog()}

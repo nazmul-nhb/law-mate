@@ -1,7 +1,6 @@
 /** biome-ignore-all lint/performance/noImgElement:img tag is needed for external images */
 
 import { User } from 'lucide-react';
-import { useValidImage } from 'nhb-hooks';
 import { getColorForInitial } from 'toolbox-x/colors';
 import { cn } from '@/lib/utils';
 import type { Uncertain } from '@/types/common.types';
@@ -24,19 +23,13 @@ type AvatarProps = {
 export default function UserAvatar({ image, name, size = 'md', className }: AvatarProps) {
 	const imgClasses = cn(sizes[size], 'shrink-0 rounded-full object-cover', className);
 
-	const imgUrl = useValidImage(image as string, {
-		trailingSlash: false,
-		imgHostLink: '',
-		placeholder: '/user-placeholder.svg',
-	});
-
 	return image && window.navigator.onLine ? (
 		<img
 			alt={name ?? 'User Avatar'}
 			className={imgClasses}
 			height={128}
 			loading="eager"
-			src={imgUrl}
+			src={image}
 			width={128}
 		/>
 	) : name ? (

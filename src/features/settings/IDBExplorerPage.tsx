@@ -129,6 +129,12 @@ export function IDBExplorerPage() {
 			</div>
 
 			<div className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6">
+				<div className="flex items-center justify-between">
+					<p className="text-sm text-muted-foreground">
+						{t('common.total')}:{' '}
+						{localizeNumber(table.getFilteredRowModel().rows.length)}
+					</p>
+				</div>
 				<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 					<div className="relative max-w-sm w-full">
 						<Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
@@ -309,11 +315,11 @@ export function IDBExplorerPage() {
 							<div className="font-semibold text-foreground">
 								{t('notes.description.label')}:
 							</div>
-							<ScrollArea className="h-40 overflow-auto">
-								<pre className="p-3 bg-muted border rounded-md whitespace-pre-wrap font-mono text-xs  leading-relaxed">
+							<pre className="p-3 bg-muted border rounded-md whitespace-pre-wrap font-mono text-xs  leading-relaxed">
+								<ScrollArea className="h-24 overflow-auto">
 									{viewingNote?.description || t('notes.no.description')}
-								</pre>
-							</ScrollArea>
+								</ScrollArea>
+							</pre>
 						</div>
 					</div>
 
