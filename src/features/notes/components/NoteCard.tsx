@@ -2,9 +2,9 @@ import type { $UUID } from 'locality-idb';
 import { Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import removeMd from 'remove-markdown';
 import { formatDateRelativeNative } from 'toolbox-x/date';
 import { isNonEmptyString } from 'toolbox-x/guards';
-import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/stores/settings.store';
@@ -65,11 +65,7 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
 				{isNonEmptyString(note.description) && (
 					<CardContent className="">
 						<div className="line-clamp-2 text-xs text-muted-foreground">
-							<MarkdownPreview
-								content={note.description}
-								removeMarkdown
-								replaceNewLine
-							/>
+							{removeMd(note.description)}
 						</div>
 					</CardContent>
 				)}

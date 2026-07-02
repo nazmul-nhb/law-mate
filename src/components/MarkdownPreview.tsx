@@ -18,7 +18,7 @@ export function MarkdownPreview({
 	content,
 	className = '',
 	removeMarkdown = false,
-	replaceNewLine,
+	replaceNewLine = false,
 }: MarkdownPreviewProps) {
 	return (
 		<div className={cn(`prose prose-neutral dark:prose-invert max-w-none`, className)}>

@@ -2,8 +2,8 @@ import { FileText, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import removeMd from 'remove-markdown';
 import { isNonEmptyString } from 'toolbox-x/guards';
-import { MarkdownPreview } from '@/components/MarkdownPreview';
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -69,11 +69,7 @@ export function SearchCommand() {
 									</p>
 									{isNonEmptyString(note.description) && (
 										<div className="truncate line-clamp-1 text-xs text-muted-foreground">
-											<MarkdownPreview
-												content={note.description}
-												removeMarkdown
-												replaceNewLine
-											/>
+											{removeMd(note.description)}
 										</div>
 									)}
 								</div>
