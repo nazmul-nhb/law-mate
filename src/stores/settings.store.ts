@@ -1,3 +1,4 @@
+import { digitToBangla } from 'toolbox-x';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DEFAULT_FONT_SIZE, DEFAULT_LANGUAGE, DEFAULT_THEME } from '@/constants/app';
@@ -9,6 +10,7 @@ interface SettingsState {
 	fontSize: number;
 	lastSyncedAt: Nullable<string>;
 	autoSync: boolean;
+	localizeNumber: (value: number | string) => string;
 	setTheme: (theme: Theme) => void;
 	setLanguage: (language: Language) => void;
 	setFontSize: (size: number) => void;
@@ -18,12 +20,16 @@ interface SettingsState {
 
 export const useSettingsStore = create<SettingsState>()(
 	persist(
-		(set) => ({
+		(set, get) => ({
 			theme: DEFAULT_THEME,
 			language: DEFAULT_LANGUAGE,
 			fontSize: DEFAULT_FONT_SIZE,
 			lastSyncedAt: null,
 			autoSync: false,
+
+			localizeNumber: (value) => {
+				return get().language === 'bn' ? digitToBangla(value) : String(value);
+			},
 
 			setTheme: (theme) => set({ theme }),
 			setLanguage: (language) => set({ language }),

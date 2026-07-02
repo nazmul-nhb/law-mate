@@ -10,6 +10,7 @@ const en = {
 		'nav.notes': 'Notes',
 		'nav.trash': 'Trash',
 		'nav.settings': 'Settings',
+		'nav.idb.explorer': 'DB Explorer',
 
 		// Notes
 		'notes.title': 'Notes',
@@ -116,6 +117,14 @@ const en = {
 		'common.confirm': 'Confirm',
 		'common.close': 'Close',
 		'common.or': 'or',
+		'common.and': 'and',
+		'common.of': 'of',
+		'common.total': 'Total Items',
+
+		'common.table.page.label': 'Page',
+		'common.table.rows.per.page': 'Rows per page',
+		'common.table.pagination.next.label': 'Next',
+		'common.table.pagination.prev.label': 'Previous',
 
 		// Footer
 		'footer.privacy': 'Privacy Policy',

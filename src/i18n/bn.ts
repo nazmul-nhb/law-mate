@@ -1,6 +1,6 @@
 import { digitToBangla } from 'toolbox-x';
 import { TERMS_PRIVACY_LAST_MODIFIED } from '@/constants/app';
-import type { I18Values } from '@/i18n';
+import type { I18Keys } from '@/i18n';
 
 const bn = {
 	translation: {
@@ -12,6 +12,7 @@ const bn = {
 		'nav.notes': 'নোটসমূহ',
 		'nav.trash': 'ট্র্যাশ',
 		'nav.settings': 'সেটিংস',
+		'nav.idb.explorer': 'DB এক্সপ্লোরার',
 
 		// Notes
 		'notes.title': 'নোটসমূহ',
@@ -118,6 +119,13 @@ const bn = {
 		'common.confirm': 'নিশ্চিত করুন',
 		'common.close': 'বন্ধ করুন',
 		'common.or': 'অথবা',
+		'common.and': 'এবং',
+		'common.of': 'এর',
+		'common.total': 'মোট আইটেম',
+		'common.table.rows.per.page': 'প্রতি পৃষ্ঠায় সারির সংখ্যা',
+		'common.table.page.label': 'পৃষ্ঠা',
+		'common.table.pagination.next.label': 'পরবর্তী পৃষ্ঠা',
+		'common.table.pagination.prev.label': 'পূর্ববর্তী পৃষ্ঠা',
 
 		// Footer
 		'footer.privacy': 'গোপনীয়তা নীতি',
@@ -215,8 +223,8 @@ const bn = {
 		// DB Explorer
 		'settings.data.explore.label': 'IndexedDB এক্সপ্লোরার',
 		'settings.data.explore.desc': 'আপনার ব্রাউজারে সংরক্ষিত সমস্ত লোকাল নোট দেখুন।',
-		'settings.data.explore.button': 'ডাটাবেস এক্সপ্লোর করুন',
-		'settings.data.explore.title': 'লোকাল ডাটাবেস নোটসমূহ',
+		'settings.data.explore.button': 'ডেটাবেস এক্সপ্লোর করুন',
+		'settings.data.explore.title': 'লোকাল ডেটাবেস',
 		'settings.data.explore.clear.all': 'সমস্ত লোকাল ডেটা মুছুন',
 		'settings.data.explore.delete.selected': 'নির্বাচিতগুলো মুছুন',
 		'settings.data.explore.confirm.clear':
@@ -228,7 +236,7 @@ const bn = {
 		'settings.data.explore.col.owner': 'মালিক আইডি',
 		'settings.data.explore.col.status': 'অবস্থা',
 		'settings.data.explore.col.version': 'সংস্করণ',
-	} satisfies I18Values,
+	} satisfies Record<I18Keys, string>,
 };
 
 export default bn;

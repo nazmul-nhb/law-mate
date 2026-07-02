@@ -35,6 +35,7 @@ import {
 import { useUserTable } from '@/hooks/useUserTable';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
+import { useSettingsStore } from '@/stores/settings.store';
 import type { Nullable } from '@/types/common.types';
 import type { Profile, ProfileStatus } from '@/types/profile.types';
 
@@ -47,6 +48,8 @@ export function AdminPage() {
 	const [users, setUsers] = useState<Profile[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isUpdating, setIsUpdating] = useState<Nullable<string>>(null);
+
+	const localizeNumber = useSettingsStore((s) => s.localizeNumber);
 
 	// Table states
 	const [globalFilter, setGlobalFilter] = useState('');
@@ -204,7 +207,7 @@ export function AdminPage() {
 
 							<div className="flex items-center gap-2">
 								<span className="text-xs text-muted-foreground whitespace-nowrap">
-									Rows per page:
+									{t('common.table.rows.per.page')}:
 								</span>
 								<Select
 									onValueChange={(val) => table.setPageSize(Number(val))}
@@ -295,9 +298,10 @@ export function AdminPage() {
 						{!isLoading && (
 							<div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
 								<div className="text-xs text-muted-foreground">
-									Page {table.getState().pagination.pageIndex + 1} of{' '}
-									{table.getPageCount()} (
-									{table.getFilteredRowModel().rows.length} total users)
+									{t('common.table.page.label')}{' '}
+									{localizeNumber(table.getState().pagination.pageIndex + 1)}/
+									{localizeNumber(table.getPageCount())} ({t('common.total')}{' '}
+									{localizeNumber(table.getFilteredRowModel().rows.length)})
 								</div>
 								<div className="flex items-center space-x-2">
 									<Button
@@ -306,7 +310,7 @@ export function AdminPage() {
 										size="sm"
 										variant="outline"
 									>
-										Previous
+										{t('common.table.pagination.prev.label')}
 									</Button>
 									<Button
 										disabled={!table.getCanNextPage()}
@@ -314,7 +318,7 @@ export function AdminPage() {
 										size="sm"
 										variant="outline"
 									>
-										Next
+										{t('common.table.pagination.next.label')}
 									</Button>
 								</div>
 							</div>

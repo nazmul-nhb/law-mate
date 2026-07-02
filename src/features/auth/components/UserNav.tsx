@@ -76,7 +76,7 @@ export function UserNav() {
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={() => navigate('/settings/idb-explorer')}>
 						<Database className="mr-2 size-4" />
-						<span>{t('settings.data.explore.label')}</span>
+						<span>{t('nav.idb.explorer')}</span>
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem onClick={signOut} variant="destructive">

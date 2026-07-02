@@ -9,6 +9,7 @@ import {
 	useReactTable,
 } from '@tanstack/react-table';
 import Fuse from 'fuse.js';
+import type { $UUID } from 'locality-idb';
 import { ArrowUpDown, Eye, Trash2 } from 'lucide-react';
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ type IDBExplorerTableOptions = {
 	globalFilter: string;
 	setGlobalFilter: Dispatch<SetStateAction<string>>;
 	onView: (note: Note) => void;
-	onDelete: (id: string) => void;
+	onDelete: (id: $UUID) => void;
 };
 
 type IDBETable = {
@@ -193,7 +194,7 @@ export function useIDBETable(options: IDBExplorerTableOptions): IDBETable {
 						</Button>
 						<Button
 							className="hover:text-destructive"
-							onClick={() => onDelete(String(row.original.id))}
+							onClick={() => onDelete(row.original.id)}
 							size="icon-sm"
 							variant="ghost"
 						>

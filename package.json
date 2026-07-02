@@ -1,7 +1,7 @@
 {
   "name": "law-mate",
   "private": true,
-  "version": "1.7.1",
+  "version": "1.7.10",
   "type": "module",
   "description": "LawMate - Keep Your Notes about Law Sections Organized.",
   "author": {
@@ -13,6 +13,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "vite:clean": "rm -rf node_modules/.vite && rm -rf node_modules/.vite-temp",
     "typecheck": "tsc --noEmit",
     "lint": "biome lint --diagnostic-level=warn",
     "fix": "biome check --write --diagnostic-level=warn",

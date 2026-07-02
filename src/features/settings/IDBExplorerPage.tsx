@@ -1,5 +1,4 @@
 import { flexRender } from '@tanstack/react-table';
-import type { $UUID } from 'locality-idb';
 import { AlertTriangle, ArrowLeft, Database, RefreshCw, Search } from 'lucide-react';
 import { useTitle } from 'nhb-hooks';
 import { useCallback, useEffect, useState } from 'react';
@@ -33,6 +32,7 @@ import {
 } from '@/components/ui/table';
 import { idb } from '@/database/db';
 import { useIDBETable } from '@/hooks/useIDBETable';
+import { useSettingsStore } from '@/stores/settings.store';
 import type { Nullable } from '@/types/common.types';
 import type { Note } from '@/types/note.types';
 
@@ -50,6 +50,8 @@ export function IDBExplorerPage() {
 	const [viewingNote, setViewingNote] = useState<Nullable<Note>>(null);
 	const [confirmClear, setConfirmClear] = useState(false);
 	const [confirmDelete, setConfirmDelete] = useState(false);
+
+	const localizeNumber = useSettingsStore((s) => s.localizeNumber);
 
 	const fetchAllNotes = useCallback(async () => {
 		try {
@@ -71,10 +73,7 @@ export function IDBExplorerPage() {
 		onView: (note) => setViewingNote(note),
 		onDelete: async (id) => {
 			try {
-				await idb
-					.delete('notes')
-					.where('id', id as $UUID)
-					.run();
+				await idb.delete('notes').where('id', id).run();
 				window.dispatchEvent(new CustomEvent('note-updated'));
 				await fetchAllNotes();
 			} catch (err) {
@@ -169,7 +168,7 @@ export function IDBExplorerPage() {
 						</Button>
 						<div className="flex items-center gap-2 shrink-0">
 							<span className="text-xs text-muted-foreground whitespace-nowrap">
-								Rows per page:
+								{t('common.table.rows.per.page')}:
 							</span>
 							<Select
 								onValueChange={(val) => table.setPageSize(Number(val))}
@@ -245,9 +244,10 @@ export function IDBExplorerPage() {
 				{table.getPageCount() > 1 && (
 					<div className="flex items-center justify-between gap-4 py-2 border-t mt-4 text-xs text-muted-foreground">
 						<div>
-							Page {table.getState().pagination.pageIndex + 1} of{' '}
-							{table.getPageCount()} ({table.getFilteredRowModel().rows.length}{' '}
-							total)
+							{t('common.table.page.label')}{' '}
+							{localizeNumber(table.getState().pagination.pageIndex + 1)}/
+							{localizeNumber(table.getPageCount())} ({t('common.total')}{' '}
+							{localizeNumber(table.getFilteredRowModel().rows.length)})
 						</div>
 						<div className="flex gap-2">
 							<Button
@@ -256,7 +256,7 @@ export function IDBExplorerPage() {
 								size="sm"
 								variant="outline"
 							>
-								Prev
+								{t('common.table.pagination.prev.label')}
 							</Button>
 							<Button
 								disabled={!table.getCanNextPage()}
@@ -264,7 +264,7 @@ export function IDBExplorerPage() {
 								size="sm"
 								variant="outline"
 							>
-								Next
+								{t('common.table.pagination.next.label')}
 							</Button>
 						</div>
 					</div>

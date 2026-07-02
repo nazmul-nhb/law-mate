@@ -50,6 +50,7 @@
 				"useKeyWithClickEvents": "off",
 				"noStaticElementInteractions": "off",
 				"useSemanticElements": "info",
+				"noSvgWithoutTitle": "off",
 				"noNoninteractiveElementToInteractiveRole": "info"
 			},
 			"suspicious": {

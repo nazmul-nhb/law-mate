@@ -8,7 +8,7 @@ export function DatabaseExplorer() {
 	const navigate = useNavigate();
 
 	return (
-		<div className="flex items-center justify-between rounded-lg border border-border p-4 bg-muted/10">
+		<div className="flex items-center justify-between flex-wrap gap-3 rounded-lg border border-border p-4 bg-muted/10">
 			<div className="space-y-1">
 				<h3 className="text-sm font-medium text-foreground">
 					{t('settings.data.explore.label')}
