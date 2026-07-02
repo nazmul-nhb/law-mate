@@ -1,92 +1,79 @@
-import { useEffect } from 'react';
+import type { $UUID } from 'locality-idb';
+import { useCallback, useEffect, useState } from 'react';
 import { googleClientId } from '@/constants/env';
 import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
-import type { AppUser } from '@/types/profile.types';
+import type { Nullable } from '@/types/common.types';
+import type { AppUser, Profile } from '@/types/profile.types';
+
+let isGsiInitialized = false;
 
 export function useAuth() {
 	const { user, isLoading, initialized, signInWithGoogle, signOut } = useAuthStore();
+	const [profile, setProfile] = useState<Nullable<Profile>>(null);
+	const [isOnline, setIsOnline] = useState<boolean>(window.navigator.onLine);
 
-	return {
-		user,
-		isLoading,
-		initialized,
-		signInWithGoogle,
-		signOut,
-	};
-}
-
-export function useAuthInit() {
-	const { user, isLoading, initialized, setUser, setProfile, setIsLoading, setInitialized } =
-		useAuthStore();
-
-	const isOnline = window.navigator.onLine;
+	const setUser = useAuthStore((s) => s.setUser);
+	const setIsLoading = useAuthStore((s) => s.setIsLoading);
+	const setInitialized = useAuthStore((s) => s.setInitialized);
 
 	useEffect(() => {
-		const assureUserProfile = async (u: AppUser) => {
-			if (!u) return;
+		const handleOnline = () => setIsOnline(true);
+		const handleOffline = () => setIsOnline(false);
 
-			// Do not Assure Profile if offline
-			if (!isOnline) {
-				console.info('Offline: Skipping profile assurance check.');
-				return;
-			}
+		window.addEventListener('online', handleOnline);
+		window.addEventListener('offline', handleOffline);
 
-			try {
-				const { data: existingProfile, error } = await supabase
-					.from('profiles')
-					.select('*')
-					.eq('id', u.id)
-					.maybeSingle();
-
-				let finalProfile = existingProfile;
-
-				if (!existingProfile && !error) {
-					const { data: newProfile, error: insertError } = await supabase
-						.from('profiles')
-						.insert({
-							id: u.id,
-							email: u.email || '',
-							full_name:
-								u.user_metadata?.full_name || u.user_metadata?.name || '',
-							avatar_url:
-								u.user_metadata?.avatar_url || u.user_metadata?.picture || '',
-							role: 'user',
-							status: 'active',
-						})
-						.select('*')
-						.single();
-
-					if (!insertError) {
-						finalProfile = newProfile;
-					}
-				}
-
-				if (finalProfile) {
-					setProfile(finalProfile);
-					setUser(u);
-				}
-
-				// Adopt any local anonymous notes created while signed out
-				const updated = await idb
-					.update('notes')
-					.set({ user_id: u.id })
-					.where((n) => !n.user_id)
-					.run();
-
-				if (updated > 0) {
-					window.dispatchEvent(new Event('note-updated'));
-				}
-			} catch (err) {
-				console.error('Failed to assure user profile:', err);
-			}
+		return () => {
+			window.removeEventListener('online', handleOnline);
+			window.removeEventListener('offline', handleOffline);
 		};
+	}, []);
 
-		// Get initial session if online
+	const assureUserProfile = useCallback(async (u: AppUser) => {
+		try {
+			const { data: prof } = await supabase
+				.from('profiles')
+				.select('*')
+				.eq('id', u.id)
+				.maybeSingle();
+
+			if (prof) {
+				setProfile(prof as Profile);
+			}
+
+			// Adopt any local anonymous notes created while signed out
+			const updatedNotes = await idb
+				.update('notes')
+				.set({ user_id: u.id as $UUID })
+				.where((n) => !n.user_id)
+				.run();
+
+			// Adopt any local anonymous laws created while signed out
+			const updatedLaws = await idb
+				.update('laws')
+				.set({ user_id: u.id as $UUID })
+				.where((l) => !l.user_id)
+				.run();
+
+			if (updatedNotes > 0) {
+				window.dispatchEvent(new CustomEvent('note-updated'));
+			}
+			if (updatedLaws > 0) {
+				window.dispatchEvent(new CustomEvent('law-updated'));
+			}
+		} catch (err) {
+			console.error('Failed to assure user profile:', err);
+		}
+	}, []);
+
+	useEffect(() => {
+		// Initial session check
 		if (isOnline) {
 			supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
 				if (initialSession?.user) {
+					setUser(initialSession.user as AppUser);
 					await assureUserProfile(initialSession.user as AppUser);
 				} else {
 					setProfile(null);
@@ -117,31 +104,28 @@ export function useAuthInit() {
 		return () => {
 			subscription.unsubscribe();
 		};
-	}, [setProfile, setUser, setIsLoading, setInitialized, isOnline]);
+	}, [setUser, setIsLoading, setInitialized, isOnline, assureUserProfile]);
 
 	// Initialize Google One Tap if GIS SDK is loaded and client ID exists
 	useEffect(() => {
-		if (isLoading || !initialized || user) return;
+		if (user || isLoading || !initialized || !googleClientId || !isOnline) return;
 
-		if (!googleClientId) {
-			return;
-		}
+		// Skip automatic floating One Tap prompt on local development origins to prevent 403 unregistered origin logs
+		const isLocalhost =
+			window.location.hostname === 'localhost' ||
+			window.location.hostname === '127.0.0.1';
 
-		// No network request when offline
-		if (!isOnline) {
-			return;
-		}
+		if (isLocalhost) return;
 
 		const initializeOneTap = () => {
-			// @ts-ignore
-			const google = window.google;
-			if (!google?.accounts?.id) return;
+			if (!google?.accounts?.id || isGsiInitialized) return;
+			isGsiInitialized = true;
 
 			google.accounts.id.initialize({
 				client_id: googleClientId,
-				callback: async (response: { credential?: string }) => {
-					if (!response.credential) return;
-					if (!isOnline) return; // check connection before API calls
+				use_fedcm_for_prompt: true,
+				callback: async (response) => {
+					if (!response.credential || !isOnline) return;
 					setIsLoading(true);
 					try {
 						const { error } = await supabase.auth.signInWithIdToken({
@@ -159,12 +143,15 @@ export function useAuthInit() {
 				cancel_on_tap_outside: true,
 			});
 
-			google.accounts.id.prompt();
+			try {
+				google.accounts.id.prompt();
+			} catch (err) {
+				console.warn('Google One Tap prompt error:', err);
+			}
 		};
 
 		// Check if window.google is already loaded, otherwise wait
-		// @ts-ignore
-		if (window.google?.accounts?.id) {
+		if (google?.accounts?.id) {
 			initializeOneTap();
 		} else {
 			const handleLoad = () => {
@@ -174,4 +161,13 @@ export function useAuthInit() {
 			return () => window.removeEventListener('load', handleLoad);
 		}
 	}, [user, isLoading, initialized, isOnline, setIsLoading]);
+
+	return {
+		user,
+		profile,
+		isLoading,
+		initialized,
+		signInWithGoogle,
+		signOut,
+	};
 }

@@ -17,7 +17,11 @@ export const lawRepository = {
 
 			const laws = await idb
 				.from('laws')
-				.where((law) => !law.deleted_at && law.user_id === user?.id)
+				.where((law) => {
+					if (law.deleted_at) return false;
+					if (!user) return true;
+					return law.user_id === user.id || !law.user_id;
+				})
 				.orderBy('updated_at', 'desc')
 				.findAll();
 
@@ -187,7 +191,11 @@ export const lawRepository = {
 
 			const laws = await idb
 				.from('laws')
-				.where((law) => !!law.deleted_at && law.user_id === user?.id)
+				.where((law) => {
+					if (!law.deleted_at) return false;
+					if (!user) return true;
+					return law.user_id === user.id || !law.user_id;
+				})
 				.orderBy('deleted_at', 'desc')
 				.findAll();
 

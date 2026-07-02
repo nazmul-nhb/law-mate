@@ -123,6 +123,48 @@ export function useIDBELawsTable(
 				enableSorting: false,
 			},
 			{
+				accessorKey: 'user_id',
+				header: ({ column }) => (
+					<button
+						className="flex items-center gap-1 hover:text-foreground cursor-pointer text-xs font-semibold uppercase tracking-wider font-mono"
+						onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+						type="button"
+					>
+						{t('settings.data.explore.col.owner')}
+						<ArrowUpDown className="ml-1 size-3.5" />
+					</button>
+				),
+				cell: ({ row }) => (
+					<span className="text-xs text-muted-foreground truncate max-w-30 block">
+						{row.original.user_id || 'anonymous'}
+					</span>
+				),
+			},
+			{
+				accessorKey: 'deleted_at',
+				header: () => (
+					<span className="text-xs font-semibold uppercase tracking-wider block text-center font-mono">
+						{t('settings.data.explore.col.status')}
+					</span>
+				),
+				cell: ({ row }) => {
+					const isDeleted = !!row.original.deleted_at;
+					return (
+						<div className="text-center">
+							<span
+								className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border ${
+									isDeleted
+										? 'bg-rose-500/10 text-rose-500 border-rose-500/20'
+										: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+								}`}
+							>
+								{isDeleted ? 'trash' : 'active'}
+							</span>
+						</div>
+					);
+				},
+			},
+			{
 				accessorKey: 'version',
 				header: ({ column }) => (
 					<button
@@ -179,7 +221,7 @@ export function useIDBELawsTable(
 		getFilteredRowModel: getFilteredRowModel(),
 		globalFilterFn: (row) => {
 			if (!filteredLawIds) return true;
-			return filteredLawIds.has(String(row.original.id));
+			return filteredLawIds.has(row.original.id);
 		},
 	});
 

@@ -6,14 +6,13 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { SearchCommand } from '@/components/SearchCommand';
 import { NoteDialog } from '@/features/notes/components/NoteDialog';
-import { useAuth, useAuthInit } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 import { useSearchCommand } from '@/hooks/useSearchCommand';
 import { syncService } from '@/services/sync.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { useSettingsStore } from '@/stores/settings.store';
 
 export function Layout() {
-	useAuthInit();
 	const { t } = useTranslation();
 	const { user, initialized } = useAuth();
 	const { profile, signOut } = useAuthStore();

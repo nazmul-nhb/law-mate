@@ -13,3 +13,9 @@ declare module 'react-i18next' {
 		resources: typeof en;
 	}
 }
+
+declare global {
+	interface Window {
+		google?: typeof google;
+	}
+}

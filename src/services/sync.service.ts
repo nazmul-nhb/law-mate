@@ -30,6 +30,29 @@ export const syncService = {
 		try {
 			const syncTime = getTimestamp();
 
+			// Auto-claim any unowned laws or notes for the current authenticated user
+			const allLocalLaws = await idb.from('laws').findAll();
+			for (const law of allLocalLaws) {
+				if (!law.user_id) {
+					await idb
+						.update('laws')
+						.set({ user_id: user.id })
+						.where('id', law.id)
+						.run();
+				}
+			}
+
+			const allLocalNotes = await idb.from('notes').findAll();
+			for (const note of allLocalNotes) {
+				if (!note.user_id) {
+					await idb
+						.update('notes')
+						.set({ user_id: user.id })
+						.where('id', note.id)
+						.run();
+				}
+			}
+
 			// ==========================================
 			// 1. SYNC LAWS
 			// ==========================================
@@ -70,8 +93,11 @@ export const syncService = {
 			}
 
 			const remoteLawsMap = new Map<string, Law>();
+			const validRemoteLawIds = new Set<string>();
+
 			for (const rl of remoteLaws || []) {
 				remoteLawsMap.set(rl.id, rl);
+				validRemoteLawIds.add(rl.id);
 			}
 
 			const localLawsMap = new Map<string, Law>();
@@ -98,6 +124,7 @@ export const syncService = {
 					});
 
 					if (!insertError) {
+						validRemoteLawIds.add(localLaw.id);
 						await idb
 							.update('laws')
 							.set({ last_synced_at: syncTime, user_id: user.id })
@@ -144,6 +171,7 @@ export const syncService = {
 						});
 
 						if (!updateError) {
+							validRemoteLawIds.add(localLaw.id);
 							await idb
 								.update('laws')
 								.set({ last_synced_at: syncTime, user_id: user.id })
@@ -251,6 +279,14 @@ export const syncService = {
 
 			// Process notes conflicts
 			for (const localNote of localNotes) {
+				// Prevent foreign key constraint failure if parent law is not yet synced remotely
+				if (localNote.law_id && !validRemoteLawIds.has(localNote.law_id)) {
+					console.warn(
+						`Skipping push for note ${localNote.id}: Parent law ${localNote.law_id} is not present on remote.`
+					);
+					continue;
+				}
+
 				const remoteNote = remoteNotesMap.get(localNote.id);
 
 				if (!remoteNote) {
@@ -334,9 +370,9 @@ export const syncService = {
 						await idb
 							.update('notes')
 							.set({
+								law_id: remoteNote.law_id,
 								title: remoteNote.title,
 								description: remoteNote.description,
-								law_id: remoteNote.law_id,
 								created_at: remoteNote.created_at,
 								updated_at: remoteNote.updated_at,
 								deleted_at: remoteNote.deleted_at || undefined,
@@ -377,12 +413,14 @@ export const syncService = {
 				}
 			}
 
-			// Trigger refresh events
-			window.dispatchEvent(new CustomEvent('note-updated'));
-			window.dispatchEvent(new CustomEvent('law-updated'));
+			// window.dispatchEvent(new CustomEvent('note-updated'));
+			// window.dispatchEvent(new CustomEvent('law-updated'));
+
+			// Save overall last synced timestamp
 			useSettingsStore.getState().setLastSyncedAt(syncTime);
 		} catch (error) {
 			console.error('Synchronization failed:', error);
+			throw error;
 		} finally {
 			setIsSyncing(false);
 		}

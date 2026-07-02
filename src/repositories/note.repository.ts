@@ -17,7 +17,11 @@ export const noteRepository = {
 
 			const notes = await idb
 				.from('notes')
-				.where((note) => !note.deleted_at && note.user_id === user?.id)
+				.where((note) => {
+					if (note.deleted_at) return false;
+					if (!user) return true;
+					return note.user_id === user.id || !note.user_id;
+				})
 				.orderBy('updated_at', 'desc')
 				.findAll();
 
@@ -185,7 +189,11 @@ export const noteRepository = {
 
 			const notes = await idb
 				.from('notes')
-				.where((note) => !!note.deleted_at && note.user_id === user?.id)
+				.where((note) => {
+					if (!note.deleted_at) return false;
+					if (!user) return true;
+					return note.user_id === user.id || !note.user_id;
+				})
 				.orderBy('deleted_at', 'desc')
 				.findAll();
 
