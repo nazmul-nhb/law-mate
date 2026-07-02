@@ -1,5 +1,5 @@
 import type { ExportData, ExportedTableData, ImportOptions } from 'locality-idb';
-import { AlertCircle, CheckCircle2, Upload } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Info, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { extractKeys, parseJSON } from 'toolbox-x';
@@ -14,7 +14,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
 	Select,
 	SelectContent,
@@ -22,6 +24,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { DATA_SHAPE, SIMPLE_DATA_SHAPE } from '@/constants/app';
 import { idb } from '@/database/db';
 import { cn } from '@/lib/utils';
 import type { IDBTableNames, LawMateSchema, Nullable } from '@/types/common.types';
@@ -47,7 +50,7 @@ const previewSymbols = {
 } as MapObjectValues<Preview, string>;
 
 function extractNotesFromJSON(data: ImportableData) {
-	return 'data' in data ? data.data?.notes : data?.notes || [];
+	return 'data' in data ? data.data?.notes || [] : data?.notes || [];
 }
 
 export function ImportSetting() {
@@ -162,9 +165,19 @@ export function ImportSetting() {
 	return (
 		<div className="space-y-4 rounded-lg border border-border p-4 bg-muted/10">
 			<div className="space-y-1">
-				<h3 className="text-sm font-medium text-foreground">
-					{t('settings.data.import.label')}
-				</h3>
+				<HoverCard>
+					<HoverCardTrigger className="cursor-pointer">
+						<h3 className="text-sm font-medium text-foreground flex items-center gap-2">
+							<span>{t('settings.data.import.label')}</span>
+							<Info className="size-3.5" />
+						</h3>
+					</HoverCardTrigger>
+					<HoverCardContent className="w-96 p-4">
+						<ScrollArea className="h-80 w-full pr-3">
+							<SampleData />
+						</ScrollArea>
+					</HoverCardContent>
+				</HoverCard>
 				<p className="text-xs text-muted-foreground">
 					{t('settings.data.import.desc')}
 				</p>
@@ -301,6 +314,70 @@ function PreviewCard({ preview, mode }: PreviewProps) {
 				{previewSymbols[mode]}
 				{preview[mode]}
 			</p>
+		</div>
+	);
+}
+
+function SampleData() {
+	return (
+		<div className="space-y-4 text-xs">
+			<p className="text-muted-foreground leading-relaxed">
+				The JSON file must match one of the following formats to import successfully:
+			</p>
+
+			<div className="space-y-1">
+				<span className="font-semibold text-foreground">1. Full Database Export</span>
+				<p className="text-[10px] text-muted-foreground font-mono">
+					Includes metadata block (exported via Full Export):
+				</p>
+				<pre className="p-2 rounded bg-muted font-mono text-[10px] whitespace-pre overflow-x-auto">
+					{DATA_SHAPE}
+				</pre>
+			</div>
+
+			<div className="space-y-1">
+				<span className="font-semibold text-foreground">2. Simple Table Export</span>
+				<p className="text-[10px] text-muted-foreground font-mono">
+					Direct table-to-array dictionary:
+				</p>
+				<pre className="p-2 rounded bg-muted font-mono text-[10px] whitespace-pre overflow-x-auto">
+					{SIMPLE_DATA_SHAPE}
+				</pre>
+			</div>
+
+			<div className="rounded border border-border p-2 bg-muted/20 text-[10px] space-y-1 text-muted-foreground leading-relaxed">
+				<p>
+					<strong className="text-foreground">Fields details:</strong>
+				</p>
+				<ul className="list-disc pl-3 space-y-0.5 font-mono">
+					<li>
+						<code className="text-foreground font-semibold">title</code> (string,
+						required)
+					</li>
+					<li>
+						<code className="text-foreground font-semibold">description</code>{' '}
+						(string, required)
+					</li>
+					<li>
+						<code className="text-foreground font-semibold">id</code> (uuid,
+						optional)
+					</li>
+					<li>
+						<code className="text-foreground font-semibold">user_id</code> (uuid,
+						optional)
+					</li>
+					<li>
+						<code className="text-foreground font-semibold">
+							created_at / updated_at / deleted_at / last_synced_at
+						</code>{' '}
+						(ISO dates, optional)
+					</li>
+					<li>
+						<code className="text-foreground font-semibold">version</code> (number,
+						optional)
+					</li>
+				</ul>
+			</div>
 		</div>
 	);
 }

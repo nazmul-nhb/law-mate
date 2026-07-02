@@ -22,3 +22,39 @@ export const SEARCH_RESULT_LIMIT = 20;
 
 export const DEFAULT_FONT_SIZE = 16;
 export const FONT_SIZES = getNumbersInRange('natural', { min: 10, max: 24 });
+
+export const DATA_SHAPE = `{
+  "metadata": {
+    "dbName": "law-mate-db",
+    "version": 1,
+    "exportedAt": "2026-07-02T07:30:46.428Z",
+    "tables": ["notes"]
+  },
+  "data": {
+    "notes": [
+      {
+        "id": "e6e69b88-5b28-48cb-9e0f-ff61f6da2edf",
+        "title": "Note Title",
+        "description": "Note Content",
+        "created_at": "2026-07-02T05:50:04.744Z",
+        "updated_at": "2026-07-02T05:50:04.744Z",
+        "deleted_at": null,
+        "version": 1
+      }
+    ]
+  }
+}`;
+
+export const SIMPLE_DATA_SHAPE = `{
+  "notes": [
+    {
+      "id": "e6e69b88-5b28-48cb-9e0f-ff61f6da2edf",
+      "title": "Note Title",
+      "description": "Note Content",
+      "created_at": "2026-07-02T05:50:04.744Z",
+      "updated_at": "2026-07-02T05:50:04.744Z",
+      "deleted_at": null,
+      "version": 1
+    }
+  ]
+}`;
