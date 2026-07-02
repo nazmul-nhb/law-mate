@@ -9,7 +9,7 @@ interface UseSearchReturn {
 	results: Note[];
 }
 
-export function useSearch(notes: Note[]): UseSearchReturn {
+export function useNoteSearch(notes: Note[]): UseSearchReturn {
 	const [query, setQuery] = useState('');
 
 	const fuse = useMemo(() => {

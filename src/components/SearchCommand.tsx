@@ -12,7 +12,7 @@ import {
 	CommandItem,
 	CommandList,
 } from '@/components/ui/command';
-import { useSearch } from '@/hooks/useSearch';
+import { useNoteSearch } from '@/hooks/useNoteSearch';
 import { noteRepository } from '@/repositories/note.repository';
 import { useUIStore } from '@/stores/ui.store';
 import type { Note } from '@/types/note.types';
@@ -22,7 +22,7 @@ export function SearchCommand() {
 	const navigate = useNavigate();
 	const { isSearchOpen, setSearchOpen } = useUIStore();
 	const [allNotes, setAllNotes] = useState<Note[]>([]);
-	const { query, setQuery, results } = useSearch(allNotes);
+	const { query, setQuery, results } = useNoteSearch(allNotes);
 
 	useEffect(() => {
 		if (isSearchOpen) {
