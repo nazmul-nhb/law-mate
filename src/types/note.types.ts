@@ -14,7 +14,7 @@ export type InsertNote = PropertyRequired<InferInsertType<NoteSchema>, 'law_id'>
 export type UpdateNote = InferUpdateType<NoteSchema>;
 
 /** User-provided fields when creating a note. */
-export type CreateNoteInput = Pick<InsertNote, 'title' | 'description'>;
+export type CreateNoteInput = Pick<InsertNote, 'title' | 'description' | 'law_id'>;
 
 /** User-provided fields when editing a note. */
 export type EditNoteInput = Partial<CreateNoteInput>;

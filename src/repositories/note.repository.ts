@@ -54,6 +54,15 @@ export const noteRepository = {
 			throw new ValidationError('Note description cannot be empty.');
 		}
 
+		if (!input.law_id) {
+			throw new ValidationError('A parent law must be selected for the note.');
+		}
+
+		const lawExists = await idb.from('laws').findByPk(input.law_id);
+		if (!lawExists) {
+			throw new ValidationError('The selected law does not exist.');
+		}
+
 		try {
 			const { user } = useAuthStore.getState();
 
@@ -61,6 +70,7 @@ export const noteRepository = {
 				.insert('notes')
 				.values({
 					user_id: user?.id,
+					law_id: input.law_id,
 					title: input.title,
 					description: input.description,
 					last_synced_at: undefined,
@@ -100,6 +110,17 @@ export const noteRepository = {
 					throw new ValidationError('Note description cannot be empty.');
 				}
 				updateData.description = input.description;
+			}
+
+			if (input.law_id !== undefined) {
+				if (!input.law_id) {
+					throw new ValidationError('A parent law must be selected for the note.');
+				}
+				const lawExists = await idb.from('laws').findByPk(input.law_id);
+				if (!lawExists) {
+					throw new ValidationError('The selected law does not exist.');
+				}
+				updateData.law_id = input.law_id;
 			}
 
 			await idb.update('notes').set(updateData).where('id', id).run();

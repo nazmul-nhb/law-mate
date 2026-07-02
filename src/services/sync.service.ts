@@ -1,12 +1,13 @@
 import type { $UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
 import { getFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from 'toolbox-x/dom';
-import { DELETE_QUEUE_KEY } from '@/constants/app';
+import { DELETE_LAWS_QUEUE_KEY, DELETE_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useUIStore } from '@/stores/ui.store';
+import type { Law } from '@/types/laws.types';
 import type { Note } from '@/types/note.types';
 
 export const syncService = {
@@ -24,66 +25,240 @@ export const syncService = {
 		}
 
 		const { setIsSyncing } = useUIStore.getState();
-
 		setIsSyncing(true);
 
 		try {
-			// Process pending permanent deletes first
-			const pending = getFromLocalStorage<$UUID[]>(DELETE_QUEUE_KEY) || [];
+			const syncTime = getTimestamp();
 
-			if (pending.length > 0 && window.navigator.onLine) {
+			// ==========================================
+			// 1. SYNC LAWS
+			// ==========================================
+			const pendingLaws = getFromLocalStorage<$UUID[]>(DELETE_LAWS_QUEUE_KEY) || [];
+			if (pendingLaws.length > 0 && window.navigator.onLine) {
 				try {
-					const { error } = await supabase.from('notes').delete().in('id', pending);
+					const { error } = await supabase
+						.from('laws')
+						.delete()
+						.in('id', pendingLaws);
+					if (!error) {
+						const currentQueue =
+							getFromLocalStorage<$UUID[]>(DELETE_LAWS_QUEUE_KEY) || [];
+						const remaining = currentQueue.filter(
+							(id) => !pendingLaws.includes(id)
+						);
+						if (remaining.length > 0) {
+							saveToLocalStorage(DELETE_LAWS_QUEUE_KEY, remaining);
+						} else {
+							removeFromLocalStorage(DELETE_LAWS_QUEUE_KEY);
+						}
+					} else {
+						console.warn('Failed to sync pending laws permanent deletes:', error);
+					}
+				} catch (err) {
+					console.error('Failed to sync pending laws permanent deletes:', err);
+				}
+			}
 
+			// Fetch local and remote laws
+			const localLaws = await idb.from('laws').where('user_id', user.id).findAll();
+			const { data: remoteLaws, error: remoteLawsError } = await supabase
+				.from('laws')
+				.select('*');
+
+			if (remoteLawsError) {
+				throw new Error(`Failed to fetch remote laws: ${remoteLawsError.message}`);
+			}
+
+			const remoteLawsMap = new Map<string, Law>();
+			for (const rl of remoteLaws || []) {
+				remoteLawsMap.set(rl.id, rl);
+			}
+
+			const localLawsMap = new Map<string, Law>();
+			for (const ll of localLaws) {
+				localLawsMap.set(ll.id, ll);
+			}
+
+			// Process laws conflicts
+			for (const localLaw of localLaws) {
+				const remoteLaw = remoteLawsMap.get(localLaw.id);
+
+				if (!remoteLaw) {
+					// Local only: upload to remote
+					const { error: insertError } = await supabase.from('laws').upsert({
+						id: localLaw.id,
+						user_id: user.id,
+						title: localLaw.title,
+						description: (localLaw.description ?? null) as string | undefined,
+						created_at: localLaw.created_at,
+						updated_at: localLaw.updated_at,
+						deleted_at: localLaw.deleted_at ?? null,
+						version: localLaw.version,
+						last_synced_at: syncTime,
+					});
+
+					if (!insertError) {
+						await idb
+							.update('laws')
+							.set({ last_synced_at: syncTime, user_id: user.id })
+							.where('id', localLaw.id)
+							.run();
+					} else {
+						console.error(`Failed to push local law ${localLaw.id}:`, insertError);
+					}
+				} else {
+					// Exists on both: conflict resolution
+					let action: 'push' | 'pull' | 'noop' = 'noop';
+
+					if (localLaw.version > remoteLaw.version) {
+						action = 'push';
+					} else if (remoteLaw.version > localLaw.version) {
+						action = 'pull';
+					} else {
+						if (remoteLaw.deleted_at && !localLaw.deleted_at) {
+							action = 'pull';
+						} else if (localLaw.deleted_at && !remoteLaw.deleted_at) {
+							action = 'push';
+						} else {
+							const localTime = new Date(localLaw.updated_at).getTime();
+							const remoteTime = new Date(remoteLaw.updated_at).getTime();
+							if (localTime > remoteTime) {
+								action = 'push';
+							} else if (remoteTime > localTime) {
+								action = 'pull';
+							}
+						}
+					}
+
+					if (action === 'push') {
+						const { error: updateError } = await supabase.from('laws').upsert({
+							id: localLaw.id,
+							user_id: user.id,
+							title: localLaw.title,
+							description: (localLaw.description ?? null) as string | undefined,
+							created_at: localLaw.created_at,
+							updated_at: localLaw.updated_at,
+							deleted_at: localLaw.deleted_at ?? null,
+							version: localLaw.version,
+							last_synced_at: syncTime,
+						});
+
+						if (!updateError) {
+							await idb
+								.update('laws')
+								.set({ last_synced_at: syncTime, user_id: user.id })
+								.where('id', localLaw.id)
+								.run();
+						} else {
+							console.error(
+								`Failed to push law update ${localLaw.id}:`,
+								updateError
+							);
+						}
+					} else if (action === 'pull') {
+						await idb
+							.update('laws')
+							.set({
+								title: remoteLaw.title,
+								description: remoteLaw.description || undefined,
+								created_at: remoteLaw.created_at,
+								updated_at: remoteLaw.updated_at,
+								deleted_at: remoteLaw.deleted_at || undefined,
+								version: remoteLaw.version,
+								last_synced_at: syncTime,
+								user_id: user.id,
+							})
+							.where('id', localLaw.id)
+							.run();
+					} else {
+						await idb
+							.update('laws')
+							.set({ last_synced_at: syncTime, user_id: user.id })
+							.where('id', localLaw.id)
+							.run();
+					}
+				}
+			}
+
+			// Remote only laws: download
+			for (const remoteLaw of remoteLaws || []) {
+				if (!localLawsMap.has(remoteLaw.id)) {
+					await idb
+						.insert('laws')
+						.values({
+							id: remoteLaw.id,
+							user_id: user.id,
+							title: remoteLaw.title,
+							description: remoteLaw.description || undefined,
+							created_at: remoteLaw.created_at,
+							updated_at: remoteLaw.updated_at,
+							deleted_at: remoteLaw.deleted_at || undefined,
+							last_synced_at: syncTime,
+							version: remoteLaw.version,
+						})
+						.run();
+				}
+			}
+
+			// ==========================================
+			// 2. SYNC NOTES
+			// ==========================================
+			const pendingNotes = getFromLocalStorage<$UUID[]>(DELETE_QUEUE_KEY) || [];
+			if (pendingNotes.length > 0 && window.navigator.onLine) {
+				try {
+					const { error } = await supabase
+						.from('notes')
+						.delete()
+						.in('id', pendingNotes);
 					if (!error) {
 						const currentQueue =
 							getFromLocalStorage<$UUID[]>(DELETE_QUEUE_KEY) || [];
-						const remaining = currentQueue.filter((id) => !pending.includes(id));
+						const remaining = currentQueue.filter(
+							(id) => !pendingNotes.includes(id)
+						);
 						if (remaining.length > 0) {
 							saveToLocalStorage(DELETE_QUEUE_KEY, remaining);
 						} else {
 							removeFromLocalStorage(DELETE_QUEUE_KEY);
 						}
 					} else {
-						console.warn('Failed to sync pending permanent deletes:', error);
+						console.warn('Failed to sync pending notes permanent deletes:', error);
 					}
 				} catch (err) {
-					console.error('Failed to sync pending permanent deletes:', err);
+					console.error('Failed to sync pending notes permanent deletes:', err);
 				}
 			}
-			// 1. Fetch all local notes (including soft-deleted) that belong to this user
-			const localNotes = await idb.from('notes').where('user_id', user.id).findAll();
 
-			// 2. Fetch all remote notes from Supabase
-			const { data: remoteNotes, error: remoteError } = await supabase
+			// Fetch local and remote notes
+			const localNotes = await idb.from('notes').where('user_id', user.id).findAll();
+			const { data: remoteNotes, error: remoteNotesError } = await supabase
 				.from('notes')
 				.select('*');
 
-			if (remoteError) {
-				throw new Error(`Failed to fetch remote notes: ${remoteError.message}`);
+			if (remoteNotesError) {
+				throw new Error(`Failed to fetch remote notes: ${remoteNotesError.message}`);
 			}
 
-			const remoteMap = new Map<string, Note>();
+			const remoteNotesMap = new Map<string, Note>();
 			for (const rn of remoteNotes || []) {
-				remoteMap.set(rn.id, rn);
+				remoteNotesMap.set(rn.id, rn);
 			}
 
-			const localMap = new Map<string, Note>();
+			const localNotesMap = new Map<string, Note>();
 			for (const ln of localNotes) {
-				localMap.set(ln.id, ln);
+				localNotesMap.set(ln.id, ln);
 			}
 
-			const syncTime = getTimestamp();
-
-			// 3. Process notes in local map
+			// Process notes conflicts
 			for (const localNote of localNotes) {
-				const remoteNote = remoteMap.get(localNote.id);
+				const remoteNote = remoteNotesMap.get(localNote.id);
 
 				if (!remoteNote) {
 					// Local only: upload to remote
 					const { error: insertError } = await supabase.from('notes').upsert({
 						id: localNote.id,
 						user_id: user.id,
+						law_id: localNote.law_id,
 						title: localNote.title,
 						description: localNote.description,
 						created_at: localNote.created_at,
@@ -106,22 +281,19 @@ export const syncService = {
 						);
 					}
 				} else {
-					// Exists on both: resolve conflict
+					// Exists on both: conflict resolution
 					let action: 'push' | 'pull' | 'noop' = 'noop';
 
-					// Rule 1: version comparison (Highest version wins)
 					if (localNote.version > remoteNote.version) {
 						action = 'push';
 					} else if (remoteNote.version > localNote.version) {
 						action = 'pull';
 					} else {
-						// Rule 2: deleted_at comparison (Deleted tie-breaker)
 						if (remoteNote.deleted_at && !localNote.deleted_at) {
 							action = 'pull';
 						} else if (localNote.deleted_at && !remoteNote.deleted_at) {
 							action = 'push';
 						} else {
-							// Rule 3: updated_at comparison (Most recent wins)
 							const localTime = new Date(localNote.updated_at).getTime();
 							const remoteTime = new Date(remoteNote.updated_at).getTime();
 							if (localTime > remoteTime) {
@@ -136,6 +308,7 @@ export const syncService = {
 						const { error: updateError } = await supabase.from('notes').upsert({
 							id: localNote.id,
 							user_id: user.id,
+							law_id: localNote.law_id,
 							title: localNote.title,
 							description: localNote.description,
 							created_at: localNote.created_at,
@@ -153,7 +326,7 @@ export const syncService = {
 								.run();
 						} else {
 							console.error(
-								`Failed to push local update for note ${localNote.id}:`,
+								`Failed to push note update ${localNote.id}:`,
 								updateError
 							);
 						}
@@ -163,6 +336,7 @@ export const syncService = {
 							.set({
 								title: remoteNote.title,
 								description: remoteNote.description,
+								law_id: remoteNote.law_id,
 								created_at: remoteNote.created_at,
 								updated_at: remoteNote.updated_at,
 								deleted_at: remoteNote.deleted_at || undefined,
@@ -173,7 +347,6 @@ export const syncService = {
 							.where('id', localNote.id)
 							.run();
 					} else {
-						// noop: just update sync time locally
 						await idb
 							.update('notes')
 							.set({ last_synced_at: syncTime, user_id: user.id })
@@ -183,16 +356,15 @@ export const syncService = {
 				}
 			}
 
-			// 4. Process notes that are in remote map but NOT in local map
+			// Remote only notes: download
 			for (const remoteNote of remoteNotes || []) {
-				if (!localMap.has(remoteNote.id)) {
-					// Remote only: download to local
-					// We only download if it's not deleted, or we can download it as soft-deleted as well
+				if (!localNotesMap.has(remoteNote.id)) {
 					await idb
 						.insert('notes')
 						.values({
 							id: remoteNote.id,
 							user_id: user.id,
+							law_id: remoteNote.law_id,
 							title: remoteNote.title,
 							description: remoteNote.description,
 							created_at: remoteNote.created_at,
@@ -205,8 +377,9 @@ export const syncService = {
 				}
 			}
 
-			// 5. Trigger note updated event to refresh active views
+			// Trigger refresh events
 			window.dispatchEvent(new CustomEvent('note-updated'));
+			window.dispatchEvent(new CustomEvent('law-updated'));
 			useSettingsStore.getState().setLastSyncedAt(syncTime);
 		} catch (error) {
 			console.error('Synchronization failed:', error);

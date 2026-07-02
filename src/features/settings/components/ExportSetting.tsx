@@ -10,13 +10,24 @@ export function ExportSetting() {
 	const { t } = useTranslation();
 	const metaId = useId();
 	const jsonId = useId();
+	const lawsId = useId();
+	const notesId = useId();
 
 	const [includeMeta, setIncludeMeta] = useState(true);
 	const [prettyJson, setPrettyJson] = useState(true);
+	const [exportLaws, setExportLaws] = useState(true);
+	const [exportNotes, setExportNotes] = useState(true);
 
 	const handleExport = async () => {
 		try {
+			const tables: ('notes' | 'laws')[] = [];
+			if (exportLaws) tables.push('laws');
+			if (exportNotes) tables.push('notes');
+
+			if (tables.length === 0) return;
+
 			await idb.$export({
+				tables,
 				includeMetadata: includeMeta,
 				pretty: prettyJson,
 			});
@@ -24,6 +35,8 @@ export function ExportSetting() {
 			console.error('Failed to export data:', err);
 		}
 	};
+
+	const isExportDisabled = !exportLaws && !exportNotes;
 
 	return (
 		<div className="space-y-4 rounded-lg border border-border p-4 bg-muted/10">
@@ -37,6 +50,28 @@ export function ExportSetting() {
 			</div>
 
 			<div className="space-y-2">
+				<div className="flex items-center justify-between">
+					<Label className="text-xs" htmlFor={lawsId}>
+						{t('settings.data.export.laws', 'Export Laws')}
+					</Label>
+					<Switch
+						checked={exportLaws}
+						id={lawsId}
+						onCheckedChange={setExportLaws}
+						size="lg"
+					/>
+				</div>
+				<div className="flex items-center justify-between">
+					<Label className="text-xs" htmlFor={notesId}>
+						{t('settings.data.export.notes', 'Export Notes')}
+					</Label>
+					<Switch
+						checked={exportNotes}
+						id={notesId}
+						onCheckedChange={setExportNotes}
+						size="lg"
+					/>
+				</div>
 				<div className="flex items-center justify-between">
 					<Label className="text-xs" htmlFor={metaId}>
 						{t('settings.data.export.meta')}
@@ -63,6 +98,7 @@ export function ExportSetting() {
 
 			<Button
 				className="w-full flex items-center justify-center gap-2 font-semibold mt-2"
+				disabled={isExportDisabled}
 				onClick={handleExport}
 				size="lg"
 			>

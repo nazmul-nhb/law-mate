@@ -155,3 +155,73 @@ select
     'active'
 from auth.users
 on conflict (id) do nothing;
+
+-- =========================================================================
+-- DATABASE MIGRATION SCRIPT - SAFELY IMPLEMENTING THE LAWS FEATURE IN CLOUD
+-- =========================================================================
+-- Follow these instructions to safely update your remote Supabase database:
+-- 1. Copy the SQL script below.
+-- 2. Open the Supabase Dashboard, select your project, go to the SQL Editor.
+-- 3. Paste and run the script. This migration is non-destructive and will not affect existing notes.
+-- =========================================================================
+
+-- A. Create public.laws table
+create table if not exists public.laws (
+    id uuid primary key,
+    user_id uuid references auth.users(id) on delete cascade not null,
+    title text not null,
+    description text,
+    created_at timestamp with time zone not null,
+    updated_at timestamp with time zone not null,
+    deleted_at timestamp with time zone,
+    last_synced_at timestamp with time zone,
+    version integer not null default 1
+);
+
+-- Enable RLS for laws
+alter table public.laws enable row level security;
+
+-- Laws RLS Policies (Deny access if user is blocked)
+create policy "Users can view their own laws if active"
+    on public.laws for select
+    using (
+        auth.uid() = user_id 
+        and exists (
+            select 1 from public.profiles 
+            where id = auth.uid() and status = 'active'
+        )
+    );
+
+create policy "Users can insert their own laws if active"
+    on public.laws for insert
+    with check (
+        auth.uid() = user_id 
+        and exists (
+            select 1 from public.profiles 
+            where id = auth.uid() and status = 'active'
+        )
+    );
+
+create policy "Users can update their own laws if active"
+    on public.laws for update
+    using (
+        auth.uid() = user_id 
+        and exists (
+            select 1 from public.profiles 
+            where id = auth.uid() and status = 'active'
+        )
+    );
+
+create policy "Users can delete their own laws if active"
+    on public.laws for delete
+    using (
+        auth.uid() = user_id 
+        and exists (
+            select 1 from public.profiles 
+            where id = auth.uid() and status = 'active'
+        )
+    );
+
+-- B. Alter public.notes table to add law_id column
+alter table public.notes add column if not exists law_id uuid references public.laws(id) on delete cascade;
+

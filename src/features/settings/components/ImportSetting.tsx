@@ -1,10 +1,8 @@
-import type { $UUID, ExportData, ExportedTableData, ImportMode } from 'locality-idb';
+import type { ExportData, ExportedTableData, ImportOptions } from 'locality-idb';
 import { AlertCircle, CheckCircle2, Info, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { extractKeys, parseJSON } from 'toolbox-x';
-import { isValidArray } from 'toolbox-x/guards';
-import type { MapObjectValues } from 'toolbox-x/types/utils';
+import { parseJSON } from 'toolbox-x';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -24,32 +22,35 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { DATA_SHAPE, SIMPLE_DATA_SHAPE } from '@/constants/app';
 import { idb } from '@/database/db';
-import { cn } from '@/lib/utils';
+import { SampleDataLayout } from '@/features/settings/components/SampleDataLayout';
 import type { IDBTableNames, LawMateSchema, Nullable } from '@/types/common.types';
+import type { Law } from '@/types/laws.types';
 import type { Note } from '@/types/note.types';
 
+type ImportMode = NonNullable<ImportOptions<IDBTableNames>['mode']>;
 type ImportableData =
 	| ExportData<IDBTableNames, LawMateSchema>
 	| ExportedTableData<IDBTableNames, LawMateSchema>;
 
-type Preview = {
+type TablePreview = {
 	insert: number;
 	update: number;
 	skip: number;
 	delete: number;
 };
 
-const previewSymbols = {
-	insert: '+',
-	update: '~',
-	skip: '',
-	delete: '-',
-} as MapObjectValues<Preview, string>;
+type Preview = {
+	laws: TablePreview;
+	notes: TablePreview;
+};
 
-function extractNotesFromJSON(data: ImportableData) {
+function extractNotesFromJSON(data: ImportableData): Partial<Note>[] {
 	return 'data' in data ? data.data?.notes || [] : data?.notes || [];
+}
+
+function extractLawsFromJSON(data: ImportableData): Partial<Law>[] {
+	return 'data' in data ? data.data?.laws || [] : data?.laws || [];
 }
 
 export function ImportSetting() {
@@ -63,35 +64,50 @@ export function ImportSetting() {
 	const [importedData, setImportedData] = useState<Nullable<ImportableData>>(null);
 	const [preview, setPreview] = useState<Nullable<Preview>>(null);
 
-	const generatePreview = async (importedNotes: Partial<Note>[], mode: ImportMode) => {
+	const generatePreview = async (
+		importedLaws: Partial<Law>[],
+		importedNotes: Partial<Note>[],
+		mode: ImportMode
+	) => {
+		const currentLaws = await idb.from('laws').findAll();
 		const currentNotes = await idb.from('notes').findAll();
-		const currentIds = new Set<$UUID>(currentNotes.map((n) => n.id));
 
-		let insert = 0;
-		let update = 0;
-		let skip = 0;
-		let deleteCount = 0;
+		const currentLawIds = new Set<string>(currentLaws.map((l) => l.id));
+		const currentNoteIds = new Set<string>(currentNotes.map((n) => n.id));
+
+		const lawsPreview: TablePreview = { insert: 0, update: 0, skip: 0, delete: 0 };
+		const notesPreview: TablePreview = { insert: 0, update: 0, skip: 0, delete: 0 };
 
 		if (mode === 'replace') {
-			insert = importedNotes.length;
-			deleteCount = currentNotes.length;
+			lawsPreview.insert = importedLaws.length;
+			lawsPreview.delete = currentLaws.length;
+			notesPreview.insert = importedNotes.length;
+			notesPreview.delete = currentNotes.length;
 		} else {
+			for (const law of importedLaws) {
+				if (law.id) {
+					if (currentLawIds.has(law.id)) {
+						if (mode === 'upsert') lawsPreview.update++;
+						else lawsPreview.skip++;
+					} else {
+						lawsPreview.insert++;
+					}
+				}
+			}
+
 			for (const note of importedNotes) {
 				if (note.id) {
-					if (currentIds.has(note.id)) {
-						if (mode === 'upsert') {
-							update++;
-						} else {
-							skip++;
-						}
+					if (currentNoteIds.has(note.id)) {
+						if (mode === 'upsert') notesPreview.update++;
+						else notesPreview.skip++;
 					} else {
-						insert++;
+						notesPreview.insert++;
 					}
 				}
 			}
 		}
 
-		setPreview({ insert, update, skip, delete: deleteCount });
+		setPreview({ laws: lawsPreview, notes: notesPreview });
 	};
 
 	const processFile = async (file: File) => {
@@ -110,14 +126,20 @@ export function ImportSetting() {
 			try {
 				const json = parseJSON<ImportableData>(String(e.target?.result), false);
 				const notes = extractNotesFromJSON(json);
+				const laws = extractLawsFromJSON(json);
 
-				if (!isValidArray<Note>(notes)) {
-					setError(t('settings.data.import.error.empty'));
+				if (notes.length === 0 && laws.length === 0) {
+					setError(
+						t(
+							'settings.data.import.error.empty',
+							'No valid laws or notes found to import.'
+						)
+					);
 					return;
 				}
 
 				setImportedData(json);
-				await generatePreview(notes, importMode);
+				await generatePreview(laws, notes, importMode);
 			} catch (err) {
 				setError(t('settings.data.import.error.invalid'));
 				console.error(err);
@@ -134,6 +156,7 @@ export function ImportSetting() {
 				mode: importMode,
 			});
 			window.dispatchEvent(new CustomEvent('note-updated'));
+			window.dispatchEvent(new CustomEvent('law-updated'));
 			setSuccess(true);
 			setPreview(null);
 			setImportedData(null);
@@ -172,7 +195,7 @@ export function ImportSetting() {
 					</HoverCardTrigger>
 					<HoverCardContent className="w-96 p-4">
 						<ScrollArea className="h-80 w-full pr-3">
-							<SampleData />
+							<SampleDataLayout />
 						</ScrollArea>
 					</HoverCardContent>
 				</HoverCard>
@@ -188,7 +211,11 @@ export function ImportSetting() {
 						if (val) {
 							setImportMode(val);
 							if (importedData) {
-								generatePreview(extractNotesFromJSON(importedData), val);
+								generatePreview(
+									extractLawsFromJSON(importedData),
+									extractNotesFromJSON(importedData),
+									val
+								);
 							}
 						}
 					}}
@@ -267,10 +294,62 @@ export function ImportSetting() {
 					</DialogHeader>
 
 					{preview ? (
-						<div className="grid grid-cols-2 gap-3 py-4">
-							{extractKeys(previewSymbols).map((mode) => (
-								<PreviewCard key={mode} mode={mode} preview={preview} />
-							))}
+						<div className="space-y-4 py-2 text-xs font-mono">
+							<div>
+								<h4 className="font-semibold text-foreground mb-1 uppercase text-[10px] tracking-wider">
+									{t('laws.sidebar.title', 'Laws')}
+								</h4>
+								<div className="grid grid-cols-4 gap-2">
+									<div className="rounded border p-1 text-center bg-muted/20">
+										<p className="text-[10px] text-muted-foreground">
+											+{preview.laws.insert}
+										</p>
+									</div>
+									<div className="rounded border p-1 text-center bg-muted/20">
+										<p className="text-[10px] text-muted-foreground">
+											~{preview.laws.update}
+										</p>
+									</div>
+									<div className="rounded border p-1 text-center bg-muted/20">
+										<p className="text-[10px] text-muted-foreground">
+											{preview.laws.skip}
+										</p>
+									</div>
+									<div className="rounded border p-1 text-center bg-muted/20">
+										<p className="text-[10px] text-muted-foreground">
+											-{preview.laws.delete}
+										</p>
+									</div>
+								</div>
+							</div>
+
+							<div>
+								<h4 className="font-semibold text-foreground mb-1 uppercase text-[10px] tracking-wider">
+									{t('nav.notes', 'Notes')}
+								</h4>
+								<div className="grid grid-cols-4 gap-2">
+									<div className="rounded border p-1 text-center bg-muted/20">
+										<p className="text-[10px] text-muted-foreground">
+											+{preview.notes.insert}
+										</p>
+									</div>
+									<div className="rounded border p-1 text-center bg-muted/20">
+										<p className="text-[10px] text-muted-foreground">
+											~{preview.notes.update}
+										</p>
+									</div>
+									<div className="rounded border p-1 text-center bg-muted/20">
+										<p className="text-[10px] text-muted-foreground">
+											{preview.notes.skip}
+										</p>
+									</div>
+									<div className="rounded border p-1 text-center bg-muted/20">
+										<p className="text-[10px] text-muted-foreground">
+											-{preview.notes.delete}
+										</p>
+									</div>
+								</div>
+							</div>
 						</div>
 					) : null}
 
@@ -284,98 +363,6 @@ export function ImportSetting() {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-		</div>
-	);
-}
-
-type PreviewProps = {
-	preview: Preview;
-	mode: keyof Preview;
-};
-
-function PreviewCard({ preview, mode }: PreviewProps) {
-	const { t } = useTranslation();
-
-	return (
-		<div className="rounded-lg border border-border p-3 bg-muted/30">
-			<p className="text-xs text-muted-foreground">
-				{t(`settings.data.import.changes.${mode}`)}
-			</p>
-			<p
-				className={cn('text-xl font-bold mt-1', {
-					'text-emerald-500': mode === 'insert',
-					'text-amber-500': mode === 'update',
-					'text-blue-500': mode === 'skip',
-					'text-rose-500': mode === 'delete',
-				})}
-			>
-				{previewSymbols[mode]}
-				{preview[mode]}
-			</p>
-		</div>
-	);
-}
-
-function SampleData() {
-	return (
-		<div className="space-y-4 text-xs">
-			<p className="text-muted-foreground leading-relaxed">
-				The JSON file must match one of the following formats to import successfully:
-			</p>
-
-			<div className="space-y-1">
-				<span className="font-semibold text-foreground">1. Full Database Export</span>
-				<p className="text-[10px] text-muted-foreground font-mono">
-					Includes metadata block (exported via Full Export):
-				</p>
-				<pre className="p-2 rounded bg-muted font-mono text-[10px] whitespace-pre overflow-x-auto">
-					{DATA_SHAPE}
-				</pre>
-			</div>
-
-			<div className="space-y-1">
-				<span className="font-semibold text-foreground">2. Simple Table Export</span>
-				<p className="text-[10px] text-muted-foreground font-mono">
-					Direct table-to-array dictionary:
-				</p>
-				<pre className="p-2 rounded bg-muted font-mono text-[10px] whitespace-pre overflow-x-auto">
-					{SIMPLE_DATA_SHAPE}
-				</pre>
-			</div>
-
-			<div className="rounded border border-border p-2 bg-muted/20 text-[10px] space-y-1 text-muted-foreground leading-relaxed">
-				<p>
-					<strong className="text-foreground">Fields details:</strong>
-				</p>
-				<ul className="list-disc pl-3 space-y-0.5 font-mono">
-					<li>
-						<code className="text-foreground font-semibold">title</code> (string,
-						required)
-					</li>
-					<li>
-						<code className="text-foreground font-semibold">description</code>{' '}
-						(string, required)
-					</li>
-					<li>
-						<code className="text-foreground font-semibold">id</code> (uuid,
-						optional)
-					</li>
-					<li>
-						<code className="text-foreground font-semibold">user_id</code> (uuid,
-						optional)
-					</li>
-					<li>
-						<code className="text-foreground font-semibold">
-							created_at / updated_at / deleted_at / last_synced_at
-						</code>{' '}
-						(ISO dates, optional)
-					</li>
-					<li>
-						<code className="text-foreground font-semibold">version</code> (number,
-						optional)
-					</li>
-				</ul>
-			</div>
 		</div>
 	);
 }

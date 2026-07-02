@@ -31,7 +31,7 @@ type IDBETable = {
 	table: Table<Note>;
 };
 
-export function useIDBETable(options: IDBExplorerTableOptions): IDBETable {
+export function useIDBENotesTable(options: IDBExplorerTableOptions): IDBETable {
 	const { t } = useTranslation();
 	const { notes, globalFilter, setGlobalFilter, onView, onDelete } = options;
 
