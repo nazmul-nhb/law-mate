@@ -90,6 +90,7 @@ const bn = {
 		// Admin
 		'nav.admin': 'এডমিন',
 		'admin.title': 'এডমিন কনসোল',
+		'admin.current.label': 'বর্তমান এডমিন',
 		'admin.offline.title': 'ইন্টারনেট কানেকশন নেই',
 		'admin.offline.description':
 			'দয়া করে আপনার ডিভাইসটি ইন্টারনেটের সাথে সংযুক্ত করে আবার চেষ্টা করুন।',
@@ -204,8 +205,8 @@ const bn = {
 		'settings.data.import.label': 'ডেটা ইম্পোর্ট',
 		'settings.data.import.desc': 'পূর্বে এক্সপোর্ট করা কোনো JSON ফাইল থেকে নোট পুনরুদ্ধার করুন।',
 		'settings.data.import.mode': 'মোড',
-		'settings.data.import.mode.merge': 'মার্জ (বিদ্যমান নোট এড়িয়ে যান)',
-		'settings.data.import.mode.upsert': 'আপসার্ট (বিদ্যমান নোট প্রতিস্থাপন করুন)',
+		'settings.data.import.mode.merge': 'মার্জ (আগেরগুলো এড়িয়ে যান)',
+		'settings.data.import.mode.upsert': 'আপসার্ট (আগেরগুলো প্রতিস্থাপন করুন)',
 		'settings.data.import.mode.replace': 'রিপ্লেস (সব মুছে ইম্পোর্ট করুন)',
 		'settings.data.import.dropzone':
 			'JSON ফাইলটি এখানে ড্র্যাগ অ্যান্ড ড্রপ করুন অথবা নির্বাচন করতে ক্লিক করুন',

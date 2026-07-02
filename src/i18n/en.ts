@@ -88,6 +88,7 @@ const en = {
 		// Admin
 		'nav.admin': 'Admin',
 		'admin.title': 'Admin Console',
+		'admin.current.label': 'Current Admin',
 		'admin.offline.title': 'No Internet Connection',
 		'admin.offline.description':
 			'Please, connect your device to the internet and try again.',

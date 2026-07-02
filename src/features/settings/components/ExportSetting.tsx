@@ -45,20 +45,26 @@ export function ExportSetting() {
 						checked={includeMeta}
 						id={metaId}
 						onCheckedChange={setIncludeMeta}
+						size="lg"
 					/>
 				</div>
 				<div className="flex items-center justify-between">
 					<Label className="text-xs" htmlFor={jsonId}>
 						{t('settings.data.export.pretty')}
 					</Label>
-					<Switch checked={prettyJson} id={jsonId} onCheckedChange={setPrettyJson} />
+					<Switch
+						checked={prettyJson}
+						id={jsonId}
+						onCheckedChange={setPrettyJson}
+						size="lg"
+					/>
 				</div>
 			</div>
 
 			<Button
-				className="w-full flex items-center justify-center gap-2 cursor-pointer mt-2"
+				className="w-full flex items-center justify-center gap-2 font-semibold mt-2"
 				onClick={handleExport}
-				size="sm"
+				size="lg"
 			>
 				<Download className="size-4" />
 				{t('settings.data.export.button')}

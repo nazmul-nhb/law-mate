@@ -209,7 +209,7 @@ export function useUserTable(options: UserTableOptions): UserTable {
 					if (isCurrentUser) {
 						return (
 							<div className="text-right text-xs text-muted-foreground italic px-2">
-								Current Admin
+								{t('admin.current.label')}
 							</div>
 						);
 					}

@@ -4,6 +4,7 @@ import { useTitle } from 'nhb-hooks';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { digitToBangla } from 'toolbox-x';
 import { EmptyState } from '@/components/EmptyState';
 import {
 	AlertDialog,
@@ -34,12 +35,15 @@ import {
 } from '@/components/ui/table';
 import { useUserTable } from '@/hooks/useUserTable';
 import { supabase } from '@/lib/supabase';
+import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import { useSettingsStore } from '@/stores/settings.store';
 import type { Nullable } from '@/types/common.types';
 import type { Profile, ProfileStatus } from '@/types/profile.types';
 
 const PAGE_LIMITS = [5, 10, 20, 30, 40, 50].map((val) => ({ value: val, label: String(val) }));
+const STAT_KEYS = ['total', 'active', 'blocked', 'deleted'] as const;
+type StatKey = (typeof STAT_KEYS)[number];
 
 export function AdminPage() {
 	const { t } = useTranslation();
@@ -142,10 +146,13 @@ export function AdminPage() {
 	}
 
 	// Calculate statistics
-	const totalUsers = users.length;
-	const activeUsers = users.filter((u) => u.status === 'active').length;
-	const blockedUsers = users.filter((u) => u.status === 'blocked').length;
-	const deletedUsers = users.filter((u) => u.status === 'deleted').length;
+
+	const userStats: Record<StatKey, number> = {
+		total: users.length,
+		active: users.filter((u) => u.status === 'active').length,
+		blocked: users.filter((u) => u.status === 'blocked').length,
+		deleted: users.filter((u) => u.status === 'deleted').length,
+	};
 
 	return (
 		<div className="space-y-6">
@@ -158,39 +165,9 @@ export function AdminPage() {
 				<Fragment>
 					{/* Statistics Cards */}
 					<div className="grid gap-4 sm:grid-cols-4">
-						{/* ! TODO: CAN create reusable component */}
-						<div className="rounded-lg border border-border bg-card p-4">
-							<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-								{t('admin.stats.total')}
-							</p>
-							<p className="mt-2 text-2xl font-bold text-foreground">
-								{localizeNumber(totalUsers)}
-							</p>
-						</div>
-						<div className="rounded-lg border border-border bg-card p-4">
-							<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-								{t('admin.stats.active')}
-							</p>
-							<p className="mt-2 text-2xl font-bold text-emerald-500">
-								{localizeNumber(activeUsers)}
-							</p>
-						</div>
-						<div className="rounded-lg border border-border bg-card p-4">
-							<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-								{t('admin.stats.blocked')}
-							</p>
-							<p className="mt-2 text-2xl font-bold text-rose-500">
-								{localizeNumber(blockedUsers)}
-							</p>
-						</div>
-						<div className="rounded-lg border border-border bg-card p-4">
-							<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-								{t('admin.stats.deleted')}
-							</p>
-							<p className="mt-2 text-2xl font-bold text-muted-foreground">
-								{localizeNumber(deletedUsers)}
-							</p>
-						</div>
+						{STAT_KEYS.map((key) => (
+							<StatCard key={key} statKey={key} stats={userStats} />
+						))}
 					</div>
 
 					{/* Controls and Table */}
@@ -372,6 +349,34 @@ export function AdminPage() {
 					title={t('admin.offline.title')}
 				/>
 			)}
+		</div>
+	);
+}
+
+type StatProps = {
+	statKey: StatKey;
+	stats: Record<StatKey, number>;
+};
+
+const statClass: Record<StatKey, string> = {
+	total: 'text-foreground',
+	active: 'text-emerald-500',
+	blocked: 'text-rose-500',
+	deleted: 'text-muted-foreground',
+};
+
+function StatCard({ statKey, stats }: StatProps) {
+	const { t } = useTranslation();
+	const lang = useSettingsStore((s) => s.language);
+
+	return (
+		<div className="rounded-lg border border-border bg-card p-4">
+			<p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+				{t(`admin.stats.${statKey}`)}
+			</p>
+			<p className={cn('mt-2 text-2xl font-bold', statClass[statKey])}>
+				{lang === 'bn' ? digitToBangla(stats[statKey]) : stats[statKey]}
+			</p>
 		</div>
 	);
 }

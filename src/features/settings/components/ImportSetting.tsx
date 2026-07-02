@@ -1,8 +1,9 @@
-import type { ExportData, ImportOptions } from 'locality-idb';
+import type { ExportData, ExportedTableData, ImportOptions } from 'locality-idb';
 import { AlertCircle, CheckCircle2, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { extractKeys } from 'toolbox-x';
+import { extractKeys, parseJSON } from 'toolbox-x';
+import { isValidArray } from 'toolbox-x/guards';
 import type { MapObjectValues } from 'toolbox-x/types/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,7 +28,9 @@ import type { IDBTableNames, LawMateSchema, Nullable } from '@/types/common.type
 import type { Note } from '@/types/note.types';
 
 type ImportMode = NonNullable<ImportOptions<IDBTableNames>['mode']>;
-type ImportableData = ExportData<IDBTableNames, LawMateSchema>;
+type ImportableData =
+	| ExportData<IDBTableNames, LawMateSchema>
+	| ExportedTableData<IDBTableNames, LawMateSchema>;
 
 type Preview = {
 	insert: number;
@@ -42,6 +45,10 @@ const previewSymbols = {
 	skip: '',
 	delete: '-',
 } as MapObjectValues<Preview, string>;
+
+function extractNotesFromJSON(data: ImportableData) {
+	return 'data' in data ? data.data?.notes : data?.notes || [];
+}
 
 export function ImportSetting() {
 	const { t } = useTranslation();
@@ -99,10 +106,10 @@ export function ImportSetting() {
 		const reader = new FileReader();
 		reader.onload = async (e) => {
 			try {
-				const json = JSON.parse(e.target?.result as string) as ImportableData;
-				const notes = json.data?.notes;
+				const json = parseJSON<ImportableData>(String(e.target?.result), false);
+				const notes = extractNotesFromJSON(json);
 
-				if (!Array.isArray(notes)) {
+				if (!isValidArray<Note>(notes)) {
 					setError(t('settings.data.import.error.empty'));
 					return;
 				}
@@ -119,8 +126,12 @@ export function ImportSetting() {
 
 	const handleImportConfirm = async () => {
 		if (!importedData) return;
+
 		try {
-			await idb.$import(importedData, { mode: importMode });
+			await idb.$import(importedData as ExportData<IDBTableNames, LawMateSchema>, {
+				mode: importMode,
+				tables: ['notes'],
+			});
 			window.dispatchEvent(new CustomEvent('note-updated'));
 			setSuccess(true);
 			setPreview(null);
@@ -159,15 +170,14 @@ export function ImportSetting() {
 				</p>
 			</div>
 
-			<div className="flex items-center gap-2">
+			<div className="flex items-center gap-2 flex-wrap">
 				<Label className="text-xs shrink-0">{t('settings.data.import.mode')}:</Label>
 				<Select
 					onValueChange={(val: Nullable<ImportMode>) => {
 						if (val) {
 							setImportMode(val);
 							if (importedData) {
-								const notes = importedData.data?.notes || [];
-								generatePreview(notes, val);
+								generatePreview(extractNotesFromJSON(importedData), val);
 							}
 						}
 					}}
