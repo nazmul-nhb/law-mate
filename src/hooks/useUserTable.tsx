@@ -9,6 +9,7 @@ import {
 	useReactTable,
 } from '@tanstack/react-table';
 import Fuse from 'fuse.js';
+import type { $UUID } from 'locality-idb';
 import { ArrowUpDown, Shield, ShieldAlert, User, UserCheck, UserX } from 'lucide-react';
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,12 +30,12 @@ type UserTableOptions = {
 	setPendingAction: Dispatch<
 		SetStateAction<
 			Nullable<{
-				userId: string;
+				userId: $UUID;
 				action: Exclude<ProfileStatus, 'active'>;
 			}>
 		>
 	>;
-	handleStatusUpdate: (userId: string, newStatus: ProfileStatus) => Promise<void>;
+	handleStatusUpdate: (userId: $UUID, newStatus: ProfileStatus) => Promise<void>;
 };
 
 type UserTable = {
@@ -61,11 +62,17 @@ export function useUserTable(options: UserTableOptions): UserTable {
 	const filteredUserIds = useMemo(() => {
 		if (!globalFilter.trim()) return null;
 
-		const fuse = new Fuse(users, {
-			keys: ['full_name', 'email'],
-			threshold: 0.25,
-			ignoreLocation: true,
-		});
+		const index = Fuse.createIndex(['full_name', 'email'], users);
+
+		const fuse = new Fuse(
+			users,
+			{
+				keys: ['full_name', 'email'],
+				threshold: 0.25,
+				ignoreLocation: true,
+			},
+			index
+		);
 
 		return new Set(fuse.search(globalFilter).map((r) => r.item.id));
 	}, [users, globalFilter]);

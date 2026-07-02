@@ -1,9 +1,9 @@
-import type { User } from '@supabase/supabase-js';
 import { useEffect } from 'react';
 import { googleClientId } from '@/constants/env';
 import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
+import type { AppUser } from '@/types/profile.types';
 
 export function useAuth() {
 	const { user, isLoading, initialized, signInWithGoogle, signOut } = useAuthStore();
@@ -24,7 +24,7 @@ export function useAuthInit() {
 	const isOnline = window.navigator.onLine;
 
 	useEffect(() => {
-		const assureUserProfile = async (u: User) => {
+		const assureUserProfile = async (u: AppUser) => {
 			if (!u) return;
 
 			// Do not Assure Profile if offline
@@ -87,7 +87,7 @@ export function useAuthInit() {
 		if (isOnline) {
 			supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
 				if (initialSession?.user) {
-					await assureUserProfile(initialSession.user);
+					await assureUserProfile(initialSession.user as AppUser);
 				} else {
 					setProfile(null);
 					setUser(null);
@@ -105,7 +105,7 @@ export function useAuthInit() {
 			data: { subscription },
 		} = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
 			if (currentSession?.user) {
-				await assureUserProfile(currentSession.user);
+				await assureUserProfile(currentSession.user as AppUser);
 			} else {
 				setProfile(null);
 				setUser(null);

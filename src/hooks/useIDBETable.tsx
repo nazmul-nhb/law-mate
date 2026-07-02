@@ -15,6 +15,7 @@ import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import removeMd from 'remove-markdown';
 import { Button } from '@/components/ui/button';
+import { SEARCH_KEYS } from '@/constants/app';
 import type { Note } from '@/types/note.types';
 
 type IDBExplorerTableOptions = {
@@ -41,11 +42,17 @@ export function useIDBETable(options: IDBExplorerTableOptions): IDBETable {
 	const filteredNoteIds = useMemo(() => {
 		if (!globalFilter.trim()) return null;
 
-		const fuse = new Fuse(notes, {
-			keys: ['title', 'description'],
-			threshold: 0.25,
-			ignoreLocation: true,
-		});
+		const index = Fuse.createIndex([...SEARCH_KEYS], notes);
+
+		const fuse = new Fuse(
+			notes,
+			{
+				keys: ['title', 'description'],
+				threshold: 0.25,
+				ignoreLocation: true,
+			},
+			index
+		);
 
 		return new Set<string>(fuse.search(globalFilter).map((r) => String(r.item.id)));
 	}, [notes, globalFilter]);

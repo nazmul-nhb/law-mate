@@ -49,11 +49,13 @@ export const SIMPLE_DATA_SHAPE = `{
   "notes": [
     {
       "id": "e6e69b88-5b28-48cb-9e0f-ff61f6da2edf",
+      "user_id": "6596afcb-6c8a-48e6-9e1f-bcdf51ab082c",
       "title": "Note Title",
       "description": "Note Content",
       "created_at": "2026-07-02T05:50:04.744Z",
       "updated_at": "2026-07-02T05:50:04.744Z",
-      "deleted_at": null,
+      "deleted_at": "2026-07-02T05:50:37.433+00:00",
+      "last_synced_at": "2026-07-02T07:30:46.428Z",
       "version": 1
     }
   ]

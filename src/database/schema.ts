@@ -1,9 +1,9 @@
-import { column, defineSchema } from 'locality-idb';
+import { type $UUID, column, defineSchema } from 'locality-idb';
 
 export const lawMateSchema = defineSchema({
 	notes: {
 		id: column.uuid().pk(),
-		user_id: column.text().optional().index(),
+		user_id: column.char<$UUID>(36).optional().index(),
 		title: column.text(),
 		description: column.text(),
 		created_at: column.timestamp(),

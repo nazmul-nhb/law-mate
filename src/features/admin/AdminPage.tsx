@@ -1,4 +1,5 @@
 import { flexRender } from '@tanstack/react-table';
+import type { $UUID } from 'locality-idb';
 import { Loader2, Search, Shield, WifiOffIcon } from 'lucide-react';
 import { useTitle } from 'nhb-hooks';
 import { Fragment, useCallback, useEffect, useState } from 'react';
@@ -62,7 +63,7 @@ export function AdminPage() {
 	const [pendingAction, setPendingAction] =
 		useState<
 			Nullable<{
-				userId: string;
+				userId: $UUID;
 				action: Exclude<ProfileStatus, 'active'>;
 			}>
 		>(null);
@@ -104,7 +105,7 @@ export function AdminPage() {
 		}
 	}, [profile, fetchUsers]);
 
-	const handleStatusUpdate = useCallback(async (userId: string, newStatus: ProfileStatus) => {
+	const handleStatusUpdate = useCallback(async (userId: $UUID, newStatus: ProfileStatus) => {
 		try {
 			setIsUpdating(userId);
 			const { error } = await supabase
@@ -146,7 +147,6 @@ export function AdminPage() {
 	}
 
 	// Calculate statistics
-
 	const userStats: Record<StatKey, number> = {
 		total: users.length,
 		active: users.filter((u) => u.status === 'active').length,

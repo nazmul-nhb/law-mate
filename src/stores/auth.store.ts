@@ -1,17 +1,16 @@
-import type { User } from '@supabase/supabase-js';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { supabase } from '@/lib/supabase';
 import type { Nullable } from '@/types/common.types';
-import type { Profile } from '@/types/profile.types';
+import type { AppUser, Profile } from '@/types/profile.types';
 
 interface AuthState {
-	user: Nullable<User>;
+	user: Nullable<AppUser>;
 	// session: Nullable<Session> ;
 	profile: Nullable<Profile>;
 	isLoading: boolean;
 	initialized: boolean;
-	setUser: (user: Nullable<User>) => void;
+	setUser: (user: Nullable<AppUser>) => void;
 	// setSession: (session: Nullable<Session> ) => void;
 	setProfile: (profile: Nullable<Profile>) => void;
 	setIsLoading: (isLoading: boolean) => void;
