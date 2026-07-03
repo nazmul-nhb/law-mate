@@ -39,7 +39,6 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 	const { t } = useTranslation();
 	const { noteDialog, closeNoteDialog } = useUIStore();
 	const [title, setTitle] = useState('');
-	const [newNote, setNewNote] = useState<Nullable<Note>>(null);
 	const [description, setDescription] = useState('');
 	const [laws, setLaws] = useState<Law[]>([]);
 	const [selectedLawId, setSelectedLawId] = useState<Nullable<$UUID>>(null);
@@ -99,6 +98,8 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 		setIsSaving(true);
 		setError(null);
 
+		let createdNote: Nullable<Note> = null;
+
 		try {
 			if (isEditing && noteDialog.noteId) {
 				await noteRepository.update(noteDialog.noteId, {
@@ -107,13 +108,11 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 					law_id: selectedLawId,
 				});
 			} else {
-				const note = await noteRepository.create({
+				createdNote = await noteRepository.create({
 					title: title.trim(),
 					description: description.trim(),
 					law_id: selectedLawId,
 				});
-
-				setNewNote(note);
 			}
 
 			closeNoteDialog();
@@ -122,10 +121,8 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 			setSelectedLawId(null);
 			window.dispatchEvent(new CustomEvent('note-updated'));
 
-			if (newNote) {
-				// TODO: Issue: navigates to the previously created note
-				navigate(`/note/${newNote.id}`, { replace: true });
-				setNewNote(null);
+			if (createdNote) {
+				navigate(`/note/${createdNote.id}`, { replace: true });
 			}
 
 			onSaved?.();
@@ -169,7 +166,10 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 							onValueChange={(law) => setSelectedLawId(law?.id ?? null)}
 							value={selectedLaw}
 						>
-							<ComboboxInput placeholder={t('notes.law.placeholder')} />
+							<ComboboxInput
+								autoFocus={false}
+								placeholder={t('notes.law.placeholder')}
+							/>
 							<ComboboxContent>
 								<ComboboxEmpty>{t('notes.law.empty')}</ComboboxEmpty>
 								<ComboboxList>

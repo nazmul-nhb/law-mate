@@ -29,7 +29,6 @@ interface LawDialogProps {
 export function LawDialog({ open, onOpenChange, lawId, onSelectLaw, onSaved }: LawDialogProps) {
 	const { t } = useTranslation();
 	const [title, setTitle] = useState('');
-	const [newLaw, setNewLaw] = useState<Nullable<Law>>(null);
 	const [description, setDescription] = useState('');
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<Nullable<string>>(null);
@@ -59,6 +58,8 @@ export function LawDialog({ open, onOpenChange, lawId, onSelectLaw, onSaved }: L
 		setIsSaving(true);
 		setError(null);
 
+		let createdLaw: Nullable<Law> = null;
+
 		try {
 			if (isEditing && lawId) {
 				await lawRepository.update(lawId, {
@@ -66,12 +67,10 @@ export function LawDialog({ open, onOpenChange, lawId, onSelectLaw, onSaved }: L
 					description: description.trim() || undefined,
 				});
 			} else {
-				const lawN = await lawRepository.create({
+				createdLaw = await lawRepository.create({
 					title: title.trim(),
 					description: description.trim() || undefined,
 				});
-
-				setNewLaw(lawN);
 			}
 
 			onOpenChange(false);
@@ -79,20 +78,17 @@ export function LawDialog({ open, onOpenChange, lawId, onSelectLaw, onSaved }: L
 			setDescription('');
 			window.dispatchEvent(new CustomEvent('law-updated'));
 
+			if (createdLaw) {
+				onSelectLaw?.(createdLaw.id);
+				const queryString = generateQueryParams({ law_id: createdLaw.id });
+				navigate({ pathname: '/', search: queryString }, { replace: true });
+			}
+
 			onSaved?.();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : t('common.error'));
 		} finally {
 			setIsSaving(false);
-			if (newLaw) {
-				// TODO: Need to fix it
-				// ! Issue: Navigates to the previously created law
-				onSelectLaw?.(newLaw.id);
-				console.log(newLaw.id);
-				const queryString = generateQueryParams({ law_id: newLaw.id });
-				navigate(`/${queryString}`, { replace: true });
-				setNewLaw(null);
-			}
 		}
 	};
 
