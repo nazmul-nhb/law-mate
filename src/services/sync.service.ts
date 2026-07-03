@@ -4,9 +4,11 @@ import { getFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from 
 import { DELETE_LAWS_QUEUE_KEY, DELETE_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
+import { getTimeDiff } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useUIStore } from '@/stores/ui.store';
+import type { SyncType } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
 import type { Note } from '@/types/note.types';
 
@@ -135,7 +137,7 @@ export const syncService = {
 					}
 				} else {
 					// Exists on both: conflict resolution
-					let action: 'push' | 'pull' | 'noop' = 'noop';
+					let action: SyncType = 'noop';
 
 					if (localLaw.version > remoteLaw.version) {
 						action = 'push';
@@ -147,11 +149,11 @@ export const syncService = {
 						} else if (localLaw.deleted_at && !remoteLaw.deleted_at) {
 							action = 'push';
 						} else {
-							const localTime = new Date(localLaw.updated_at).getTime();
-							const remoteTime = new Date(remoteLaw.updated_at).getTime();
-							if (localTime > remoteTime) {
+							const diff = getTimeDiff(localLaw.updated_at, remoteLaw.updated_at);
+
+							if (diff > 0) {
 								action = 'push';
-							} else if (remoteTime > localTime) {
+							} else if (diff < 0) {
 								action = 'pull';
 							}
 						}
@@ -318,7 +320,7 @@ export const syncService = {
 					}
 				} else {
 					// Exists on both: conflict resolution
-					let action: 'push' | 'pull' | 'noop' = 'noop';
+					let action: SyncType = 'noop';
 
 					if (localNote.version > remoteNote.version) {
 						action = 'push';
@@ -330,11 +332,14 @@ export const syncService = {
 						} else if (localNote.deleted_at && !remoteNote.deleted_at) {
 							action = 'push';
 						} else {
-							const localTime = new Date(localNote.updated_at).getTime();
-							const remoteTime = new Date(remoteNote.updated_at).getTime();
-							if (localTime > remoteTime) {
+							const diff = getTimeDiff(
+								localNote.updated_at,
+								remoteNote.updated_at
+							);
+
+							if (diff > 0) {
 								action = 'push';
-							} else if (remoteTime > localTime) {
+							} else if (diff < 0) {
 								action = 'pull';
 							}
 						}

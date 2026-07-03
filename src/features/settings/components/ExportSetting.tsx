@@ -52,7 +52,7 @@ export function ExportSetting() {
 			<div className="space-y-2">
 				<div className="flex items-center justify-between">
 					<Label className="text-xs" htmlFor={lawsId}>
-						{t('settings.data.export.laws', 'Export Laws')}
+						{t('settings.data.export.laws')}
 					</Label>
 					<Switch
 						checked={exportLaws}
@@ -63,7 +63,7 @@ export function ExportSetting() {
 				</div>
 				<div className="flex items-center justify-between">
 					<Label className="text-xs" htmlFor={notesId}>
-						{t('settings.data.export.notes', 'Export Notes')}
+						{t('settings.data.export.notes')}
 					</Label>
 					<Switch
 						checked={exportNotes}

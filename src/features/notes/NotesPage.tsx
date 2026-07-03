@@ -144,7 +144,7 @@ export function NotesPage() {
 						type="button"
 					>
 						<Menu className="size-4" />
-						{selectedLaw ? selectedLaw.title : t('laws.select', 'Select Law')}
+						{selectedLaw ? selectedLaw.title : t('laws.select')}
 					</button>
 
 					<button
@@ -156,7 +156,7 @@ export function NotesPage() {
 						type="button"
 					>
 						<FolderPlus className="size-3.5" />
-						{t('laws.create', 'New Law')}
+						{t('laws.create')}
 					</button>
 				</div>
 
@@ -203,13 +203,10 @@ export function NotesPage() {
 					<div className="flex-1 flex flex-col items-center justify-center text-center p-8">
 						<BookOpen className="size-12 text-muted-foreground/40 mb-4 animate-pulse" />
 						<h2 className="text-base font-semibold text-foreground mb-1">
-							{t('laws.unselected.title', 'Select a Law to Begin')}
+							{t('laws.unselected.title')}
 						</h2>
 						<p className="text-xs text-muted-foreground max-w-xs leading-relaxed mb-6 font-mono">
-							{t(
-								'laws.unselected.desc',
-								"Select a law from the left sidebar to view its notes. If you haven't created any laws, click the folder icon to add one!"
-							)}
+							{t('laws.unselected.desc')}
 						</p>
 						<Button
 							onClick={() => {
@@ -219,7 +216,7 @@ export function NotesPage() {
 							size="sm"
 						>
 							<FolderPlus className="size-4 mr-2" />
-							{t('laws.create', 'Create a Law')}
+							{t('laws.create')}
 						</Button>
 					</div>
 				)}
@@ -236,14 +233,11 @@ export function NotesPage() {
 
 			{/* Soft delete law confirmation */}
 			<ConfirmDialog
-				description={t(
-					'laws.confirm.soft.delete',
-					'Are you sure you want to delete this law? All notes under this law will also be moved to the trash.'
-				)}
+				description={t('laws.confirm.soft.delete')}
 				onConfirm={handleConfirmDeleteLaw}
 				onOpenChange={(open) => !open && setLawDeleteConfirmId(null)}
 				open={!!lawDeleteConfirmId}
-				title={t('laws.delete', 'Delete Law')}
+				title={t('laws.delete')}
 			/>
 
 			{/* Note Dialog */}

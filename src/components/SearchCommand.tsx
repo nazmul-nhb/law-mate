@@ -67,7 +67,7 @@ export function SearchCommand() {
 					onChange={(e) => setScopeLawId(e.target.value || null)}
 					value={scopeLawId || ''}
 				>
-					<option value="">{t('search.all.laws', 'All Laws')}</option>
+					<option value="">{t('search.all.laws')}</option>
 					{laws.map((law) => (
 						<option key={law.id} value={law.id}>
 							{law.title}
@@ -88,10 +88,10 @@ export function SearchCommand() {
 							type="button"
 						>
 							{field === 'all'
-								? t('search.fields.all', 'All Fields')
+								? t('search.fields.all')
 								: field === 'title'
-									? t('search.fields.title', 'Title')
-									: t('search.fields.desc', 'Description')}
+									? t('search.fields.title')
+									: t('search.fields.desc')}
 						</button>
 					))}
 				</div>

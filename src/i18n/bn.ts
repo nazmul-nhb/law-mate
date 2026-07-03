@@ -14,6 +14,28 @@ const bn = {
 		'nav.settings': 'সেটিংস',
 		'nav.idb.explorer': 'DB এক্সপ্লোরার',
 
+		// Laws
+		'laws.title': 'আইনসমূহ',
+		'laws.create': 'নতুন আইন',
+		'laws.edit': 'আইন সম্পাদনা',
+		'laws.delete': 'আইন মুছে ফেলুন',
+		'laws.select': 'আইন নির্বাচন করুন',
+		'laws.title.label': 'আইনের শিরোনাম',
+		'laws.title.placeholder': 'আইনের শিরোনাম লিখুন...',
+		'laws.description.label': 'বিবরণ',
+		'laws.description.placeholder': 'আইনের বিবরণ লিখুন...',
+		'laws.sidebar.title': 'আইনসমূহ',
+		'laws.unselected.title': 'শুরু করতে একটি আইন নির্বাচন করুন',
+		'laws.unselected.desc':
+			'আইনের ধারা ও নোট দেখতে সাইডবার থেকে একটি আইন নির্বাচন করুন, অথবা নতুন আইন তৈরি করুন।',
+		'laws.title.required': 'আইনের শিরোনাম ফাঁকা রাখা যাবে না',
+		'laws.deleted.success': 'আইনটি ট্র্যাশে সরানো হয়েছে',
+		'laws.saved.success': 'আইনটি সংরক্ষিত হয়েছে',
+		'laws.confirm.soft.delete':
+			'আপনি কি নিশ্চিত যে এই আইনটি এবং এর অধীনস্থ সকল নোট ট্র্যাশে পাঠাতে চান?',
+		'laws.confirm.delete':
+			'আপনি কি নিশ্চিত? এটি স্থায়ীভাবে এই আইনটি এবং এর অধীনস্থ সকল নোট মুছে ফেলবে।',
+
 		// Notes
 		'notes.title': 'নোটসমূহ',
 		'notes.empty': 'কোনো নোট নেই',
@@ -28,6 +50,10 @@ const bn = {
 		'notes.title.placeholder': 'নোটের শিরোনাম লিখুন...',
 		'notes.description.label': 'বিবরণ',
 		'notes.description.placeholder': 'নোটের বিবরণ লিখুন...',
+		'notes.law.label': 'সংক্রান্ত আইন',
+		'notes.law.placeholder': 'আইন নির্বাচন করুন...',
+		'notes.law.empty': 'কোনো আইন পাওয়া যায়নি',
+		'notes.law.required': 'একটি আইন নির্বাচন করা আবশ্যক।',
 		'notes.deleted.success': 'নোটটি ট্র্যাশে সরানো হয়েছে',
 		'notes.saved.success': 'নোটটি সংরক্ষিত হয়েছে',
 		'notes.untitled': 'শিরোনাম নেই',
@@ -50,6 +76,10 @@ const bn = {
 		'search.placeholder': 'নোট খুঁজুন...',
 		'search.empty': 'কোনো ফলাফল পাওয়া যায়নি',
 		'search.hint': 'খুঁজুন',
+		'search.all.laws': 'সকল আইন',
+		'search.fields.all': 'সকল ক্ষেত্র',
+		'search.fields.title': 'শিরোনাম',
+		'search.fields.desc': 'বিবরণ',
 
 		// Trash
 		'trash.title': 'ট্র্যাশ',
@@ -61,6 +91,10 @@ const bn = {
 		'trash.delete.success': 'নোটটি স্থায়ীভাবে মুছে ফেলা হয়েছে',
 		'trash.confirm.delete': 'আপনি কি নিশ্চিত? এই প্রক্রিয়াটি পুনরুদ্ধারযোগ্য নয়।',
 		'trash.confirm.soft.delete': 'আপনি কি নিশ্চিত যে এই নোটটি ট্র্যাশে পাঠাতে চান?',
+		'trash.laws.section': 'মুছে ফেলা আইনসমূহ',
+		'trash.laws.empty': 'ট্র্যাশে কোনো মুছে ফেলা আইন নেই।',
+		'trash.notes.section': 'মুছে ফেলা নোটসমূহ',
+		'trash.notes.empty': 'ট্র্যাশে কোনো মুছে ফেলা নোট নেই।',
 
 		// Settings
 		'settings.title': 'সেটিংস',
@@ -199,6 +233,8 @@ const bn = {
 		'settings.data.title': 'ডেটা ম্যানেজমেন্ট',
 		'settings.data.export.label': 'ডেটা এক্সপোর্ট',
 		'settings.data.export.desc': 'একটি JSON ফাইলে আপনার নোট এবং মেটাডেটা ব্যাকআপ রাখুন।',
+		'settings.data.export.laws': 'আইনসমূহ এক্সপোর্ট করুন',
+		'settings.data.export.notes': 'নোটসমূহ এক্সপোর্ট করুন',
 		'settings.data.export.meta': 'মেটাডেটা অন্তর্ভুক্ত করুন',
 		'settings.data.export.pretty': 'প্রিটি প্রিন্ট JSON',
 		'settings.data.export.button': 'JSON ফাইলে এক্সপোর্ট',

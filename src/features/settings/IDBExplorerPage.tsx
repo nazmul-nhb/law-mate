@@ -57,7 +57,7 @@ export function IDBExplorerPage() {
 						className="font-mono text-xs uppercase tracking-wider font-semibold"
 						value="laws"
 					>
-						{t('laws.sidebar.title', 'Laws')}
+						{t('laws.sidebar.title')}
 					</TabsTrigger>
 				</TabsList>
 

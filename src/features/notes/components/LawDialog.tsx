@@ -45,7 +45,7 @@ export function LawDialog({ open, onOpenChange, lawId, onSaved }: LawDialogProps
 
 	const handleSave = async () => {
 		if (!title.trim()) {
-			setError(t('notes.title.placeholder', 'Title cannot be empty.'));
+			setError(t('laws.title.required'));
 			return;
 		}
 
@@ -90,11 +90,7 @@ export function LawDialog({ open, onOpenChange, lawId, onSaved }: LawDialogProps
 		<Dialog onOpenChange={onOpenChange} open={open}>
 			<DialogContent className="max-h-[90vh] overflow-y-auto max-w-[99%] md:max-w-2xl">
 				<DialogHeader>
-					<DialogTitle>
-						{isEditing
-							? t('laws.edit', 'Edit Law')
-							: t('laws.create', 'Create Law')}
-					</DialogTitle>
+					<DialogTitle>{isEditing ? t('laws.edit') : t('laws.create')}</DialogTitle>
 				</DialogHeader>
 
 				<div className="space-y-4 py-2 max-w-full">

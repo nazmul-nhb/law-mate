@@ -297,7 +297,7 @@ export function ImportSetting() {
 						<div className="space-y-4 py-2 text-xs font-mono">
 							<div>
 								<h4 className="font-semibold text-foreground mb-1 uppercase text-[10px] tracking-wider">
-									{t('laws.sidebar.title', 'Laws')}
+									{t('laws.sidebar.title')}
 								</h4>
 								<div className="grid grid-cols-4 gap-2">
 									<div className="rounded border p-1 text-center bg-muted/20">
@@ -325,7 +325,7 @@ export function ImportSetting() {
 
 							<div>
 								<h4 className="font-semibold text-foreground mb-1 uppercase text-[10px] tracking-wider">
-									{t('nav.notes', 'Notes')}
+									{t('nav.notes')}
 								</h4>
 								<div className="grid grid-cols-4 gap-2">
 									<div className="rounded border p-1 text-center bg-muted/20">

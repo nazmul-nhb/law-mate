@@ -12,6 +12,27 @@ const en = {
 		'nav.settings': 'Settings',
 		'nav.idb.explorer': 'DB Explorer',
 
+		// Laws
+		'laws.title': 'Laws',
+		'laws.create': 'New Law',
+		'laws.edit': 'Edit Law',
+		'laws.delete': 'Delete Law',
+		'laws.select': 'Select Law',
+		'laws.title.label': 'Law Title',
+		'laws.title.placeholder': 'Enter law title...',
+		'laws.description.label': 'Description',
+		'laws.description.placeholder': 'Write law description...',
+		'laws.sidebar.title': 'Laws',
+		'laws.unselected.title': 'Select a Law to Begin',
+		'laws.unselected.desc':
+			'Choose a law from the sidebar to view its sections and notes, or create a new law.',
+		'laws.title.required': 'Law title cannot be empty',
+		'laws.deleted.success': 'Law moved to trash',
+		'laws.saved.success': 'Law saved successfully',
+		'laws.confirm.soft.delete': 'Are you sure you want to move this law to trash?',
+		'laws.confirm.delete':
+			'Are you sure? This will permanently delete this law and its associated notes.',
+
 		// Notes
 		'notes.title': 'Notes',
 		'notes.empty': 'No notes yet',
@@ -26,6 +47,10 @@ const en = {
 		'notes.title.placeholder': 'Enter note title...',
 		'notes.description.label': 'Description',
 		'notes.description.placeholder': 'Write note description...',
+		'notes.law.label': 'Select Law',
+		'notes.law.placeholder': 'Select parent law...',
+		'notes.law.empty': 'No laws found',
+		'notes.law.required': 'A parent law must be selected.',
 		'notes.deleted.success': 'Note moved to trash',
 		'notes.saved.success': 'Note saved successfully',
 		'notes.untitled': 'Untitled',
@@ -48,6 +73,10 @@ const en = {
 		'search.placeholder': 'Search notes...',
 		'search.empty': 'No results found',
 		'search.hint': 'Search',
+		'search.all.laws': 'All Laws',
+		'search.fields.all': 'All Fields',
+		'search.fields.title': 'Title',
+		'search.fields.desc': 'Description',
 
 		// Trash
 		'trash.title': 'Trash',
@@ -59,6 +88,10 @@ const en = {
 		'trash.delete.success': 'Note permanently deleted',
 		'trash.confirm.delete': 'Are you sure? This action cannot be undone.',
 		'trash.confirm.soft.delete': 'Are you sure you want to move this note to trash?',
+		'trash.laws.section': 'DELETED LAWS',
+		'trash.laws.empty': 'No deleted laws in trash.',
+		'trash.notes.section': 'DELETED NOTES',
+		'trash.notes.empty': 'No deleted notes in trash.',
 
 		// Settings
 		'settings.title': 'Settings',
@@ -200,6 +233,8 @@ const en = {
 		'settings.data.title': 'Data Management',
 		'settings.data.export.label': 'Export Data',
 		'settings.data.export.desc': 'Backup your notes and metadata to a JSON file.',
+		'settings.data.export.laws': 'Export Laws',
+		'settings.data.export.notes': 'Export Notes',
 		'settings.data.export.meta': 'Include Metadata',
 		'settings.data.export.pretty': 'Pretty Print JSON',
 		'settings.data.export.button': 'Export to JSON',

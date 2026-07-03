@@ -30,9 +30,9 @@ export function LawSidebar({
 			{/* Sidebar Header */}
 			<div className="p-4 border-b border-border flex items-center justify-between shrink-0">
 				<h2 className="text-xs font-semibold text-foreground uppercase tracking-wider font-mono">
-					{t('laws.sidebar.title', 'Laws')}
+					{t('laws.sidebar.title')}
 				</h2>
-				<TooltipSimple content={t('laws.create', 'Create Law')}>
+				<TooltipSimple content={t('laws.create')}>
 					<button
 						className="rounded p-1.5 hover:bg-accent text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
 						onClick={onAddLaw}

@@ -78,7 +78,7 @@ export function TrashPage() {
 					<Collapsible onOpenChange={setIsLawsOpen} open={isLawsOpen}>
 						<CollapsibleTrigger className="flex items-center justify-between w-full p-4 border border-border rounded-lg bg-muted/20 hover:bg-muted/30 transition-colors cursor-pointer select-none">
 							<h2 className="text-sm font-semibold tracking-tight text-foreground font-mono">
-								{t('trash.laws.section', 'DELETED LAWS')} (
+								{t('trash.laws.section')} (
 								{lang === 'bn'
 									? digitToBangla(deletedLaws.length)
 									: String(deletedLaws.length)}
@@ -93,7 +93,7 @@ export function TrashPage() {
 						<CollapsibleContent className="mt-2 overflow-hidden transition-all duration-200">
 							{deletedLaws.length === 0 ? (
 								<p className="text-xs text-muted-foreground py-4 text-center">
-									{t('trash.laws.empty', 'No deleted laws in trash.')}
+									{t('trash.laws.empty')}
 								</p>
 							) : (
 								<TrashLawList
@@ -109,7 +109,7 @@ export function TrashPage() {
 					<Collapsible onOpenChange={setIsNotesOpen} open={isNotesOpen}>
 						<CollapsibleTrigger className="flex items-center justify-between w-full p-4 border border-border rounded-lg bg-muted/20 hover:bg-muted/30 transition-colors cursor-pointer select-none">
 							<h2 className="text-sm font-semibold tracking-tight text-foreground font-mono">
-								{t('trash.notes.section', 'DELETED NOTES')} (
+								{t('trash.notes.section')} (
 								{lang === 'bn'
 									? digitToBangla(deletedNotes.length)
 									: String(deletedNotes.length)}
@@ -124,7 +124,7 @@ export function TrashPage() {
 						<CollapsibleContent className="mt-2 overflow-hidden transition-all duration-200">
 							{deletedNotes.length === 0 ? (
 								<p className="text-xs text-muted-foreground py-4 text-center">
-									{t('trash.notes.empty', 'No deleted notes in trash.')}
+									{t('trash.notes.empty')}
 								</p>
 							) : (
 								<TrashList

@@ -70,7 +70,7 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 
 	const handleSave = async () => {
 		if (!selectedLawId) {
-			setError(t('notes.law.required', 'A parent law must be selected.'));
+			setError(t('notes.law.required'));
 			return;
 		}
 
@@ -126,6 +126,7 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 	};
 
 	const idForTitle = useId();
+	const selectedLaw = laws.find((l) => l.id === selectedLawId) ?? null;
 
 	return (
 		<Dialog onOpenChange={handleOpenChange} open={noteDialog.open}>
@@ -136,24 +137,26 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 
 				<div className="space-y-4 py-2 max-w-full">
 					<div className="space-y-2">
-						<Label>{t('notes.law.label', 'Select Law')}</Label>
+						<Label>{t('notes.law.label')}</Label>
 						<Combobox
-							onValueChange={(val) => setSelectedLawId((val as $UUID) || null)}
-							value={selectedLawId || ''}
+							isItemEqualToValue={(a: Nullable<Law>, b: Nullable<Law>) =>
+								a?.id === b?.id
+							}
+							items={laws}
+							itemToStringLabel={(item: Nullable<Law>) => item?.title ?? ''}
+							itemToStringValue={(item: Nullable<Law>) => item?.id ?? ''}
+							onValueChange={(law) => setSelectedLawId(law?.id ?? null)}
+							value={selectedLaw}
 						>
-							<ComboboxInput
-								placeholder={t('notes.law.placeholder', 'Select parent law...')}
-							/>
+							<ComboboxInput placeholder={t('notes.law.placeholder')} />
 							<ComboboxContent>
+								<ComboboxEmpty>{t('notes.law.empty')}</ComboboxEmpty>
 								<ComboboxList>
-									{laws.map((law) => (
-										<ComboboxItem key={law.id} value={law.id}>
-											{law.title}
+									{(item: Law) => (
+										<ComboboxItem key={item.id} value={item}>
+											{item.title}
 										</ComboboxItem>
-									))}
-									<ComboboxEmpty>
-										{t('notes.law.empty', 'No laws found')}
-									</ComboboxEmpty>
+									)}
 								</ComboboxList>
 							</ComboboxContent>
 						</Combobox>
