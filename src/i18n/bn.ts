@@ -6,16 +6,16 @@ const bn = {
 	translation: {
 		// App
 		'app.name': 'আইন বন্ধু',
-		'app.tagline': 'আপনার আইন সম্পর্কিত নোটগুলো গুছিয়ে রাখুন',
+		'app.tagline': 'আপনার আইন সম্পর্কিত নোট গুছিয়ে রাখুন',
 
 		// Navigation
-		'nav.notes': 'নোটসমূহ',
+		'nav.notes': 'নোট',
 		'nav.trash': 'ট্র্যাশ',
 		'nav.settings': 'সেটিংস',
 		'nav.idb.explorer': 'DB এক্সপ্লোরার',
 
 		// Laws
-		'laws.title': 'আইনসমূহ',
+		'laws.title': 'আইন',
 		'laws.create': 'নতুন আইন',
 		'laws.edit': 'আইন সম্পাদনা',
 		'laws.delete': 'আইন মুছে ফেলুন',
@@ -37,7 +37,7 @@ const bn = {
 			'আপনি কি নিশ্চিত? এটি স্থায়ীভাবে এই আইনটি এবং এর অধীনস্থ সকল নোট মুছে ফেলবে।',
 
 		// Notes
-		'notes.title': 'নোটসমূহ',
+		'notes.title': 'নোট',
 		'notes.empty': 'কোনো নোট নেই',
 		'notes.empty.description': 'নতুন নোট তৈরি করতে নিচের বাটনে ক্লিক করুন',
 		'notes.create': 'নতুন নোট',

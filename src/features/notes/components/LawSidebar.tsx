@@ -1,8 +1,10 @@
 import type { $UUID } from 'locality-idb';
 import { FolderPlus, Pencil, Trash2 } from 'lucide-react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
+import { useQueryParams } from '@/hooks/useQueryParams';
 import type { Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
 
@@ -25,6 +27,22 @@ export function LawSidebar({
 }: LawSidebarProps) {
 	const { t } = useTranslation();
 
+	const { getQueryParam, setQueryParams } = useQueryParams();
+
+	useEffect(() => {
+		if (selectedLawId) {
+			setQueryParams({ law_id: selectedLawId });
+		}
+	}, [selectedLawId, setQueryParams]);
+
+	useEffect(() => {
+		const lawId = getQueryParam<$UUID>('law_id');
+
+		if (lawId) {
+			onSelectLaw(lawId);
+		}
+	}, [getQueryParam, onSelectLaw]);
+
 	return (
 		<div className="flex flex-col h-full bg-card/45 border-r border-border min-w-64 max-w-64">
 			{/* Sidebar Header */}
@@ -44,7 +62,7 @@ export function LawSidebar({
 			</div>
 
 			{/* Sidebar List */}
-			<ScrollArea className="flex-1">
+			<ScrollArea className="flex-1 h-full">
 				<div className="p-2 space-y-1">
 					{laws.length === 0 ? (
 						<p className="text-xs text-muted-foreground text-center py-8 px-4 leading-relaxed font-mono">
@@ -64,7 +82,10 @@ export function LawSidebar({
 											: 'text-muted-foreground hover:bg-accent/40 hover:text-foreground'
 									}`}
 									key={law.id}
-									onClick={() => onSelectLaw(law.id)}
+									onClick={() => {
+										onSelectLaw(law.id);
+										setQueryParams({ law_id: law.id });
+									}}
 								>
 									<span className="text-xs truncate max-w-42.5 select-none block">
 										{law.title}

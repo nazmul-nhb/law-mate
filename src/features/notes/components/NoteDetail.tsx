@@ -61,7 +61,7 @@ export function NoteDetail() {
 		try {
 			await noteRepository.softDelete(note.id);
 			window.dispatchEvent(new CustomEvent('note-updated'));
-			navigate('/');
+			navigate(-1);
 		} catch (error) {
 			console.error('Failed to delete note:', error);
 		}
@@ -85,7 +85,7 @@ export function NoteDetail() {
 			<div className="flex items-center justify-between">
 				<button
 					className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-					onClick={() => navigate('/')}
+					onClick={() => navigate(-1)}
 					type="button"
 				>
 					<ArrowLeft className="size-4" />

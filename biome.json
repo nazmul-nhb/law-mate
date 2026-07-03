@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -70,7 +70,7 @@
 				"useImportType": "warn"
 			},
 			"correctness": {
-				"recommended": true,
+				"preset": "recommended",
 				"useExhaustiveDependencies": "warn",
 				"noUnusedFunctionParameters": "warn",
 				"noUnusedImports": "warn",

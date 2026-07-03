@@ -1,6 +1,8 @@
 import type { $UUID } from 'locality-idb';
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import { generateQueryParams } from 'toolbox-x';
 import { MarkdownEditor } from '@/components/MarkdownEditor';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,20 +16,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { lawRepository } from '@/repositories/law.repository';
 import type { Nullable } from '@/types/common.types';
+import type { Law } from '@/types/laws.types';
 
 interface LawDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+	onSelectLaw?: (id: $UUID) => void;
 	lawId?: Nullable<$UUID>;
 	onSaved?: () => void;
 }
 
-export function LawDialog({ open, onOpenChange, lawId, onSaved }: LawDialogProps) {
+export function LawDialog({ open, onOpenChange, lawId, onSelectLaw, onSaved }: LawDialogProps) {
 	const { t } = useTranslation();
 	const [title, setTitle] = useState('');
+	const [newLaw, setNewLaw] = useState<Nullable<Law>>(null);
 	const [description, setDescription] = useState('');
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<Nullable<string>>(null);
+
+	const navigate = useNavigate();
 
 	const isEditing = !!lawId;
 
@@ -59,21 +66,33 @@ export function LawDialog({ open, onOpenChange, lawId, onSaved }: LawDialogProps
 					description: description.trim() || undefined,
 				});
 			} else {
-				await lawRepository.create({
+				const lawN = await lawRepository.create({
 					title: title.trim(),
 					description: description.trim() || undefined,
 				});
+
+				setNewLaw(lawN);
 			}
 
 			onOpenChange(false);
 			setTitle('');
 			setDescription('');
 			window.dispatchEvent(new CustomEvent('law-updated'));
+
 			onSaved?.();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : t('common.error'));
 		} finally {
 			setIsSaving(false);
+			if (newLaw) {
+				// TODO: Need to fix it
+				// ! Issue: Navigates to the previously created law
+				onSelectLaw?.(newLaw.id);
+				console.log(newLaw.id);
+				const queryString = generateQueryParams({ law_id: newLaw.id });
+				navigate(`/${queryString}`, { replace: true });
+				setNewLaw(null);
+			}
 		}
 	};
 
@@ -95,19 +114,23 @@ export function LawDialog({ open, onOpenChange, lawId, onSaved }: LawDialogProps
 
 				<div className="space-y-4 py-2 max-w-full">
 					<div className="space-y-2 max-w-full">
-						<Label htmlFor={idForTitle}>{t('notes.title.label')}</Label>
+						<Label htmlFor={idForTitle}>{t('laws.title.label')}</Label>
 						<Input
 							autoFocus
 							id={idForTitle}
 							onChange={(e) => setTitle(e.target.value)}
-							placeholder={t('notes.title.placeholder')}
+							placeholder={t('laws.title.placeholder')}
 							value={title}
 						/>
 					</div>
 
 					<div className="space-y-2">
-						<Label>{t('notes.description.label')}</Label>
-						<MarkdownEditor onChange={setDescription} value={description} />
+						<Label>{t('laws.description.label')}</Label>
+						<MarkdownEditor
+							onChange={setDescription}
+							placeholder={t('laws.description.placeholder')}
+							value={description}
+						/>
 					</div>
 
 					{error ? <p className="text-sm text-destructive">{error}</p> : null}

@@ -167,7 +167,7 @@ export function NotesPage() {
 							<div className="flex items-center justify-between gap-4">
 								<h1 className="text-lg font-bold text-foreground flex items-center gap-2">
 									<span>{selectedLaw.title}</span>
-									<span className="text-[10px] font-normal text-muted-foreground font-mono bg-background px-2 py-0.5 rounded border border-border shrink-0">
+									<span className="text-sm font-semibold text-primary font-mono bg-background px-2 pb-0.5 pt-1  rounded border border-border shrink-0">
 										{lang === 'bn'
 											? digitToBangla(totalNotes)
 											: String(totalNotes)}{' '}
@@ -247,6 +247,7 @@ export function NotesPage() {
 			<LawDialog
 				lawId={editingLawId}
 				onOpenChange={setIsLawDialogOpen}
+				onSelectLaw={setSelectedLawId}
 				open={isLawDialogOpen}
 			/>
 		</div>

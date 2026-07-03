@@ -1,6 +1,7 @@
 import type { $UUID } from 'locality-idb';
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import { MarkdownEditor } from '@/components/MarkdownEditor';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,11 +22,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useQueryParams } from '@/hooks/useQueryParams';
 import { lawRepository } from '@/repositories/law.repository';
 import { noteRepository } from '@/repositories/note.repository';
 import { useUIStore } from '@/stores/ui.store';
 import type { Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
+import type { Note } from '@/types/note.types';
 
 interface NoteDialogProps {
 	onSaved?: () => void;
@@ -36,11 +39,15 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 	const { t } = useTranslation();
 	const { noteDialog, closeNoteDialog } = useUIStore();
 	const [title, setTitle] = useState('');
+	const [newNote, setNewNote] = useState<Nullable<Note>>(null);
 	const [description, setDescription] = useState('');
 	const [laws, setLaws] = useState<Law[]>([]);
 	const [selectedLawId, setSelectedLawId] = useState<Nullable<$UUID>>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<Nullable<string>>(null);
+	const navigate = useNavigate();
+
+	const { getQueryParam } = useQueryParams();
 
 	const isEditing = !!noteDialog.noteId;
 
@@ -65,8 +72,13 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 			setTitle('');
 			setDescription('');
 			setSelectedLawId(defaultLawId || null);
+
+			const lawId = getQueryParam<$UUID>('law_id');
+			if (lawId) {
+				setSelectedLawId(lawId);
+			}
 		}
-	}, [noteDialog.open, noteDialog.noteId, defaultLawId]);
+	}, [noteDialog.open, noteDialog.noteId, defaultLawId, getQueryParam]);
 
 	const handleSave = async () => {
 		if (!selectedLawId) {
@@ -95,11 +107,13 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 					law_id: selectedLawId,
 				});
 			} else {
-				await noteRepository.create({
+				const note = await noteRepository.create({
 					title: title.trim(),
 					description: description.trim(),
 					law_id: selectedLawId,
 				});
+
+				setNewNote(note);
 			}
 
 			closeNoteDialog();
@@ -107,6 +121,13 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 			setDescription('');
 			setSelectedLawId(null);
 			window.dispatchEvent(new CustomEvent('note-updated'));
+
+			if (newNote) {
+				// TODO: Issue: navigates to the previously created note
+				navigate(`/note/${newNote.id}`, { replace: true });
+				setNewNote(null);
+			}
+
 			onSaved?.();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : t('common.error'));
