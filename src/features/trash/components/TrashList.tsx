@@ -8,15 +8,22 @@ import { Separator } from '@/components/ui/separator';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { useSettingsStore } from '@/stores/settings.store';
 import type { Nullable } from '@/types/common.types';
+import type { Law } from '@/types/laws.types';
 import type { Note } from '@/types/note.types';
 
-interface TrashListProps {
-	notes: Note[];
+interface TrashListProps<Data extends Law | Note> {
+	data: Data[];
+	i18nPrefix: 'notes' | 'laws';
 	onRestore: (id: $UUID) => Promise<boolean>;
 	onPermanentDelete: (id: $UUID) => Promise<boolean>;
 }
 
-export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProps) {
+export function TrashList<Data extends Law | Note>({
+	data,
+	i18nPrefix,
+	onRestore,
+	onPermanentDelete,
+}: TrashListProps<Data>) {
 	const { t } = useTranslation();
 	const [confirmId, setConfirmId] = useState<Nullable<$UUID>>(null);
 
@@ -31,17 +38,17 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 	return (
 		<Fragment>
 			<div className="grid md:grid-cols-2 gap-2">
-				{notes.map((note) => (
-					<div className="rounded-lg border border-border bg-card p-4" key={note.id}>
+				{data.map((item) => (
+					<div className="rounded-lg border border-border bg-card p-4" key={item.id}>
 						<div className="min-w-0 flex-1">
 							<h3 className="flex items-center justify-between gap-2 flex-wrap truncate line-clamp-1 text-sm font-medium text-foreground">
-								<span>{note.title || t('notes.untitled')}</span>
+								<span>{item.title || t(`notes.untitled`)}</span>
 
 								<div className="flex items-center gap-1">
 									<TooltipSimple content={t('trash.restore')}>
 										<button
 											className="rounded p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
-											onClick={() => onRestore(note.id)}
+											onClick={() => onRestore(item.id)}
 											type="button"
 										>
 											<RotateCcw className="size-5" />
@@ -51,7 +58,7 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 									<TooltipSimple content={t('trash.delete.permanent')}>
 										<button
 											className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-											onClick={() => setConfirmId(note.id)}
+											onClick={() => setConfirmId(item.id)}
 											type="button"
 										>
 											<Trash2 className="size-5" />
@@ -59,12 +66,12 @@ export function TrashList({ notes, onRestore, onPermanentDelete }: TrashListProp
 									</TooltipSimple>
 								</div>
 							</h3>
-							{note.deleted_at ? (
+							{item.deleted_at ? (
 								<p className="mt-2 text-xs text-muted-foreground font-mono">
-									{t('notes.deleted.success')}
+									{t(`${i18nPrefix}.deleted.success`)}
 									{': '}
 									<span className="font-semibold">
-										{formatDateRelativeNative(note.deleted_at, {
+										{formatDateRelativeNative(item.deleted_at, {
 											locale: language,
 										})}
 									</span>

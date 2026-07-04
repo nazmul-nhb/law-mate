@@ -9,9 +9,9 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { TrashLawList } from '@/features/trash/components/TrashLawList';
 import { TrashList } from '@/features/trash/components/TrashList';
 import { useTrash } from '@/hooks/useTrash';
+import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/stores/settings.store';
 
 export function TrashPage() {
@@ -85,9 +85,10 @@ export function TrashPage() {
 								)
 							</h2>
 							<ChevronDown
-								className={`size-4 text-muted-foreground transition-transform duration-200 ${
-									isLawsOpen ? 'rotate-180' : ''
-								}`}
+								className={cn(
+									'size-4 text-muted-foreground transition-transform duration-200',
+									{ 'rotate-180': isLawsOpen }
+								)}
 							/>
 						</CollapsibleTrigger>
 						<CollapsibleContent className="mt-2 overflow-hidden transition-all duration-200">
@@ -98,8 +99,9 @@ export function TrashPage() {
 									title={t('trash.empty')}
 								/>
 							) : (
-								<TrashLawList
-									laws={deletedLaws}
+								<TrashList
+									data={deletedLaws}
+									i18nPrefix="laws"
 									onPermanentDelete={permanentDeleteLaw}
 									onRestore={restoreLaw}
 								/>
@@ -118,9 +120,10 @@ export function TrashPage() {
 								)
 							</h2>
 							<ChevronDown
-								className={`size-4 text-muted-foreground transition-transform duration-200 ${
-									isNotesOpen ? 'rotate-180' : ''
-								}`}
+								className={cn(
+									'size-4 text-muted-foreground transition-transform duration-200',
+									{ 'rotate-180': isNotesOpen }
+								)}
 							/>
 						</CollapsibleTrigger>
 						<CollapsibleContent className="mt-2 overflow-hidden transition-all duration-200">
@@ -132,7 +135,8 @@ export function TrashPage() {
 								/>
 							) : (
 								<TrashList
-									notes={deletedNotes}
+									data={deletedNotes}
+									i18nPrefix="notes"
 									onPermanentDelete={permanentDeleteNote}
 									onRestore={restoreNote}
 								/>
