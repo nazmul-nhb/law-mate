@@ -197,12 +197,12 @@ export function useExplorerTables<Data extends Note | Law>(
 			{
 				id: 'actions',
 				header: () => (
-					<span className="text-xs font-semibold uppercase tracking-wider block text-center font-mono">
+					<span className="text-xs font-semibold uppercase tracking-wider block text-right font-mono">
 						{t('admin.table.actions')}
 					</span>
 				),
 				cell: ({ row }) => (
-					<div className="flex items-center justify-end gap-1">
+					<div className="flex items-center justify-end gap-1 text-right">
 						<Button
 							onClick={() => onView(row.original)}
 							size="icon-sm"

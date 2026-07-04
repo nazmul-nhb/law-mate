@@ -13,7 +13,6 @@ import {
 	DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
 	Select,
 	SelectContent,
@@ -30,6 +29,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { idb } from '@/database/db';
+import ExplorerDataView from '@/features/settings/components/ExplorerDataView';
 import { useExplorerTables } from '@/hooks/useExplorerTables';
 import type { Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
@@ -275,6 +275,7 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 			{/* Viewing Law Dialog */}
 			<Dialog onOpenChange={(open) => !open && setViewingLaw(null)} open={!!viewingLaw}>
 				<DialogContent className="max-w-lg sm:max-w-[96%] md:max-w-2xl max-h-[80vh] overflow-y-auto">
+					{/* <ScrollArea className="max-h-[80vh] h-full overflow-y-auto"> */}
 					<DialogHeader>
 						<DialogTitle>{viewingLaw?.title || t('notes.untitled')}</DialogTitle>
 						<DialogDescription className="font-mono text-[10px] break-all">
@@ -282,45 +283,12 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 						</DialogDescription>
 					</DialogHeader>
 
-					<div className="space-y-4 py-2 text-xs">
-						<div className="grid grid-cols-2 gap-4 border-b border-border pb-3 text-muted-foreground font-mono">
-							<div>
-								<span className="font-semibold text-foreground">User ID:</span>{' '}
-								{viewingLaw?.user_id || 'anonymous'}
-							</div>
-							<div>
-								<span className="font-semibold text-foreground">Version:</span>{' '}
-								{viewingLaw?.version}
-							</div>
-							<div>
-								<span className="font-semibold text-foreground">Created:</span>{' '}
-								{viewingLaw?.created_at}
-							</div>
-							<div>
-								<span className="font-semibold text-foreground">Updated:</span>{' '}
-								{viewingLaw?.updated_at}
-							</div>
-							{viewingLaw?.deleted_at ? (
-								<div className="col-span-2 text-rose-500 font-semibold">
-									Deleted At: {viewingLaw.deleted_at}
-								</div>
-							) : null}
-						</div>
-						<div className="space-y-2">
-							<div className="font-semibold text-foreground">
-								{t('notes.description.label')}:
-							</div>
-							<pre className="p-3 bg-muted border rounded-md whitespace-pre-wrap font-mono text-xs leading-relaxed">
-								<ScrollArea className="h-24 overflow-auto">
-									{viewingLaw?.description || t('notes.no.description')}
-								</ScrollArea>
-							</pre>
-						</div>
-					</div>
+					<ExplorerDataView data={viewingLaw} />
 
 					<DialogFooter>
 						<Button onClick={() => setViewingLaw(null)}>{t('common.close')}</Button>
 					</DialogFooter>
+					{/* </ScrollArea> */}
 				</DialogContent>
 			</Dialog>
 		</div>

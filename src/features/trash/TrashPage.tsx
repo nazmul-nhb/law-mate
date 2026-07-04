@@ -92,9 +92,11 @@ export function TrashPage() {
 						</CollapsibleTrigger>
 						<CollapsibleContent className="mt-2 overflow-hidden transition-all duration-200">
 							{deletedLaws.length === 0 ? (
-								<p className="text-xs text-muted-foreground py-4 text-center">
-									{t('trash.laws.empty')}
-								</p>
+								<EmptyState
+									description={t('trash.laws.empty')}
+									icon={Trash2}
+									title={t('trash.empty')}
+								/>
 							) : (
 								<TrashLawList
 									laws={deletedLaws}
@@ -123,9 +125,11 @@ export function TrashPage() {
 						</CollapsibleTrigger>
 						<CollapsibleContent className="mt-2 overflow-hidden transition-all duration-200">
 							{deletedNotes.length === 0 ? (
-								<p className="text-xs text-muted-foreground py-4 text-center">
-									{t('trash.notes.empty')}
-								</p>
+								<EmptyState
+									description={t('trash.notes.empty')}
+									icon={Trash2}
+									title={t('trash.empty')}
+								/>
 							) : (
 								<TrashList
 									notes={deletedNotes}

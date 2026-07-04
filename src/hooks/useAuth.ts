@@ -1,22 +1,26 @@
-import type { $UUID } from 'locality-idb';
 import { useCallback, useEffect, useState } from 'react';
 import { googleClientId } from '@/constants/env';
 import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
-import type { Nullable } from '@/types/common.types';
-import type { AppUser, Profile } from '@/types/profile.types';
+import type { AppUser } from '@/types/profile.types';
 
 let isGsiInitialized = false;
 
 export function useAuth() {
-	const { user, isLoading, initialized, signInWithGoogle, signOut } = useAuthStore();
-	const [profile, setProfile] = useState<Nullable<Profile>>(null);
+	const {
+		user,
+		profile,
+		isLoading,
+		initialized,
+		signInWithGoogle,
+		signOut,
+		setUser,
+		setProfile,
+		setIsLoading,
+		setInitialized,
+	} = useAuthStore();
 	const [isOnline, setIsOnline] = useState<boolean>(window.navigator.onLine);
-
-	const setUser = useAuthStore((s) => s.setUser);
-	const setIsLoading = useAuthStore((s) => s.setIsLoading);
-	const setInitialized = useAuthStore((s) => s.setInitialized);
 
 	useEffect(() => {
 		const handleOnline = () => setIsOnline(true);
@@ -31,44 +35,45 @@ export function useAuth() {
 		};
 	}, []);
 
-	const assureUserProfile = useCallback(async (u: AppUser) => {
-		try {
-			const { data: prof } = await supabase
-				.from('profiles')
-				.select('*')
-				.eq('id', u.id)
-				.maybeSingle();
+	const assureUserProfile = useCallback(
+		async (u: AppUser) => {
+			try {
+				const { data: prof } = await supabase
+					.from('profiles')
+					.select('*')
+					.eq('id', u.id)
+					.maybeSingle();
 
-			console.log({ prof });
+				if (prof) {
+					setProfile(prof);
+				}
 
-			if (prof) {
-				setProfile(prof as Profile);
+				// Adopt any local anonymous notes created while signed out
+				const updatedNotes = await idb
+					.update('notes')
+					.set({ user_id: u.id })
+					.where((n) => !n.user_id)
+					.run();
+
+				// Adopt any local anonymous laws created while signed out
+				const updatedLaws = await idb
+					.update('laws')
+					.set({ user_id: u.id })
+					.where((l) => !l.user_id)
+					.run();
+
+				if (updatedNotes > 0) {
+					window.dispatchEvent(new CustomEvent('note-updated'));
+				}
+				if (updatedLaws > 0) {
+					window.dispatchEvent(new CustomEvent('law-updated'));
+				}
+			} catch (err) {
+				console.error('Failed to assure user profile:', err);
 			}
-
-			// Adopt any local anonymous notes created while signed out
-			const updatedNotes = await idb
-				.update('notes')
-				.set({ user_id: u.id as $UUID })
-				.where((n) => !n.user_id)
-				.run();
-
-			// Adopt any local anonymous laws created while signed out
-			const updatedLaws = await idb
-				.update('laws')
-				.set({ user_id: u.id as $UUID })
-				.where((l) => !l.user_id)
-				.run();
-
-			if (updatedNotes > 0) {
-				window.dispatchEvent(new CustomEvent('note-updated'));
-			}
-			if (updatedLaws > 0) {
-				window.dispatchEvent(new CustomEvent('law-updated'));
-			}
-		} catch (err) {
-			console.error('Failed to assure user profile:', err);
-		}
-	}, []);
+		},
+		[setProfile]
+	);
 
 	useEffect(() => {
 		// Initial session check
@@ -94,6 +99,7 @@ export function useAuth() {
 			data: { subscription },
 		} = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
 			if (currentSession?.user) {
+				setUser(currentSession.user as AppUser);
 				await assureUserProfile(currentSession.user as AppUser);
 			} else {
 				setProfile(null);
@@ -106,7 +112,7 @@ export function useAuth() {
 		return () => {
 			subscription.unsubscribe();
 		};
-	}, [setUser, setIsLoading, setInitialized, isOnline, assureUserProfile]);
+	}, [setUser, setProfile, setIsLoading, setInitialized, isOnline, assureUserProfile]);
 
 	// Initialize Google One Tap if GIS SDK is loaded and client ID exists
 	useEffect(() => {

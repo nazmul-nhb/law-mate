@@ -1,7 +1,7 @@
 {
   "name": "law-mate",
   "private": true,
-  "version": "1.9.3",
+  "version": "1.9.4",
   "type": "module",
   "description": "LawMate - Keep Your Notes about Law Sections Organized.",
   "author": {

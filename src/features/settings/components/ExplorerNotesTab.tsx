@@ -13,7 +13,6 @@ import {
 	DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
 	Select,
 	SelectContent,
@@ -30,6 +29,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { idb } from '@/database/db';
+import ExplorerDataView from '@/features/settings/components/ExplorerDataView';
 import { useExplorerTables } from '@/hooks/useExplorerTables';
 import type { Nullable } from '@/types/common.types';
 import type { Note } from '@/types/note.types';
@@ -282,45 +282,7 @@ export function ExplorerNotesTab({ localizeNumber, setConfirmConfig }: ExplorerN
 						</DialogDescription>
 					</DialogHeader>
 
-					<div className="space-y-4 py-2 text-xs">
-						<div className="grid grid-cols-2 gap-4 border-b border-border pb-3 text-muted-foreground font-mono">
-							<div>
-								<span className="font-semibold text-foreground">User ID:</span>{' '}
-								{viewingNote?.user_id || 'anonymous'}
-							</div>
-							<div>
-								<span className="font-semibold text-foreground">Law ID:</span>{' '}
-								{viewingNote?.law_id || '-'}
-							</div>
-							<div>
-								<span className="font-semibold text-foreground">Version:</span>{' '}
-								{viewingNote?.version}
-							</div>
-							<div>
-								<span className="font-semibold text-foreground">Created:</span>{' '}
-								{viewingNote?.created_at}
-							</div>
-							<div>
-								<span className="font-semibold text-foreground">Updated:</span>{' '}
-								{viewingNote?.updated_at}
-							</div>
-							{viewingNote?.deleted_at ? (
-								<div className="col-span-2 text-rose-500 font-semibold">
-									Deleted At: {viewingNote.deleted_at}
-								</div>
-							) : null}
-						</div>
-						<div className="space-y-2">
-							<div className="font-semibold text-foreground">
-								{t('notes.description.label')}:
-							</div>
-							<pre className="p-3 bg-muted border rounded-md whitespace-pre-wrap font-mono text-xs leading-relaxed">
-								<ScrollArea className="h-24 overflow-auto">
-									{viewingNote?.description || t('notes.no.description')}
-								</ScrollArea>
-							</pre>
-						</div>
-					</div>
+					<ExplorerDataView data={viewingNote} />
 
 					<DialogFooter>
 						<Button onClick={() => setViewingNote(null)}>

@@ -78,7 +78,7 @@ export function LawSidebar({
 										onSelectLaw(law.id);
 									}}
 								>
-									<span className="text-xs truncate max-w-42.5 select-none block">
+									<span className="text-sm truncate line-clamp-1 max-w-42.5 select-none block">
 										{law.title}
 									</span>
 
@@ -99,7 +99,7 @@ export function LawSidebar({
 											}}
 											type="button"
 										>
-											<Pencil className="size-3" />
+											<Pencil className="size-4" />
 										</button>
 										<button
 											className="rounded p-0.5 hover:bg-destructive/10 text-muted-foreground hover:text-destructive cursor-pointer"
@@ -109,7 +109,7 @@ export function LawSidebar({
 											}}
 											type="button"
 										>
-											<Trash2 className="size-3" />
+											<Trash2 className="size-4" />
 										</button>
 									</div>
 								</div>

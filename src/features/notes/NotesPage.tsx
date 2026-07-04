@@ -123,6 +123,7 @@ export function NotesPage() {
 			<Sheet onOpenChange={setIsMobileLawsOpen} open={isMobileLawsOpen}>
 				<SheetContent className="w-72 p-0 h-full border-r border-border" side="left">
 					<LawSidebar
+						isMobileDevice={isMobileLawsOpen}
 						laws={laws}
 						onAddLaw={() => {
 							setIsMobileLawsOpen(false);
@@ -142,7 +143,6 @@ export function NotesPage() {
 							handleSelectLaw(id);
 							setIsMobileLawsOpen(false);
 						}}
-						isMobileDevice={isMobileLawsOpen}
 						selectedLawId={selectedLawId}
 					/>
 				</SheetContent>

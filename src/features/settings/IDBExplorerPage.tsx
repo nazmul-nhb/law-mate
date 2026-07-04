@@ -59,8 +59,8 @@ export function IDBExplorerPage() {
 
 			<Tabs
 				className="space-y-4"
-				defaultValue={activeTab || 'notes'}
-				onValueChange={(value) => setQueryParams({ tab: value })}
+				onValueChange={(value: TabType) => setQueryParams({ tab: value })}
+				value={activeTab || 'notes'}
 			>
 				<TabsList className="grid w-full grid-cols-2 max-w-md">
 					<TabsTrigger

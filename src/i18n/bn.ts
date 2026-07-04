@@ -24,7 +24,7 @@ const bn = {
 		'laws.title.placeholder': 'আইনের শিরোনাম লিখুন...',
 		'laws.description.label': 'বিবরণ',
 		'laws.description.placeholder': 'আইনের বিবরণ লিখুন...',
-		'laws.sidebar.title': 'আইনসমূহ',
+		'laws.sidebar.title': 'আইন',
 		'laws.unselected.title': 'শুরু করতে একটি আইন নির্বাচন করুন',
 		'laws.unselected.desc':
 			'আইনের ধারা ও নোট দেখতে সাইডবার থেকে একটি আইন নির্বাচন করুন, অথবা নতুন আইন তৈরি করুন।',
@@ -100,16 +100,16 @@ const bn = {
 		// Trash
 		'trash.title': 'ট্র্যাশ',
 		'trash.empty': 'ট্র্যাশ খালি',
-		'trash.empty.description': 'মুছে ফেলা নোটগুলো এখানে দেখা যাবে',
+		'trash.empty.description': 'মুছে ফেলা আইন এবং নোট এখানে দেখা যাবে',
 		'trash.restore': 'পুনরুদ্ধার করুন',
 		'trash.delete.permanent': 'স্থায়ীভাবে মুছুন',
 		'trash.restore.success': 'নোটটি পুনরুদ্ধার করা হয়েছে',
 		'trash.delete.success': 'নোটটি স্থায়ীভাবে মুছে ফেলা হয়েছে',
 		'trash.confirm.delete': 'আপনি কি নিশ্চিত? এই প্রক্রিয়াটি পুনরুদ্ধারযোগ্য নয়।',
 		'trash.confirm.soft.delete': 'আপনি কি নিশ্চিত যে এই নোটটি ট্র্যাশে পাঠাতে চান?',
-		'trash.laws.section': 'মুছে ফেলা আইনসমূহ',
+		'trash.laws.section': 'মুছে ফেলা আইন',
 		'trash.laws.empty': 'ট্র্যাশে কোনো মুছে ফেলা আইন নেই।',
-		'trash.notes.section': 'মুছে ফেলা নোটসমূহ',
+		'trash.notes.section': 'মুছে ফেলা নোট',
 		'trash.notes.empty': 'ট্র্যাশে কোনো মুছে ফেলা নোট নেই।',
 
 		// Settings
@@ -177,6 +177,7 @@ const bn = {
 		'common.table.page.label': 'পৃষ্ঠা',
 		'common.table.pagination.next.label': 'পরবর্তী পৃষ্ঠা',
 		'common.table.pagination.prev.label': 'পূর্ববর্তী পৃষ্ঠা',
+		'common.anonymous.label': 'নাম নেই',
 
 		// Footer
 		'footer.privacy': 'গোপনীয়তা নীতি',
@@ -235,7 +236,7 @@ const bn = {
 		// Not Found
 		'notfound.title': 'পাতাটি পাওয়া যায়নি',
 		'notfound.description': 'আপনি যে পাতাটি খুঁজছেন তা অস্তিত্বহীন বা সরানো হয়েছে।',
-		'notfound.back.home': 'নোটসমূহে যান',
+		'notfound.back.home': 'নোটে যান',
 		'notfound.back.prev': 'পেছনে যান',
 
 		// Error Boundary
@@ -249,8 +250,8 @@ const bn = {
 		'settings.data.title': 'ডেটা ম্যানেজমেন্ট',
 		'settings.data.export.label': 'ডেটা এক্সপোর্ট',
 		'settings.data.export.desc': 'একটি JSON ফাইলে আপনার নোট এবং মেটাডেটা ব্যাকআপ রাখুন।',
-		'settings.data.export.laws': 'আইনসমূহ এক্সপোর্ট করুন',
-		'settings.data.export.notes': 'নোটসমূহ এক্সপোর্ট করুন',
+		'settings.data.export.laws': 'আইন এক্সপোর্ট করুন',
+		'settings.data.export.notes': 'নোট এক্সপোর্ট করুন',
 		'settings.data.export.meta': 'মেটাডেটা অন্তর্ভুক্ত করুন',
 		'settings.data.export.pretty': 'প্রিটি প্রিন্ট JSON',
 		'settings.data.export.button': 'JSON ফাইলে এক্সপোর্ট',

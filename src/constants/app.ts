@@ -7,7 +7,7 @@ export const APP_VERSION = (pkg.version || '1.0.0') as LooseLiteral<'1.0.0'>;
 export const DB_NAME = 'law-mate-db';
 export const DB_VERSION = 2;
 
-export const DELETE_QUEUE_KEY = 'law-mate-pending-permanent-deletes';
+export const DELETE_QUEUE_KEY = 'law-mate-pending-permanent-notes-deletes';
 export const DELETE_LAWS_QUEUE_KEY = 'law-mate-pending-permanent-laws-deletes';
 export const TERMS_PRIVACY_LAST_MODIFIED = '2026-07-01';
 
