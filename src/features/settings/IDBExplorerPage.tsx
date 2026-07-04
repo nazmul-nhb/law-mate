@@ -1,6 +1,6 @@
 import { ArrowLeft, Database } from 'lucide-react';
 import { useTitle } from 'nhb-hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
@@ -8,12 +8,24 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ExplorerLawsTab } from '@/features/settings/components/ExplorerLawsTab';
 import { ExplorerNotesTab } from '@/features/settings/components/ExplorerNotesTab';
+import { useQueryParams } from '@/hooks/useQueryParams';
 import { useSettingsStore } from '@/stores/settings.store';
 import type { Nullable } from '@/types/common.types';
+
+type TabType = 'notes' | 'laws';
 
 export function IDBExplorerPage() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+	const { getQueryParam, setQueryParams } = useQueryParams();
+
+	const activeTab = getQueryParam<TabType>('tab');
+
+	useEffect(() => {
+		if (!activeTab) {
+			setQueryParams({ tab: 'notes' });
+		}
+	}, [activeTab, setQueryParams]);
 
 	const [confirmConfig, setConfirmConfig] =
 		useState<
@@ -45,7 +57,11 @@ export function IDBExplorerPage() {
 				</h1>
 			</div>
 
-			<Tabs className="space-y-4" defaultValue="notes">
+			<Tabs
+				className="space-y-4"
+				defaultValue={activeTab || 'notes'}
+				onValueChange={(value) => setQueryParams({ tab: value })}
+			>
 				<TabsList className="grid w-full grid-cols-2 max-w-md">
 					<TabsTrigger
 						className="font-mono text-xs uppercase tracking-wider font-semibold"
