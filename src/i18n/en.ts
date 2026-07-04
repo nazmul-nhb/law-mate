@@ -23,6 +23,7 @@ const en = {
 		'laws.description.label': 'Description',
 		'laws.description.placeholder': 'Write law description...',
 		'laws.sidebar.title': 'Laws',
+		'laws.empty': 'No laws created yet. Click the icon above to add a new law.',
 		'laws.unselected.title': 'Select a Law to Begin',
 		'laws.unselected.desc':
 			'Choose a law from the sidebar to view its sections and notes, or create a new law.',

@@ -25,6 +25,7 @@ const bn = {
 		'laws.description.label': 'বিবরণ',
 		'laws.description.placeholder': 'আইনের বিবরণ লিখুন...',
 		'laws.sidebar.title': 'আইন',
+		'laws.empty': 'এখনও কোনো আইন তৈরি হয়নি। উপরের আইকনে ক্লিক করে নতুন আইন তৈরি করুন।',
 		'laws.unselected.title': 'শুরু করতে একটি আইন নির্বাচন করুন',
 		'laws.unselected.desc':
 			'আইনের ধারা ও নোট দেখতে সাইডবার থেকে একটি আইন নির্বাচন করুন, অথবা নতুন আইন তৈরি করুন।',

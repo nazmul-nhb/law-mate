@@ -58,10 +58,7 @@ export function LawSidebar({
 				<div className="p-2 space-y-1">
 					{laws.length === 0 ? (
 						<p className="text-xs text-muted-foreground text-center py-8 px-4 leading-relaxed font-mono">
-							{t(
-								'laws.empty',
-								'No laws created yet. Click the icon above to add a new law.'
-							)}
+							{t('laws.empty')}
 						</p>
 					) : (
 						laws.map((law) => {
