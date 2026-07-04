@@ -6,19 +6,21 @@ Live URL: <https://law-mate.nazmul-nhb.dev/>
 
 ## ✨ Features
 
-- **Local-First Storage**: Read and write notes instantly offline using IndexedDB via `locality-idb`.
-- **Cloud Sync**: Automatically synchronizes local notes to Supabase when connection is available and user is authenticated.
+- **Local-First Storage**: Read and write notes instantly offline using `IndexedDB` via `locality-idb`.
+- **Cloud Sync**: Automatically synchronizes local notes to `Supabase` when connection is available and user is authenticated.
 - **Markdown Editor**: Distraction-free editing pane with dynamic live rendering previews.
+- **OCR**: Extracts text from images using `Google Vision API`.
 - **Admin Panel**: TanStack table-powered administration interface with sorting, pagination, search, and profile status management.
 - **PWA Capabilities**: Fully installable offline app support.
 - **Multi-lingual**: Complete localization support in Bengali and English.
 
 ## 🛠️ Tech Stack
 
-- **Core**: React 19, TypeScript, Vite
-- **Database**: IndexedDB ([`locality-idb`](https://github.com/nazmul-nhb/locality-idb)) + Supabase
-- **State Management**: Zustand
-- **UI Components**: Radix UI, Base UI, TailwindCSS, Lucide Icons
+- **Core**: `React 19`, `TypeScript`, `Vite`
+- **Database**: `IndexedDB` ([`locality-idb`](https://github.com/nazmul-nhb/locality-idb)) + `Supabase`
+- **OCR**: `Google Cloud Vision API`
+- **State Management**: `Zustand`
+- **UI Components**: `Base UI` (via `shadcn`), `TailwindCSS`, `Lucide Icons`
 - **i18n**: `i18next` & `react-i18next`
 
 ## 🚀 Getting Started
