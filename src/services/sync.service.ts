@@ -418,8 +418,8 @@ export const syncService = {
 				}
 			}
 
-			// window.dispatchEvent(new CustomEvent('note-updated'));
-			// window.dispatchEvent(new CustomEvent('law-updated'));
+			window.dispatchEvent(new CustomEvent('note-updated'));
+			window.dispatchEvent(new CustomEvent('law-updated'));
 
 			// Save overall last synced timestamp
 			useSettingsStore.getState().setLastSyncedAt(syncTime);
