@@ -1,7 +1,7 @@
-import type { $UUID } from 'locality-idb';
+import type { $UUID, Maybe } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
 import { getFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from 'toolbox-x/dom';
-import { DELETE_LAWS_QUEUE_KEY, DELETE_QUEUE_KEY } from '@/constants/app';
+import { DELETE_LAWS_QUEUE_KEY, DELETE_NOTES_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
 import { getTimeDiff } from '@/lib/utils';
@@ -117,7 +117,7 @@ export const syncService = {
 						id: localLaw.id,
 						user_id: user.id,
 						title: localLaw.title,
-						description: (localLaw.description ?? null) as string | undefined,
+						description: (localLaw.description ?? null) as Maybe<string>,
 						created_at: localLaw.created_at,
 						updated_at: localLaw.updated_at,
 						deleted_at: localLaw.deleted_at ?? null,
@@ -164,7 +164,7 @@ export const syncService = {
 							id: localLaw.id,
 							user_id: user.id,
 							title: localLaw.title,
-							description: (localLaw.description ?? null) as string | undefined,
+							description: (localLaw.description ?? null) as Maybe<string>,
 							created_at: localLaw.created_at,
 							updated_at: localLaw.updated_at,
 							deleted_at: localLaw.deleted_at ?? null,
@@ -233,7 +233,7 @@ export const syncService = {
 			// ==========================================
 			// 2. SYNC NOTES
 			// ==========================================
-			const pendingNotes = getFromLocalStorage<$UUID[]>(DELETE_QUEUE_KEY) || [];
+			const pendingNotes = getFromLocalStorage<$UUID[]>(DELETE_NOTES_QUEUE_KEY) || [];
 			if (pendingNotes.length > 0 && window.navigator.onLine) {
 				try {
 					const { error } = await supabase
@@ -242,14 +242,14 @@ export const syncService = {
 						.in('id', pendingNotes);
 					if (!error) {
 						const currentQueue =
-							getFromLocalStorage<$UUID[]>(DELETE_QUEUE_KEY) || [];
+							getFromLocalStorage<$UUID[]>(DELETE_NOTES_QUEUE_KEY) || [];
 						const remaining = currentQueue.filter(
 							(id) => !pendingNotes.includes(id)
 						);
 						if (remaining.length > 0) {
-							saveToLocalStorage(DELETE_QUEUE_KEY, remaining);
+							saveToLocalStorage(DELETE_NOTES_QUEUE_KEY, remaining);
 						} else {
-							removeFromLocalStorage(DELETE_QUEUE_KEY);
+							removeFromLocalStorage(DELETE_NOTES_QUEUE_KEY);
 						}
 					} else {
 						console.warn('Failed to sync pending notes permanent deletes:', error);

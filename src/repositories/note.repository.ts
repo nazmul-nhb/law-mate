@@ -1,7 +1,7 @@
 import type { $UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
 import { getFromLocalStorage, saveToLocalStorage } from 'toolbox-x/dom';
-import { DELETE_QUEUE_KEY } from '@/constants/app';
+import { DELETE_NOTES_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
 import { DatabaseError, NotFoundError, ValidationError } from '@/lib/errors';
 import { supabase } from '@/lib/supabase';
@@ -227,11 +227,11 @@ export const noteRepository = {
 				}
 
 				// Offline or error: queue for sync
-				const pending = getFromLocalStorage<$UUID[]>(DELETE_QUEUE_KEY) || [];
+				const pending = getFromLocalStorage<$UUID[]>(DELETE_NOTES_QUEUE_KEY) || [];
 
 				if (!pending.includes(id)) {
 					pending.push(id);
-					saveToLocalStorage(DELETE_QUEUE_KEY, pending);
+					saveToLocalStorage(DELETE_NOTES_QUEUE_KEY, pending);
 				}
 			}
 		} catch (error) {
