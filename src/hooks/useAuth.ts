@@ -39,6 +39,8 @@ export function useAuth() {
 				.eq('id', u.id)
 				.maybeSingle();
 
+			console.log({ prof });
+
 			if (prof) {
 				setProfile(prof as Profile);
 			}

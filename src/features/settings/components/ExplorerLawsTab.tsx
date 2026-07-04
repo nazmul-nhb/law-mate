@@ -30,7 +30,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { idb } from '@/database/db';
-import { useIDBELawsTable } from '@/hooks/useIDBELawsTable';
+import { useExplorerTables } from '@/hooks/useExplorerTables';
 import type { Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
 
@@ -70,8 +70,8 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 		fetchAllLaws();
 	}, [fetchAllLaws]);
 
-	const { table } = useIDBELawsTable({
-		laws,
+	const { table } = useExplorerTables({
+		data: laws,
 		globalFilter,
 		setGlobalFilter,
 		onView: (law) => setViewingLaw(law),

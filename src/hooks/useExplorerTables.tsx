@@ -16,24 +16,27 @@ import { useTranslation } from 'react-i18next';
 import removeMd from 'remove-markdown';
 import { Button } from '@/components/ui/button';
 import { SEARCH_KEYS } from '@/constants/app';
+import type { Law } from '@/types/laws.types';
 import type { Note } from '@/types/note.types';
 
-type IDBExplorerTableOptions = {
-	notes: Note[];
+type ExplorerTableOptions<Data extends Note | Law> = {
+	data: Data[];
 	globalFilter: string;
 	setGlobalFilter: Dispatch<SetStateAction<string>>;
-	onView: (note: Note) => void;
+	onView: (data: Data) => void;
 	onDelete: (id: $UUID) => void;
 };
 
-type IDBETable = {
-	columns: ColumnDef<Note>[];
-	table: Table<Note>;
+type IDBETable<Data extends Note | Law> = {
+	columns: ColumnDef<Data>[];
+	table: Table<Data>;
 };
 
-export function useIDBENotesTable(options: IDBExplorerTableOptions): IDBETable {
+export function useExplorerTables<Data extends Note | Law>(
+	options: ExplorerTableOptions<Data>
+): IDBETable<Data> {
 	const { t } = useTranslation();
-	const { notes, globalFilter, setGlobalFilter, onView, onDelete } = options;
+	const { data, globalFilter, setGlobalFilter, onView, onDelete } = options;
 
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
@@ -42,10 +45,10 @@ export function useIDBENotesTable(options: IDBExplorerTableOptions): IDBETable {
 	const filteredNoteIds = useMemo(() => {
 		if (!globalFilter.trim()) return null;
 
-		const index = Fuse.createIndex([...SEARCH_KEYS], notes);
+		const index = Fuse.createIndex([...SEARCH_KEYS], data);
 
 		const fuse = new Fuse(
-			notes,
+			data,
 			{
 				keys: ['title', 'description'],
 				threshold: 0.25,
@@ -55,9 +58,9 @@ export function useIDBENotesTable(options: IDBExplorerTableOptions): IDBETable {
 		);
 
 		return new Set<string>(fuse.search(globalFilter).map((r) => String(r.item.id)));
-	}, [notes, globalFilter]);
+	}, [data, globalFilter]);
 
-	const columns = useMemo<ColumnDef<Note>[]>(() => {
+	const columns = useMemo<ColumnDef<Data>[]>(() => {
 		return [
 			{
 				id: 'select',
@@ -124,7 +127,7 @@ export function useIDBENotesTable(options: IDBExplorerTableOptions): IDBETable {
 					const note = row.original;
 					return (
 						<span className="font-medium truncate line-clamp-1 max-w-50 block">
-							{removeMd(note.description) || (
+							{removeMd(note?.description ?? '') || (
 								<span className="text-muted-foreground italic">
 									{t('notes.no.description')}
 								</span>
@@ -177,19 +180,27 @@ export function useIDBENotesTable(options: IDBExplorerTableOptions): IDBETable {
 			},
 			{
 				accessorKey: 'version',
-				header: () => (
-					<span className="text-xs font-semibold uppercase tracking-wider block text-center font-mono">
+				header: ({ column }) => (
+					<button
+						className="flex items-center gap-1 hover:text-foreground cursor-pointer text-xs font-semibold uppercase tracking-wider font-mono"
+						onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+						type="button"
+					>
 						{t('settings.data.explore.col.version')}
-					</span>
+						<ArrowUpDown className="ml-1 size-3.5" />
+					</button>
 				),
 				cell: ({ row }) => (
-					<span className="text-center text-xs font-mono block">
-						{row.original.version}
-					</span>
+					<span className="font-mono text-xs">{row.original.version}</span>
 				),
 			},
 			{
 				id: 'actions',
+				header: () => (
+					<span className="text-xs font-semibold uppercase tracking-wider block text-center font-mono">
+						{t('admin.table.actions')}
+					</span>
+				),
 				cell: ({ row }) => (
 					<div className="flex items-center justify-end gap-1">
 						<Button
@@ -214,7 +225,7 @@ export function useIDBENotesTable(options: IDBExplorerTableOptions): IDBETable {
 	}, [t, onView, onDelete]);
 
 	const table = useReactTable({
-		data: notes,
+		data,
 		columns,
 		state: {
 			sorting,

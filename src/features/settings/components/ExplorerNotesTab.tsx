@@ -30,7 +30,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { idb } from '@/database/db';
-import { useIDBENotesTable } from '@/hooks/useIDBENotesTable';
+import { useExplorerTables } from '@/hooks/useExplorerTables';
 import type { Nullable } from '@/types/common.types';
 import type { Note } from '@/types/note.types';
 
@@ -70,8 +70,8 @@ export function ExplorerNotesTab({ localizeNumber, setConfirmConfig }: ExplorerN
 		fetchAllNotes();
 	}, [fetchAllNotes]);
 
-	const { table } = useIDBENotesTable({
-		notes,
+	const { table } = useExplorerTables({
+		data: notes,
 		globalFilter,
 		setGlobalFilter,
 		onView: (note) => setViewingNote(note),
