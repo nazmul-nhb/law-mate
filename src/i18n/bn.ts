@@ -71,6 +71,22 @@ const bn = {
 		'editor.list': 'তালিকা',
 		'editor.ordered.list': 'ক্রমিক তালিকা',
 		'editor.quote': 'উদ্ধৃতি',
+		'editor.ocr.scan': 'ছবি থেকে লেখা স্ক্যান করুন (OCR)',
+		'editor.ocr.scanning': 'লেখা স্ক্যান হচ্ছে...',
+		'editor.ocr.dialog.title': 'স্ক্যান করা লেখা সমুহ',
+		'editor.ocr.dialog.desc':
+			'স্ক্যান করা লেখাটি যাচাই করে এডিটরে কীভাবে যোগ করতে চান তা নির্বাচন করুন:',
+		'editor.ocr.mode.replace': 'সম্পূর্ণ লেখা পরিবর্তন করুন',
+		'editor.ocr.mode.append': 'শেষে যুক্ত করুন',
+		'editor.ocr.mode.prepend': 'শুরুতে যুক্ত করুন',
+		'editor.ocr.dropzone': 'লেখা বের করতে ছবি এখানে ড্রপ করুন',
+		'editor.ocr.error.missing_key':
+			'গুগল ভিশন এপিআই কি পাওয়া যায়নি। আপনার পরিবেশে VITE_GOOGLE_VISION_API_KEY দিন।',
+		'editor.ocr.error.invalid_type':
+			'অনুগ্রহ করে সঠিক ছবি ফাইল (PNG, JPG, WEBP, GIF) নির্বাচন করুন।',
+		'editor.ocr.error.too_large': 'ছবি ফাইলটি অনেক বড় (সর্বোচ্চ ১০MB)।',
+		'editor.ocr.error.no_text': 'ছবিতে পড়ার মতো কোনো লেখা পাওয়া যায়নি।',
+		'editor.ocr.error.failed': 'ছবি থেকে টেক্সট বের করতে ব্যর্থ হয়েছে।',
 
 		// Search
 		'search.placeholder': 'নোট খুঁজুন...',

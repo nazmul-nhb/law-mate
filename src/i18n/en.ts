@@ -68,6 +68,22 @@ const en = {
 		'editor.list': 'List',
 		'editor.ordered.list': 'Ordered List',
 		'editor.quote': 'Quote',
+		'editor.ocr.scan': 'Scan text from image (OCR)',
+		'editor.ocr.scanning': 'Scanning text...',
+		'editor.ocr.dialog.title': 'Extracted Text Preview',
+		'editor.ocr.dialog.desc':
+			'Review the extracted text and choose how to insert it into your editor content:',
+		'editor.ocr.mode.replace': 'Replace All',
+		'editor.ocr.mode.append': 'Append at End',
+		'editor.ocr.mode.prepend': 'Prepend at Start',
+		'editor.ocr.dropzone': 'Drop image here to extract text',
+		'editor.ocr.error.missing_key':
+			'Google Vision API key is missing. Please configure VITE_GOOGLE_VISION_API_KEY in your environment.',
+		'editor.ocr.error.invalid_type':
+			'Please select a valid image file (PNG, JPG, WEBP, GIF).',
+		'editor.ocr.error.too_large': 'Image file is too large (maximum 10MB).',
+		'editor.ocr.error.no_text': 'No readable text was detected in the image.',
+		'editor.ocr.error.failed': 'Failed to extract text from image.',
 
 		// Search
 		'search.placeholder': 'Search notes...',
