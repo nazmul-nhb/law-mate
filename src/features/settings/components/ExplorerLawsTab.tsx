@@ -28,6 +28,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { idb } from '@/database/db';
 import ExplorerDataView from '@/features/settings/components/ExplorerDataView';
 import { useExplorerTables } from '@/hooks/useExplorerTables';
@@ -85,7 +86,7 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 							.delete('laws')
 							.where('id', id as $UUID)
 							.run();
-						window.dispatchEvent(new CustomEvent('law-updated'));
+						window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
 						await fetchAllLaws();
 					} catch (err) {
 						console.error('Failed to delete law:', err);
@@ -101,7 +102,7 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 		try {
 			const ids = selectedRows.map((r) => r.original.id);
 			await Promise.all(ids.map((id) => idb.delete('laws').where('id', id).run()));
-			window.dispatchEvent(new CustomEvent('law-updated'));
+			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
 			await fetchAllLaws();
 			table.resetRowSelection();
 		} catch (err) {
@@ -112,7 +113,7 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 	const handleClearAll = async () => {
 		try {
 			await idb.delete('laws').run();
-			window.dispatchEvent(new CustomEvent('law-updated'));
+			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
 			await fetchAllLaws();
 			table.resetRowSelection();
 		} catch (err) {

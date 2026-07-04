@@ -28,6 +28,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { idb } from '@/database/db';
 import ExplorerDataView from '@/features/settings/components/ExplorerDataView';
 import { useExplorerTables } from '@/hooks/useExplorerTables';
@@ -85,7 +86,7 @@ export function ExplorerNotesTab({ localizeNumber, setConfirmConfig }: ExplorerN
 							.delete('notes')
 							.where('id', id as $UUID)
 							.run();
-						window.dispatchEvent(new CustomEvent('note-updated'));
+						window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
 						await fetchAllNotes();
 					} catch (err) {
 						console.error('Failed to delete note:', err);
@@ -101,7 +102,7 @@ export function ExplorerNotesTab({ localizeNumber, setConfirmConfig }: ExplorerN
 		try {
 			const ids = selectedRows.map((r) => r.original.id);
 			await Promise.all(ids.map((id) => idb.delete('notes').where('id', id).run()));
-			window.dispatchEvent(new CustomEvent('note-updated'));
+			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
 			await fetchAllNotes();
 			table.resetRowSelection();
 		} catch (err) {
@@ -112,7 +113,7 @@ export function ExplorerNotesTab({ localizeNumber, setConfirmConfig }: ExplorerN
 	const handleClearAll = async () => {
 		try {
 			await idb.delete('notes').run();
-			window.dispatchEvent(new CustomEvent('note-updated'));
+			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
 			await fetchAllNotes();
 			table.resetRowSelection();
 		} catch (err) {

@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { googleClientId } from '@/constants/env';
 import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
+import { syncService } from '@/services/sync.service';
 import { useAuthStore } from '@/stores/auth.store';
 import type { AppUser } from '@/types/profile.types';
 
@@ -63,10 +65,10 @@ export function useAuth() {
 					.run();
 
 				if (updatedNotes > 0) {
-					window.dispatchEvent(new CustomEvent('note-updated'));
+					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
 				}
 				if (updatedLaws > 0) {
-					window.dispatchEvent(new CustomEvent('law-updated'));
+					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
 				}
 			} catch (err) {
 				console.error('Failed to assure user profile:', err);
@@ -80,8 +82,12 @@ export function useAuth() {
 		if (isOnline) {
 			supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
 				if (initialSession?.user) {
-					setUser(initialSession.user as AppUser);
-					await assureUserProfile(initialSession.user as AppUser);
+					const appUser = initialSession.user as AppUser;
+					setUser(appUser);
+					await assureUserProfile(appUser);
+					await syncService.sync();
+					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
+					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
 				} else {
 					setProfile(null);
 					setUser(null);
@@ -97,10 +103,16 @@ export function useAuth() {
 		// Listen for auth changes
 		const {
 			data: { subscription },
-		} = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
+		} = supabase.auth.onAuthStateChange(async (event, currentSession) => {
 			if (currentSession?.user) {
-				setUser(currentSession.user as AppUser);
-				await assureUserProfile(currentSession.user as AppUser);
+				const appUser = currentSession.user as AppUser;
+				setUser(appUser);
+				await assureUserProfile(appUser);
+				if (event === 'SIGNED_IN') {
+					await syncService.sync();
+					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
+					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
+				}
 			} else {
 				setProfile(null);
 				setUser(null);

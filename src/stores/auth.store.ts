@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { supabase } from '@/lib/supabase';
 import type { Nullable } from '@/types/common.types';
 import type { AppUser, Profile } from '@/types/profile.types';
@@ -54,6 +55,7 @@ export const useAuthStore = create<AuthState>()(
 							},
 						},
 					});
+
 					if (error) throw error;
 				} catch (error) {
 					console.error('Failed to sign in with Google OAuth:', error);
@@ -66,8 +68,13 @@ export const useAuthStore = create<AuthState>()(
 				set({ isLoading: true });
 				try {
 					const { error } = await supabase.auth.signOut();
+
 					set({ user: null, profile: null });
+
 					if (error) throw error;
+
+					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
+					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
 				} catch (error) {
 					console.error('Failed to sign out:', error);
 				} finally {

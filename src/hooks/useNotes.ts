@@ -1,5 +1,6 @@
 import type { $UUID } from 'locality-idb';
 import { useCallback, useEffect, useState } from 'react';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { useAuth } from '@/hooks/useAuth';
 import { noteRepository } from '@/repositories/note.repository';
 import { syncService } from '@/services/sync.service';
@@ -37,9 +38,9 @@ export function useNotes(): UseNotesReturn {
 
 	useEffect(() => {
 		refresh();
-		window.addEventListener('note-updated', refresh);
+		window.addEventListener(CUSTOM_EVENTS.NOTES_UPDATED, refresh);
 		return () => {
-			window.removeEventListener('note-updated', refresh);
+			window.removeEventListener(CUSTOM_EVENTS.NOTES_UPDATED, refresh);
 		};
 	}, [refresh]);
 

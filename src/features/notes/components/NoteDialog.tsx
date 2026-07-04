@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { useQueryParams } from '@/hooks/useQueryParams';
 import { lawRepository } from '@/repositories/law.repository';
 import { noteRepository } from '@/repositories/note.repository';
@@ -119,7 +120,7 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 			setTitle('');
 			setDescription('');
 			setSelectedLawId(null);
-			window.dispatchEvent(new CustomEvent('note-updated'));
+			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
 
 			if (createdNote) {
 				navigate(`/note/${createdNote.id}`, { replace: true });

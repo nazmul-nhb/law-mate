@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { lawRepository } from '@/repositories/law.repository';
 import type { Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
@@ -76,7 +77,7 @@ export function LawDialog({ open, onOpenChange, lawId, onSelectLaw, onSaved }: L
 			onOpenChange(false);
 			setTitle('');
 			setDescription('');
-			window.dispatchEvent(new CustomEvent('law-updated'));
+			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
 
 			if (createdLaw) {
 				onSelectLaw?.(createdLaw.id);

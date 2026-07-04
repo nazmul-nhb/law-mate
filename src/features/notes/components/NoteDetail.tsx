@@ -8,6 +8,7 @@ import { formatDateRelativeNative } from 'toolbox-x/date';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { noteRepository } from '@/repositories/note.repository';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useUIStore } from '@/stores/ui.store';
@@ -45,8 +46,8 @@ export function NoteDetail() {
 		const handleUpdated = () => {
 			fetchNote();
 		};
-		window.addEventListener('note-updated', handleUpdated);
-		return () => window.removeEventListener('note-updated', handleUpdated);
+		window.addEventListener(CUSTOM_EVENTS.NOTES_UPDATED, handleUpdated);
+		return () => window.removeEventListener(CUSTOM_EVENTS.NOTES_UPDATED, handleUpdated);
 	}, [fetchNote]);
 
 	useTitle(note?.title || t('app.tagline'));
@@ -60,7 +61,7 @@ export function NoteDetail() {
 		if (!note) return;
 		try {
 			await noteRepository.softDelete(note.id);
-			window.dispatchEvent(new CustomEvent('note-updated'));
+			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
 			navigate(-1);
 		} catch (error) {
 			console.error('Failed to delete note:', error);

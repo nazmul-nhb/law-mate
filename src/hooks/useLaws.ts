@@ -1,5 +1,6 @@
 import type { $UUID } from 'locality-idb';
 import { useCallback, useEffect, useState } from 'react';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { useAuth } from '@/hooks/useAuth';
 import { lawRepository } from '@/repositories/law.repository';
 import { syncService } from '@/services/sync.service';
@@ -37,9 +38,9 @@ export function useLaws(): UseLawsReturn {
 
 	useEffect(() => {
 		refresh();
-		window.addEventListener('law-updated', refresh);
+		window.addEventListener(CUSTOM_EVENTS.LAWS_UPDATED, refresh);
 		return () => {
-			window.removeEventListener('law-updated', refresh);
+			window.removeEventListener(CUSTOM_EVENTS.LAWS_UPDATED, refresh);
 		};
 	}, [refresh]);
 

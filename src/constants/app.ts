@@ -17,6 +17,11 @@ export const SUPPORTED_LANGUAGES = ['bn', 'en'] as const;
 export const THEME_OPTIONS = ['light', 'dark', 'system'] as const;
 export const DEFAULT_THEME = 'system';
 
+export const CUSTOM_EVENTS = {
+	LAWS_UPDATED: 'law-updated',
+	NOTES_UPDATED: 'note-updated',
+} as const;
+
 export const SEARCH_KEYS = ['title', 'description'] as const;
 export const SEARCH_THRESHOLD = 0.3;
 export const SEARCH_RESULT_LIMIT = 20;

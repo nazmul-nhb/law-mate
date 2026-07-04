@@ -22,6 +22,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { idb } from '@/database/db';
 import { SampleDataLayout } from '@/features/settings/components/SampleDataLayout';
 import { cn } from '@/lib/utils';
@@ -155,8 +156,8 @@ export function ImportSetting() {
 			await idb.$import(importedData as ExportData<IDBTableNames, LawMateSchema>, {
 				mode: importMode,
 			});
-			window.dispatchEvent(new CustomEvent('note-updated'));
-			window.dispatchEvent(new CustomEvent('law-updated'));
+			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
+			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
 			setSuccess(true);
 			setPreview(null);
 			setImportedData(null);

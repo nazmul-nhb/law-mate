@@ -1,5 +1,6 @@
 import type { $UUID } from 'locality-idb';
 import { useCallback, useEffect, useState } from 'react';
+import { CUSTOM_EVENTS } from '@/constants/app';
 import { useAuth } from '@/hooks/useAuth';
 import { lawRepository } from '@/repositories/law.repository';
 import { noteRepository } from '@/repositories/note.repository';
@@ -46,11 +47,11 @@ export function useTrash(): UseTrashReturn {
 
 	useEffect(() => {
 		refresh();
-		window.addEventListener('note-updated', refresh);
-		window.addEventListener('law-updated', refresh);
+		window.addEventListener(CUSTOM_EVENTS.NOTES_UPDATED, refresh);
+		window.addEventListener(CUSTOM_EVENTS.LAWS_UPDATED, refresh);
 		return () => {
-			window.removeEventListener('note-updated', refresh);
-			window.removeEventListener('law-updated', refresh);
+			window.removeEventListener(CUSTOM_EVENTS.NOTES_UPDATED, refresh);
+			window.removeEventListener(CUSTOM_EVENTS.LAWS_UPDATED, refresh);
 		};
 	}, [refresh]);
 
