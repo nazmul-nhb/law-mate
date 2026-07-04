@@ -2,7 +2,7 @@ import type { ExportData, ExportedTableData, ImportOptions } from 'locality-idb'
 import { AlertCircle, CheckCircle2, Info, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { parseJSON } from 'toolbox-x';
+import { digitToBangla, parseJSON } from 'toolbox-x';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -24,6 +24,8 @@ import {
 } from '@/components/ui/select';
 import { idb } from '@/database/db';
 import { SampleDataLayout } from '@/features/settings/components/SampleDataLayout';
+import { cn } from '@/lib/utils';
+import { useSettingsStore } from '@/stores/settings.store';
 import type { IDBTableNames, LawMateSchema, Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
 import type { Note } from '@/types/note.types';
@@ -33,23 +35,21 @@ type ImportableData =
 	| ExportData<IDBTableNames, LawMateSchema>
 	| ExportedTableData<IDBTableNames, LawMateSchema>;
 
-type TablePreview = {
-	insert: number;
-	update: number;
-	skip: number;
-	delete: number;
-};
+const PREVIEW_STATES = ['insert', 'update', 'skip', 'delete'] as const;
+type PreviewState = (typeof PREVIEW_STATES)[number];
+
+type PreviewRecord = Record<PreviewState, number>;
 
 type Preview = {
-	laws: TablePreview;
-	notes: TablePreview;
+	laws: PreviewRecord;
+	notes: PreviewRecord;
 };
 
-function extractNotesFromJSON(data: ImportableData): Partial<Note>[] {
+function extractNotesFromJSON(data: ImportableData): Note[] {
 	return 'data' in data ? data.data?.notes || [] : data?.notes || [];
 }
 
-function extractLawsFromJSON(data: ImportableData): Partial<Law>[] {
+function extractLawsFromJSON(data: ImportableData): Law[] {
 	return 'data' in data ? data.data?.laws || [] : data?.laws || [];
 }
 
@@ -65,18 +65,18 @@ export function ImportSetting() {
 	const [preview, setPreview] = useState<Nullable<Preview>>(null);
 
 	const generatePreview = async (
-		importedLaws: Partial<Law>[],
-		importedNotes: Partial<Note>[],
+		importedLaws: Law[],
+		importedNotes: Note[],
 		mode: ImportMode
 	) => {
 		const currentLaws = await idb.from('laws').findAll();
 		const currentNotes = await idb.from('notes').findAll();
 
-		const currentLawIds = new Set<string>(currentLaws.map((l) => l.id));
-		const currentNoteIds = new Set<string>(currentNotes.map((n) => n.id));
+		const currentLawIds = new Set(currentLaws.map((l) => l.id));
+		const currentNoteIds = new Set(currentNotes.map((n) => n.id));
 
-		const lawsPreview: TablePreview = { insert: 0, update: 0, skip: 0, delete: 0 };
-		const notesPreview: TablePreview = { insert: 0, update: 0, skip: 0, delete: 0 };
+		const lawsPreview: PreviewRecord = { insert: 0, update: 0, skip: 0, delete: 0 };
+		const notesPreview: PreviewRecord = { insert: 0, update: 0, skip: 0, delete: 0 };
 
 		if (mode === 'replace') {
 			lawsPreview.insert = importedLaws.length;
@@ -296,64 +296,38 @@ export function ImportSetting() {
 					{preview ? (
 						<div className="space-y-4 py-2 text-xs font-mono">
 							<div>
-								<h4 className="font-semibold text-foreground mb-1 uppercase text-[10px] tracking-wider">
+								<h4 className="font-semibold text-foreground mb-1 uppercase text-sm tracking-wider">
 									{t('laws.sidebar.title')}
 								</h4>
-								<div className="grid grid-cols-4 gap-2">
-									<div className="rounded border p-1 text-center bg-muted/20">
-										<p className="text-[10px] text-muted-foreground">
-											+{preview.laws.insert}
-										</p>
-									</div>
-									<div className="rounded border p-1 text-center bg-muted/20">
-										<p className="text-[10px] text-muted-foreground">
-											~{preview.laws.update}
-										</p>
-									</div>
-									<div className="rounded border p-1 text-center bg-muted/20">
-										<p className="text-[10px] text-muted-foreground">
-											{preview.laws.skip}
-										</p>
-									</div>
-									<div className="rounded border p-1 text-center bg-muted/20">
-										<p className="text-[10px] text-muted-foreground">
-											-{preview.laws.delete}
-										</p>
-									</div>
+								<div className="grid grid-cols-2 gap-2">
+									{PREVIEW_STATES.map((state) => (
+										<DataPreview
+											key={state}
+											preview={preview.laws}
+											state={state}
+										/>
+									))}
 								</div>
 							</div>
 
 							<div>
-								<h4 className="font-semibold text-foreground mb-1 uppercase text-[10px] tracking-wider">
+								<h4 className="font-semibold text-foreground mb-1 uppercase text-sm tracking-wider">
 									{t('nav.notes')}
 								</h4>
-								<div className="grid grid-cols-4 gap-2">
-									<div className="rounded border p-1 text-center bg-muted/20">
-										<p className="text-[10px] text-muted-foreground">
-											+{preview.notes.insert}
-										</p>
-									</div>
-									<div className="rounded border p-1 text-center bg-muted/20">
-										<p className="text-[10px] text-muted-foreground">
-											~{preview.notes.update}
-										</p>
-									</div>
-									<div className="rounded border p-1 text-center bg-muted/20">
-										<p className="text-[10px] text-muted-foreground">
-											{preview.notes.skip}
-										</p>
-									</div>
-									<div className="rounded border p-1 text-center bg-muted/20">
-										<p className="text-[10px] text-muted-foreground">
-											-{preview.notes.delete}
-										</p>
-									</div>
+								<div className="grid grid-cols-2 gap-2">
+									{PREVIEW_STATES.map((state) => (
+										<DataPreview
+											key={state}
+											preview={preview.notes}
+											state={state}
+										/>
+									))}
 								</div>
 							</div>
 						</div>
 					) : null}
 
-					<DialogFooter className="gap-2 sm:gap-0">
+					<DialogFooter className="gap-2 sm:gap-3">
 						<Button onClick={() => setPreview(null)} variant="outline">
 							{t('notes.cancel')}
 						</Button>
@@ -363,6 +337,38 @@ export function ImportSetting() {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+		</div>
+	);
+}
+
+type PreviewProps = {
+	preview: PreviewRecord;
+	state: PreviewState;
+};
+
+function DataPreview({ preview, state }: PreviewProps) {
+	const lang = useSettingsStore((s) => s.language);
+
+	const prefixes: Record<PreviewState, string> = {
+		insert: '+',
+		update: '~',
+		skip: '^',
+		delete: '-',
+	};
+
+	const bg: Record<PreviewState, string> = {
+		insert: 'bg-emerald-500/20',
+		update: 'bg-blue-500/20',
+		skip: 'bg-muted/20',
+		delete: 'bg-destructive/20',
+	};
+
+	return (
+		<div className={cn(`rounded border p-1 text-center`, bg[state])}>
+			<p className="text-sm text-muted-foreground">
+				{prefixes[state]}
+				{lang === 'bn' ? digitToBangla(preview[state]) : preview[state]}
+			</p>
 		</div>
 	);
 }

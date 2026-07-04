@@ -64,7 +64,7 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
 				</CardHeader>
 				{isNonEmptyString(note.description) && (
 					<CardContent className="">
-						<div className="line-clamp-2 text-xs text-muted-foreground">
+						<div className="line-clamp-2 text-sm text-muted-foreground">
 							{removeMd(note.description)}
 						</div>
 					</CardContent>
