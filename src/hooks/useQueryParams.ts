@@ -6,7 +6,7 @@ import type { QueryObject } from 'toolbox-x/types/object';
 import type { LooseLiteral } from 'toolbox-x/types/utils';
 
 export interface LawMateQueryObject extends QueryObject {
-	law_id?: $UUID;
+	law_id?: Nullable<$UUID>;
 	tab?: LooseLiteral<'notes' | 'laws'>;
 }
 

@@ -36,7 +36,7 @@ export default function Header() {
 		<header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-sm">
 			<div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
 				{/* Left: mobile menu + logo */}
-				<div className="flex items-center gap-3">
+				<div className="flex items-center gap-1.5 sm:gap-3">
 					{/* Mobile hamburger */}
 					<Sheet>
 						<SheetTrigger
@@ -78,7 +78,7 @@ export default function Header() {
 					>
 						<img
 							alt="LawMate Logo"
-							className="size-6 object-contain"
+							className="size-7.5 sm:size-6 object-contain"
 							src="/law-mate.png"
 						/>
 						<span className="sm:inline hidden">{t('app.name')}</span>

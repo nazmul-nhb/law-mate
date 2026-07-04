@@ -1,7 +1,7 @@
 import type { $UUID } from 'locality-idb';
 import { BookOpen, FolderPlus, Menu, Plus } from 'lucide-react';
 import { useTitle } from 'nhb-hooks';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { digitToBangla } from 'toolbox-x';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
@@ -14,6 +14,7 @@ import { NoteDialog } from '@/features/notes/components/NoteDialog';
 import { NoteList } from '@/features/notes/components/NoteList';
 import { useLaws } from '@/hooks/useLaws';
 import { useNotes } from '@/hooks/useNotes';
+import { useQueryParams } from '@/hooks/useQueryParams';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useUIStore } from '@/stores/ui.store';
 import type { Nullable } from '@/types/common.types';
@@ -29,8 +30,8 @@ export function NotesPage() {
 	} = useNotes();
 	const { laws, isLoading: isLawsLoading, error: lawsError, deleteLaw } = useLaws();
 	const openNoteDialog = useUIStore((s) => s.openNoteDialog);
+	const { getQueryParam, setQueryParams } = useQueryParams();
 
-	const [selectedLawId, setSelectedLawId] = useState<Nullable<$UUID>>(null);
 	const [deleteConfirmId, setDeleteConfirmId] = useState<Nullable<$UUID>>(null);
 	const [lawDeleteConfirmId, setLawDeleteConfirmId] = useState<Nullable<$UUID>>(null);
 	const [isLawDialogOpen, setIsLawDialogOpen] = useState(false);
@@ -40,12 +41,23 @@ export function NotesPage() {
 	const lang = useSettingsStore((s) => s.language);
 	useTitle(t('app.tagline'), { position: 'after' });
 
-	// Auto-select first law if none selected and laws exist
+	const urlLawId = getQueryParam<$UUID>('law_id');
+	const selectedLawId: Nullable<$UUID> =
+		urlLawId && laws.some((l) => l.id === urlLawId) ? urlLawId : (laws[0]?.id ?? null);
+
+	const handleSelectLaw = useCallback(
+		(id: Nullable<$UUID>) => {
+			setQueryParams({ law_id: id });
+		},
+		[setQueryParams]
+	);
+
+	// Ensure default law ID is reflected in URL if missing
 	useEffect(() => {
-		if (laws.length > 0 && !selectedLawId) {
-			setSelectedLawId(laws[0].id);
+		if (laws.length > 0 && !urlLawId) {
+			setQueryParams({ law_id: laws[0].id });
 		}
-	}, [laws, selectedLawId]);
+	}, [laws, urlLawId, setQueryParams]);
 
 	const handleConfirmDeleteNote = async () => {
 		if (deleteConfirmId) {
@@ -58,7 +70,8 @@ export function NotesPage() {
 		if (lawDeleteConfirmId) {
 			await deleteLaw(lawDeleteConfirmId);
 			if (selectedLawId === lawDeleteConfirmId) {
-				setSelectedLawId(laws.find((l) => l.id !== lawDeleteConfirmId)?.id || null);
+				const nextLawId = laws.find((l) => l.id !== lawDeleteConfirmId)?.id || null;
+				handleSelectLaw(nextLawId);
 			}
 			setLawDeleteConfirmId(null);
 			refreshNotes();
@@ -89,7 +102,7 @@ export function NotesPage() {
 	return (
 		<div className="flex h-[calc(100vh-100px)] border border-border rounded-lg overflow-hidden bg-background">
 			{/* Desktop Left Sidebar */}
-			<div className="hidden md:block h-full shrink-0">
+			<div className="hidden md:block h-full shrink-0 w-64">
 				<LawSidebar
 					laws={laws}
 					onAddLaw={() => {
@@ -101,7 +114,7 @@ export function NotesPage() {
 						setEditingLawId(id);
 						setIsLawDialogOpen(true);
 					}}
-					onSelectLaw={setSelectedLawId}
+					onSelectLaw={handleSelectLaw}
 					selectedLawId={selectedLawId}
 				/>
 			</div>
@@ -126,18 +139,19 @@ export function NotesPage() {
 							setIsLawDialogOpen(true);
 						}}
 						onSelectLaw={(id) => {
-							setSelectedLawId(id);
+							handleSelectLaw(id);
 							setIsMobileLawsOpen(false);
 						}}
+						isMobileDevice={isMobileLawsOpen}
 						selectedLawId={selectedLawId}
 					/>
 				</SheetContent>
 			</Sheet>
 
 			{/* Main Notes Area */}
-			<div className="flex-1 flex flex-col h-full bg-background overflow-hidden p-6">
+			<div className="flex-1 flex flex-col h-full bg-background overflow-hidden p-4">
 				{/* Mobile Header bar */}
-				<div className="flex items-center justify-between md:hidden mb-4 shrink-0 border-b border-border pb-3">
+				<div className="flex items-center justify-between flex-wrap md:hidden mb-4 shrink-0 border-b border-border pb-3">
 					<button
 						className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer"
 						onClick={() => setIsMobileLawsOpen(true)}
@@ -164,12 +178,12 @@ export function NotesPage() {
 					<div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
 						{/* Law Detail summary Card */}
 						<div className="mb-6 space-y-3 bg-muted/20 border border-border p-4 rounded-lg shrink-0">
-							<div className="flex items-center justify-between gap-4">
-								<h1 className="text-lg font-bold text-foreground flex items-center gap-2">
+							<div className="flex items-center justify-between flex-wrap gap-4">
+								<h1 className="text-lg font-bold text-foreground flex items-center flex-wrap gap-2">
 									<span>{selectedLaw.title}</span>
 									<span className="text-sm font-semibold text-primary font-mono bg-background px-2 pb-0.5 pt-1  rounded border border-border shrink-0">
 										{lang === 'bn'
-											? digitToBangla(totalNotes)
+											? digitToBangla(totalNotes).concat(' টি')
 											: String(totalNotes)}{' '}
 										{t('notes.title')}
 									</span>
@@ -247,7 +261,12 @@ export function NotesPage() {
 			<LawDialog
 				lawId={editingLawId}
 				onOpenChange={setIsLawDialogOpen}
-				onSelectLaw={setSelectedLawId}
+				onSelectLaw={(id) => {
+					handleSelectLaw(id);
+					if (isMobileLawsOpen) {
+						setIsMobileLawsOpen(false);
+					}
+				}}
 				open={isLawDialogOpen}
 			/>
 		</div>

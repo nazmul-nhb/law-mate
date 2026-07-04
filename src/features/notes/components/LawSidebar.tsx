@@ -1,10 +1,9 @@
 import type { $UUID } from 'locality-idb';
 import { FolderPlus, Pencil, Trash2 } from 'lucide-react';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
-import { useQueryParams } from '@/hooks/useQueryParams';
+import { cn } from '@/lib/utils';
 import type { Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
 
@@ -15,6 +14,8 @@ interface LawSidebarProps {
 	onAddLaw: () => void;
 	onEditLaw: (id: $UUID) => void;
 	onDeleteLaw: (id: $UUID) => void;
+	isMobileDevice?: boolean;
+	className?: string;
 }
 
 export function LawSidebar({
@@ -24,29 +25,20 @@ export function LawSidebar({
 	onAddLaw,
 	onEditLaw,
 	onDeleteLaw,
+	isMobileDevice = false,
+	className,
 }: LawSidebarProps) {
 	const { t } = useTranslation();
 
-	const { getQueryParam, setQueryParams } = useQueryParams();
-
-	useEffect(() => {
-		if (selectedLawId) {
-			setQueryParams({ law_id: selectedLawId });
-		}
-	}, [selectedLawId, setQueryParams]);
-
-	useEffect(() => {
-		const lawId = getQueryParam<$UUID>('law_id');
-
-		if (lawId) {
-			onSelectLaw(lawId);
-		}
-	}, [getQueryParam, onSelectLaw]);
-
 	return (
-		<div className="flex flex-col h-full bg-card/45 border-r border-border min-w-64 max-w-64">
+		<div
+			className={cn(
+				'flex flex-col h-full bg-card/45 border-r border-border w-full',
+				className
+			)}
+		>
 			{/* Sidebar Header */}
-			<div className="p-4 border-b border-border flex items-center justify-between shrink-0">
+			<div className="p-4 border-b border-border flex items-center justify-between shrink-0 pr-12 md:pr-4">
 				<h2 className="text-xs font-semibold text-foreground uppercase tracking-wider font-mono">
 					{t('laws.sidebar.title')}
 				</h2>
@@ -84,7 +76,6 @@ export function LawSidebar({
 									key={law.id}
 									onClick={() => {
 										onSelectLaw(law.id);
-										setQueryParams({ law_id: law.id });
 									}}
 								>
 									<span className="text-xs truncate max-w-42.5 select-none block">
@@ -92,7 +83,14 @@ export function LawSidebar({
 									</span>
 
 									{/* Action buttons (only show on hover or when active) */}
-									<div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity shrink-0 bg-transparent pl-2">
+									<div
+										className={cn(
+											'flex items-center gap-1 transition-opacity shrink-0 bg-transparent pl-2',
+											isMobileDevice
+												? 'opacity-100'
+												: 'opacity-0 group-hover:opacity-100 '
+										)}
+									>
 										<button
 											className="rounded p-0.5 hover:bg-accent-foreground/10 text-muted-foreground hover:text-foreground cursor-pointer"
 											onClick={(e) => {
