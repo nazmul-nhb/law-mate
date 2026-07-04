@@ -1,3 +1,5 @@
+import type { LooseLiteral } from 'toolbox-x/types/utils';
+
 export type OcrInsertionMode = 'replace' | 'append' | 'prepend';
 
 export interface VisionTextAnnotation {
@@ -23,5 +25,11 @@ export interface VisionBatchAnnotateImagesResponse {
 export interface OcrExtractionResult {
 	text: string;
 	success: boolean;
-	error?: string;
+	error?: LooseLiteral<
+		| 'MISSING_API_KEY'
+		| 'INVALID_IMAGE_TYPE'
+		| 'FILE_TOO_LARGE'
+		| 'NO_TEXT_FOUND'
+		| 'NO_INTERNET_CONNECTION'
+	>;
 }

@@ -23,8 +23,16 @@ export const ocrService = {
 	 */
 	async extractTextFromImage(file: File): Promise<OcrExtractionResult> {
 		try {
-			// Validate file type
+			if (!navigator.onLine) {
+				return {
+					text: '',
+					success: false,
+					error: 'NO_INTERNET_CONNECTION',
+				};
+			}
+
 			if (!file.type.startsWith('image/')) {
+				// Validate file type
 				return {
 					text: '',
 					success: false,

@@ -142,6 +142,8 @@ export function MarkdownEditor({
 					setOcrError(t('editor.ocr.error.too_large'));
 				} else if (result.error === 'NO_TEXT_FOUND') {
 					setOcrError(t('editor.ocr.error.no_text'));
+				} else if (result.error === 'NO_INTERNET_CONNECTION') {
+					setOcrError(t('admin.offline.title'));
 				} else {
 					setOcrError(result.error || t('editor.ocr.error.failed'));
 				}
@@ -286,7 +288,10 @@ export function MarkdownEditor({
 							<button
 								className={cn(
 									'rounded p-1.5 transition-colors cursor-pointer flex items-center gap-1 text-primary hover:bg-primary/10',
-									isScanning && 'opacity-60 pointer-events-none'
+									{
+										'opacity-60 pointer-events-none': isScanning,
+										'cursor-no-drop': !navigator.onLine,
+									}
 								)}
 								disabled={isScanning}
 								onClick={() => fileInputRef.current?.click()}

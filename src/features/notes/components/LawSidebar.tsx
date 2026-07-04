@@ -62,7 +62,7 @@ export function LawSidebar({
 			</div>
 
 			{/* Sidebar List */}
-			<ScrollArea className="flex-1 h-full pb-6">
+			<ScrollArea className="flex-1 h-[calc(100%-2.5rem)] pb-6">
 				<div className="p-2 space-y-1">
 					{laws.length === 0 ? (
 						<p className="text-xs text-muted-foreground text-center py-8 px-4 leading-relaxed font-mono">
