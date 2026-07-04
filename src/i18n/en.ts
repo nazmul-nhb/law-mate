@@ -14,6 +14,7 @@ const en = {
 
 		// Laws
 		'laws.title': 'Laws',
+		'laws.total': 'Total Laws',
 		'laws.create': 'New Law',
 		'laws.edit': 'Edit Law',
 		'laws.delete': 'Delete Law',
@@ -36,6 +37,7 @@ const en = {
 
 		// Notes
 		'notes.title': 'Notes',
+		'notes.total': 'Total Notes',
 		'notes.empty': 'No notes yet',
 		'notes.empty.description': 'Click the button below to create your first note',
 		'notes.create': 'New Note',
@@ -87,7 +89,8 @@ const en = {
 		'editor.ocr.error.failed': 'Failed to extract text from image.',
 
 		// Search
-		'search.placeholder': 'Search notes...',
+		'search.notes.placeholder': 'Search notes...',
+		'search.laws.placeholder': 'Search notes...',
 		'search.empty': 'No results found',
 		'search.hint': 'Search',
 		'search.all.laws': 'All Laws',
@@ -170,7 +173,6 @@ const en = {
 		'common.or': 'or',
 		'common.and': 'and',
 		'common.of': 'of',
-		'common.total': 'Total Items',
 		'common.anonymous.label': 'anonymous',
 
 		'common.table.page.label': 'Page',

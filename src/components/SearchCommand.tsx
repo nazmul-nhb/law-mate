@@ -56,7 +56,7 @@ export function SearchCommand() {
 		<CommandDialog className="top-1/5" onOpenChange={setSearchOpen} open={isSearchOpen}>
 			<CommandInput
 				onValueChange={setQuery}
-				placeholder={t('search.placeholder')}
+				placeholder={t('search.notes.placeholder')}
 				value={query}
 			/>
 

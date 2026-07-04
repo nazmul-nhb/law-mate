@@ -123,13 +123,16 @@ export function ExplorerNotesTab({ localizeNumber, setConfirmConfig }: ExplorerN
 
 	return (
 		<div className="space-y-4">
+			<h2 className="font-semibold">
+				{t('notes.total')} {localizeNumber(table.getFilteredRowModel().rows.length)}
+			</h2>
 			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 				<div className="relative max-w-sm w-full">
 					<Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
 					<Input
 						className="pl-9 h-9"
 						onChange={(e) => setGlobalFilter(e.target.value)}
-						placeholder={t('search.placeholder')}
+						placeholder={t('search.notes.placeholder')}
 						value={globalFilter}
 					/>
 				</div>
@@ -249,8 +252,7 @@ export function ExplorerNotesTab({ localizeNumber, setConfirmConfig }: ExplorerN
 					<div>
 						{t('common.table.page.label')}{' '}
 						{localizeNumber(table.getState().pagination.pageIndex + 1)}/
-						{localizeNumber(table.getPageCount())} ({t('common.total')}{' '}
-						{localizeNumber(table.getFilteredRowModel().rows.length)})
+						{localizeNumber(table.getPageCount())}
 					</div>
 					<div className="flex gap-2">
 						<Button

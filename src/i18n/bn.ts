@@ -16,6 +16,7 @@ const bn = {
 
 		// Laws
 		'laws.title': 'আইন',
+		'laws.total': 'মোট আইন',
 		'laws.create': 'নতুন আইন',
 		'laws.edit': 'আইন সম্পাদনা',
 		'laws.delete': 'আইন মুছে ফেলুন',
@@ -39,6 +40,7 @@ const bn = {
 
 		// Notes
 		'notes.title': 'নোট',
+		'notes.total': 'মোট নোট',
 		'notes.empty': 'কোনো নোট নেই',
 		'notes.empty.description': 'নতুন নোট তৈরি করতে নিচের বাটনে ক্লিক করুন',
 		'notes.create': 'নতুন নোট',
@@ -90,7 +92,8 @@ const bn = {
 		'editor.ocr.error.failed': 'ছবি থেকে টেক্সট বের করতে ব্যর্থ হয়েছে।',
 
 		// Search
-		'search.placeholder': 'নোট খুঁজুন...',
+		'search.notes.placeholder': 'নোট খুঁজুন...',
+		'search.laws.placeholder': 'আইন খুঁজুন...',
 		'search.empty': 'কোনো ফলাফল পাওয়া যায়নি',
 		'search.hint': 'খুঁজুন',
 		'search.all.laws': 'সকল আইন',
@@ -173,7 +176,6 @@ const bn = {
 		'common.or': 'অথবা',
 		'common.and': 'এবং',
 		'common.of': 'এর',
-		'common.total': 'মোট আইটেম',
 		'common.table.rows.per.page': 'প্রতি পৃষ্ঠায় সারির সংখ্যা',
 		'common.table.page.label': 'পৃষ্ঠা',
 		'common.table.pagination.next.label': 'পরবর্তী পৃষ্ঠা',

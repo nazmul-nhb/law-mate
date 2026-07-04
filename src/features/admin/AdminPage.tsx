@@ -172,6 +172,10 @@ export function AdminPage() {
 
 					{/* Controls and Table */}
 					<div className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6">
+						<h2 className="font-semibold">
+							{t('admin.stats.total')}{' '}
+							{localizeNumber(table.getFilteredRowModel().rows.length)}
+						</h2>
 						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 							<div className="relative max-w-sm w-full">
 								<Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
@@ -282,8 +286,7 @@ export function AdminPage() {
 								<div className="text-xs text-muted-foreground">
 									{t('common.table.page.label')}{' '}
 									{localizeNumber(table.getState().pagination.pageIndex + 1)}/
-									{localizeNumber(table.getPageCount())} ({t('common.total')}{' '}
-									{localizeNumber(table.getFilteredRowModel().rows.length)})
+									{localizeNumber(table.getPageCount())}
 								</div>
 								<div className="flex items-center space-x-2">
 									<Button
