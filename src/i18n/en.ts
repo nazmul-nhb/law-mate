@@ -170,7 +170,7 @@ const en = {
 		'common.and': 'and',
 		'common.of': 'of',
 		'common.total': 'Total Items',
-		'common.anonymous.label': 'Anonymous',
+		'common.anonymous.label': 'anonymous',
 
 		'common.table.page.label': 'Page',
 		'common.table.rows.per.page': 'Rows per page',

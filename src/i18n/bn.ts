@@ -177,7 +177,7 @@ const bn = {
 		'common.table.page.label': 'পৃষ্ঠা',
 		'common.table.pagination.next.label': 'পরবর্তী পৃষ্ঠা',
 		'common.table.pagination.prev.label': 'পূর্ববর্তী পৃষ্ঠা',
-		'common.anonymous.label': 'নাম নেই',
+		'common.anonymous.label': 'অজ্ঞাতনামা',
 
 		// Footer
 		'footer.privacy': 'গোপনীয়তা নীতি',

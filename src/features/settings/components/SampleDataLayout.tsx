@@ -54,7 +54,7 @@ export function SampleDataLayout() {
 					</li>
 					<li>
 						<code className="text-foreground font-semibold">
-							created_at / updated_at / deleted_at
+							created_at / updated_at / deleted_at / last_synced_at
 						</code>{' '}
 						(ISO dates, optional)
 					</li>

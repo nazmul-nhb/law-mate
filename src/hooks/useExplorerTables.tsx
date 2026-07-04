@@ -150,7 +150,7 @@ export function useExplorerTables<Data extends Note | Law>(
 				),
 				cell: ({ row }) => (
 					<span className="text-xs text-muted-foreground truncate max-w-30 block">
-						{row.original.user_id || 'anonymous'}
+						{row.original.user_id || t('common.anonymous.label')}
 					</span>
 				),
 			},
