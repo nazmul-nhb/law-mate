@@ -15,17 +15,10 @@ export const lawRepository = {
 		try {
 			const { user } = useAuthStore.getState();
 
-			const laws = await idb
+			return await idb
 				.from('laws')
-				.where((law) => {
-					if (law.deleted_at) return false;
-					if (!user) return true;
-					return law.user_id === user.id || !law.user_id;
-				})
-				.orderBy('updated_at', 'desc')
+				.where((law) => !law.deleted_at && law.user_id === user?.id)
 				.findAll();
-
-			return laws;
 		} catch (error) {
 			throw new DatabaseError('getAll laws', error);
 		}
@@ -191,11 +184,7 @@ export const lawRepository = {
 
 			const laws = await idb
 				.from('laws')
-				.where((law) => {
-					if (!law.deleted_at) return false;
-					if (!user) return true;
-					return law.user_id === user.id || !law.user_id;
-				})
+				.where((law) => law.deleted_at && law.user_id === user?.id)
 				.orderBy('deleted_at', 'desc')
 				.findAll();
 
@@ -256,20 +245,6 @@ export const lawRepository = {
 			}
 
 			throw new DatabaseError('permanentDelete law', error);
-		}
-	},
-
-	/** Get all active laws for search indexing. */
-	async getAllForSearch(): Promise<Law[]> {
-		try {
-			const { user } = useAuthStore.getState();
-
-			return await idb
-				.from('laws')
-				.where((law) => !law.deleted_at && law.user_id === user?.id)
-				.findAll();
-		} catch (error) {
-			throw new DatabaseError('getAllForSearch laws', error);
 		}
 	},
 };

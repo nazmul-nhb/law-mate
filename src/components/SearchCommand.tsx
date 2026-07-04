@@ -38,8 +38,8 @@ export function SearchCommand() {
 
 	useEffect(() => {
 		if (isSearchOpen) {
-			noteRepository.getAllForSearch().then(setAllNotes);
-			lawRepository.getAllForSearch().then(setLaws);
+			noteRepository.getAll().then(setAllNotes);
+			lawRepository.getAll().then(setLaws);
 		} else {
 			setQuery('');
 			setScopeLawId(null);

@@ -15,17 +15,10 @@ export const noteRepository = {
 		try {
 			const { user } = useAuthStore.getState();
 
-			const notes = await idb
+			return await idb
 				.from('notes')
-				.where((note) => {
-					if (note.deleted_at) return false;
-					if (!user) return true;
-					return note.user_id === user.id || !note.user_id;
-				})
-				.orderBy('updated_at', 'desc')
+				.where((note) => !note.deleted_at && note.user_id === user?.id)
 				.findAll();
-
-			return notes;
 		} catch (error) {
 			throw new DatabaseError('getAll notes', error);
 		}
@@ -189,11 +182,7 @@ export const noteRepository = {
 
 			const notes = await idb
 				.from('notes')
-				.where((note) => {
-					if (!note.deleted_at) return false;
-					if (!user) return true;
-					return note.user_id === user.id || !note.user_id;
-				})
+				.where((note) => note.deleted_at && note.user_id === user?.id)
 				.orderBy('deleted_at', 'desc')
 				.findAll();
 
@@ -251,20 +240,6 @@ export const noteRepository = {
 			}
 
 			throw new DatabaseError('permanentDelete note', error);
-		}
-	},
-
-	/** Get all active notes for search indexing. */
-	async getAllForSearch(): Promise<Note[]> {
-		try {
-			const { user } = useAuthStore.getState();
-
-			return await idb
-				.from('notes')
-				.where((note) => !note.deleted_at && note.user_id === user?.id)
-				.findAll();
-		} catch (error) {
-			throw new DatabaseError('getAllForSearch notes', error);
 		}
 	},
 };

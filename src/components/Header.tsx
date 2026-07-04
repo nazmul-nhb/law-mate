@@ -30,6 +30,7 @@ export default function Header() {
 		...((profile?.role === 'admin'
 			? [{ path: '/admin', labelKey: 'nav.admin', icon: Shield }]
 			: []) satisfies Array<NavItem>),
+		// { path: '/idb-explorer', labelKey: 'nav.idb.explorer', icon: Database },
 	] satisfies Array<NavItem>;
 
 	return (
@@ -86,7 +87,7 @@ export default function Header() {
 				</div>
 
 				{/* Center: desktop nav */}
-				<nav className="hidden items-center gap-1 sm:flex">
+				<nav className="hidden items-center gap-1 sm:flex justify-start">
 					{navItems.map((item) => (
 						<StyledNavLink key={item.path} {...item} />
 					))}
@@ -102,7 +103,7 @@ export default function Header() {
 					>
 						<div className="flex items-center justify-center gap-1 h-8 rounded-md border border-input px-2 py-1 text-xs text-muted-foreground">
 							<Search className="size-5 mr-1" />
-							<kbd className="font-mono pt-1 sm:inline hidden">⌘ + K</kbd>
+							<kbd className="font-mono pt-1 sm:inline hidden">⌘+K</kbd>
 						</div>
 					</button>
 					<LanguageToggle />

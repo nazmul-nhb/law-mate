@@ -16,7 +16,7 @@ export default function StyledNavLink({ path, labelKey, icon: Icon }: NavItem) {
 		<NavLink
 			className={({ isActive }) =>
 				cn(
-					'flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+					'flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium transition-colors',
 					isActive
 						? 'bg-accent text-accent-foreground'
 						: 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
@@ -26,7 +26,7 @@ export default function StyledNavLink({ path, labelKey, icon: Icon }: NavItem) {
 			to={path}
 		>
 			<Icon className="size-4" />
-			{t(labelKey)}
+			<span> {t(labelKey)}</span>
 		</NavLink>
 	);
 }
