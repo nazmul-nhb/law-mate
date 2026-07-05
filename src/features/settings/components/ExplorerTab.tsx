@@ -31,10 +31,12 @@ import { CUSTOM_EVENTS, PAGE_LIMITS } from '@/constants/app';
 import { idb } from '@/database/db';
 import ExplorerDataView from '@/features/settings/components/ExplorerDataView';
 import { useExplorerTables } from '@/hooks/useExplorerTables';
-import type { Nullable } from '@/types/common.types';
+import type { IDBTableNames, Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
+import type { Note } from '@/types/note.types';
 
-interface ExplorerLawsTabProps {
+interface ExplorerTabProps {
+	idbTable: IDBTableNames;
 	localizeNumber: (val: number | string) => string;
 	setConfirmConfig: (
 		config: Nullable<{
@@ -46,41 +48,44 @@ interface ExplorerLawsTabProps {
 	) => void;
 }
 
-export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLawsTabProps) {
+export function ExplorerTab({ idbTable, localizeNumber, setConfirmConfig }: ExplorerTabProps) {
 	const { t } = useTranslation();
-	const [laws, setLaws] = useState<Law[]>([]);
+	const [data, setData] = useState<Array<Law | Note>>([]);
 	const [globalFilter, setGlobalFilter] = useState('');
-	const [viewingLaw, setViewingLaw] = useState<Nullable<Law>>(null);
+	const [viewingData, setViewingData] = useState<Nullable<Law | Note>>(null);
 
-	const fetchAllLaws = useCallback(async () => {
+	const EVENT =
+		idbTable === 'notes' ? CUSTOM_EVENTS.NOTES_UPDATED : CUSTOM_EVENTS.LAWS_UPDATED;
+
+	const fetchAllData = useCallback(async () => {
 		try {
-			const data = await idb.from('laws').findAll();
-			setLaws(data || []);
+			const data = await idb.from(idbTable).findAll();
+			setData(data || []);
 		} catch (err) {
-			console.error('Failed to fetch IDB laws:', err);
+			console.error(`Failed to fetch IDB ${idbTable}'`, err);
 		}
-	}, []);
+	}, [idbTable]);
 
 	useEffect(() => {
-		fetchAllLaws();
-	}, [fetchAllLaws]);
+		fetchAllData();
+	}, [fetchAllData]);
 
 	const { table } = useExplorerTables({
-		data: laws,
+		data,
 		globalFilter,
 		setGlobalFilter,
-		onView: (law) => setViewingLaw(law),
+		onView: (data) => setViewingData(data),
 		onDelete: (id) => {
 			setConfirmConfig({
 				title: t('settings.data.explore.delete.single'),
 				description: t('settings.data.explore.confirm.delete.single'),
 				onConfirm: async () => {
 					try {
-						await idb.delete('laws').where('id', id).run();
-						window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
-						await fetchAllLaws();
+						await idb.delete(idbTable).where('id', id).run();
+						window.dispatchEvent(new CustomEvent(EVENT));
+						await fetchAllData();
 					} catch (err) {
-						console.error('Failed to delete law:', err);
+						console.error(`Failed to delete item from ${idbTable}:`, err);
 					}
 				},
 			});
@@ -92,30 +97,31 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 	const handleDeleteSelected = async () => {
 		try {
 			const ids = selectedRows.map((r) => r.original.id);
-			await Promise.all(ids.map((id) => idb.delete('laws').where('id', id).run()));
-			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
-			await fetchAllLaws();
+			await Promise.all(ids.map((id) => idb.delete(idbTable).where('id', id).run()));
+			window.dispatchEvent(new CustomEvent(EVENT));
+			await fetchAllData();
 			table.resetRowSelection();
 		} catch (err) {
-			console.error('Failed to delete laws:', err);
+			console.error(`Failed to delete ${idbTable}:`, err);
 		}
 	};
 
 	const handleClearAll = async () => {
 		try {
-			await idb.delete('laws').run();
-			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
-			await fetchAllLaws();
+			await idb.delete(idbTable).run();
+			window.dispatchEvent(new CustomEvent(EVENT));
+			await fetchAllData();
 			table.resetRowSelection();
 		} catch (err) {
-			console.error('Failed to clear laws:', err);
+			console.error('Failed to clear database:', err);
 		}
 	};
 
 	return (
 		<div className="space-y-4">
 			<h2 className="font-semibold">
-				{t('laws.total')} {localizeNumber(table.getFilteredRowModel().rows.length)}
+				{t(`${idbTable}.total`)}{' '}
+				{localizeNumber(table.getFilteredRowModel().rows.length)}
 			</h2>
 			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 				<div className="relative max-w-sm w-full">
@@ -123,7 +129,7 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 					<Input
 						className="pl-9 h-9"
 						onChange={(e) => setGlobalFilter(e.target.value)}
-						placeholder={t('search.laws.placeholder')}
+						placeholder={t(`search.${idbTable}.placeholder`)}
 						value={globalFilter}
 					/>
 				</div>
@@ -131,7 +137,7 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 				<div className="flex items-center gap-3 flex-wrap sm:flex-nowrap justify-end">
 					<Button
 						className="h-9 w-9 shrink-0"
-						onClick={fetchAllLaws}
+						onClick={fetchAllData}
 						size="icon-sm"
 						variant="ghost"
 					>
@@ -266,23 +272,23 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 				</div>
 			)}
 
-			{/* Viewing Law Dialog */}
-			<Dialog onOpenChange={(open) => !open && setViewingLaw(null)} open={!!viewingLaw}>
+			{/* Viewing Note Dialog */}
+			<Dialog onOpenChange={(open) => !open && setViewingData(null)} open={!!viewingData}>
 				<DialogContent className="max-w-lg sm:max-w-[96%] md:max-w-2xl max-h-[80vh] overflow-y-auto">
-					{/* <ScrollArea className="max-h-[80vh] h-full overflow-y-auto"> */}
 					<DialogHeader>
-						<DialogTitle>{viewingLaw?.title || t('notes.untitled')}</DialogTitle>
+						<DialogTitle>{viewingData?.title || t('notes.untitled')}</DialogTitle>
 						<DialogDescription className="font-mono text-[10px] break-all">
-							ID: {viewingLaw?.id}
+							ID: {viewingData?.id}
 						</DialogDescription>
 					</DialogHeader>
 
-					<ExplorerDataView data={viewingLaw} />
+					<ExplorerDataView data={viewingData} />
 
 					<DialogFooter>
-						<Button onClick={() => setViewingLaw(null)}>{t('common.close')}</Button>
+						<Button onClick={() => setViewingData(null)}>
+							{t('common.close')}
+						</Button>
 					</DialogFooter>
-					{/* </ScrollArea> */}
 				</DialogContent>
 			</Dialog>
 		</div>

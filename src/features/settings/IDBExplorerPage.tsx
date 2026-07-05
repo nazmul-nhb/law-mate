@@ -6,8 +6,7 @@ import { useNavigate } from 'react-router';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ExplorerLawsTab } from '@/features/settings/components/ExplorerLawsTab';
-import { ExplorerNotesTab } from '@/features/settings/components/ExplorerNotesTab';
+import { ExplorerTab } from '@/features/settings/components/ExplorerTab';
 import { useQueryParams } from '@/hooks/useQueryParams';
 import { useSettingsStore } from '@/stores/settings.store';
 import type { IDBTableNames, Nullable } from '@/types/common.types';
@@ -36,6 +35,7 @@ export function IDBExplorerPage() {
 		>(null);
 
 	const localizeNumber = useSettingsStore((s) => s.localizeNumber);
+
 	useTitle(t('settings.data.explore.label'));
 
 	return (
@@ -79,7 +79,8 @@ export function IDBExplorerPage() {
 					className="rounded-lg border border-border bg-card p-4 sm:p-6"
 					value="notes"
 				>
-					<ExplorerNotesTab
+					<ExplorerTab
+						idbTable="notes"
 						localizeNumber={localizeNumber}
 						setConfirmConfig={setConfirmConfig}
 					/>
@@ -89,7 +90,8 @@ export function IDBExplorerPage() {
 					className="rounded-lg border border-border bg-card p-4 sm:p-6"
 					value="laws"
 				>
-					<ExplorerLawsTab
+					<ExplorerTab
+						idbTable="laws"
 						localizeNumber={localizeNumber}
 						setConfirmConfig={setConfirmConfig}
 					/>
