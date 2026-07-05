@@ -7,13 +7,13 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Separator } from '@/components/ui/separator';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { useSettingsStore } from '@/stores/settings.store';
-import type { Nullable } from '@/types/common.types';
+import type { IDBTableNames, Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
 import type { Note } from '@/types/note.types';
 
 interface TrashListProps<Data extends Law | Note> {
 	data: Data[];
-	i18nPrefix: 'notes' | 'laws';
+	i18nPrefix: IDBTableNames;
 	onRestore: (id: $UUID) => Promise<boolean>;
 	onPermanentDelete: (id: $UUID) => Promise<boolean>;
 }

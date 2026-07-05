@@ -1,5 +1,4 @@
 import { flexRender } from '@tanstack/react-table';
-import type { $UUID } from 'locality-idb';
 import { RefreshCw, Search } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -82,10 +81,7 @@ export function ExplorerNotesTab({ localizeNumber, setConfirmConfig }: ExplorerN
 				description: t('settings.data.explore.confirm.delete.single'),
 				onConfirm: async () => {
 					try {
-						await idb
-							.delete('notes')
-							.where('id', id as $UUID)
-							.run();
+						await idb.delete('notes').where('id', id).run();
 						window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
 						await fetchAllNotes();
 					} catch (err) {

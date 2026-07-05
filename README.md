@@ -8,11 +8,12 @@ Live URL: <https://law-mate.nazmul-nhb.dev/>
 
 - **Local-First Storage**: Read and write notes instantly offline using `IndexedDB` via `locality-idb`.
 - **Cloud Sync**: Automatically synchronizes local notes to `Supabase` when connection is available and user is authenticated.
-- **Markdown Editor**: Distraction-free editing pane with dynamic live rendering previews.
+- **Export/Import**: Export database to JSON and import data from JSON.
 - **OCR**: Extracts text from images using `Google Vision API`.
-- **Admin Panel**: TanStack table-powered administration interface with sorting, pagination, search, and profile status management.
+- **Markdown Editor**: Distraction-free minimal editing pane with dynamic live rendering previews.
 - **PWA Capabilities**: Fully installable offline app support.
 - **Multi-lingual**: Complete localization support in Bengali and English.
+- **Admin Panel**: TanStack table-powered administration interface with sorting, pagination, search, and profile status management.
 
 ## 🛠️ Tech Stack
 
@@ -23,7 +24,9 @@ Live URL: <https://law-mate.nazmul-nhb.dev/>
 - **UI Components**: `Base UI` (via `shadcn`), `TailwindCSS`, `Lucide Icons`
 - **i18n**: `i18next` & `react-i18next`
 
-## 🚀 Getting Started
+---
+
+## 🚀 Development
 
 ### 1. Prerequisites
 
@@ -42,9 +45,10 @@ pnpm install
 Create a `.env` file in the root folder with the following variables:
 
 ```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
-VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
+VITE_GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+VITE_GOOGLE_VISION_API_KEY=YOUR_GOOGLE_VISION_API_KEY
 ```
 
 ### 4. Development Server
@@ -63,9 +67,12 @@ Build static assets for production:
 pnpm build
 ```
 
+### 6. Run the Production Build Locally
+
+```bash
+pnpm preview
+```
+
 ---
 
-## Future Plans
-
-- Export to `json` and import/restore notes from `json`
-- Display curated law nots by all users in home page
+Built with ❤️ by [Nazmul Hassan](https://nazmul-nhb.dev)

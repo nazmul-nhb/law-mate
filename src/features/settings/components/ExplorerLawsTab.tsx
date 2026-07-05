@@ -1,5 +1,4 @@
 import { flexRender } from '@tanstack/react-table';
-import type { $UUID } from 'locality-idb';
 import { RefreshCw, Search } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,17 +27,12 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { CUSTOM_EVENTS } from '@/constants/app';
+import { CUSTOM_EVENTS, PAGE_LIMITS } from '@/constants/app';
 import { idb } from '@/database/db';
 import ExplorerDataView from '@/features/settings/components/ExplorerDataView';
 import { useExplorerTables } from '@/hooks/useExplorerTables';
 import type { Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
-
-const PAGE_LIMITS = [5, 10, 20, 30, 40, 50].map((val) => ({
-	value: val,
-	label: String(val),
-}));
 
 interface ExplorerLawsTabProps {
 	localizeNumber: (val: number | string) => string;
@@ -82,10 +76,7 @@ export function ExplorerLawsTab({ localizeNumber, setConfirmConfig }: ExplorerLa
 				description: t('settings.data.explore.confirm.delete.single'),
 				onConfirm: async () => {
 					try {
-						await idb
-							.delete('laws')
-							.where('id', id as $UUID)
-							.run();
+						await idb.delete('laws').where('id', id).run();
 						window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
 						await fetchAllLaws();
 					} catch (err) {

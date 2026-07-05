@@ -10,16 +10,14 @@ import { ExplorerLawsTab } from '@/features/settings/components/ExplorerLawsTab'
 import { ExplorerNotesTab } from '@/features/settings/components/ExplorerNotesTab';
 import { useQueryParams } from '@/hooks/useQueryParams';
 import { useSettingsStore } from '@/stores/settings.store';
-import type { Nullable } from '@/types/common.types';
-
-type TabType = 'notes' | 'laws';
+import type { IDBTableNames, Nullable } from '@/types/common.types';
 
 export function IDBExplorerPage() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { getQueryParam, setQueryParams } = useQueryParams();
 
-	const activeTab = getQueryParam<TabType>('tab');
+	const activeTab = getQueryParam<IDBTableNames>('tab');
 
 	useEffect(() => {
 		if (!activeTab) {
@@ -59,7 +57,7 @@ export function IDBExplorerPage() {
 
 			<Tabs
 				className="space-y-4"
-				onValueChange={(value: TabType) => setQueryParams({ tab: value })}
+				onValueChange={(value: IDBTableNames) => setQueryParams({ tab: value })}
 				value={activeTab || 'notes'}
 			>
 				<TabsList className="grid w-full grid-cols-2 max-w-md">

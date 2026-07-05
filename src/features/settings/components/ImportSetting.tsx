@@ -130,12 +130,7 @@ export function ImportSetting() {
 				const laws = extractLawsFromJSON(json);
 
 				if (notes.length === 0 && laws.length === 0) {
-					setError(
-						t(
-							'settings.data.import.error.empty',
-							'No valid laws or notes found to import.'
-						)
-					);
+					setError(t('settings.data.import.error.empty'));
 					return;
 				}
 

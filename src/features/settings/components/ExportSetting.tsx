@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { idb } from '@/database/db';
+import type { IDBTableNames } from '@/types/common.types';
 
 export function ExportSetting() {
 	const { t } = useTranslation();
@@ -20,7 +21,7 @@ export function ExportSetting() {
 
 	const handleExport = async () => {
 		try {
-			const tables: ('notes' | 'laws')[] = [];
+			const tables: IDBTableNames[] = [];
 			if (exportLaws) tables.push('laws');
 			if (exportNotes) tables.push('notes');
 

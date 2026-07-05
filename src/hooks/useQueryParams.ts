@@ -4,10 +4,11 @@ import { useSearchParams } from 'react-router';
 import { generateQueryParams } from 'toolbox-x';
 import type { QueryObject } from 'toolbox-x/types/object';
 import type { LooseLiteral } from 'toolbox-x/types/utils';
+import type { IDBTableNames } from '@/types/common.types';
 
 export interface LawMateQueryObject extends QueryObject {
 	law_id?: Nullable<$UUID>;
-	tab?: LooseLiteral<'notes' | 'laws'>;
+	tab?: LooseLiteral<IDBTableNames>;
 }
 
 export function useQueryParams() {

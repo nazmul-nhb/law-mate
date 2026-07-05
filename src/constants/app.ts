@@ -29,6 +29,11 @@ export const SEARCH_RESULT_LIMIT = 20;
 export const DEFAULT_FONT_SIZE = 16;
 export const FONT_SIZES = getNumbersInRange('natural', { min: 10, max: 24 });
 
+export const PAGE_LIMITS = [5, 10, 20, 30, 40, 50].map((val) => ({
+	value: val,
+	label: String(val),
+}));
+
 export const DATA_SHAPE = `{
   "metadata": {
     "dbName": "law-mate-db",
