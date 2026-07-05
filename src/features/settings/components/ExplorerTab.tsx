@@ -60,9 +60,10 @@ export function ExplorerTab({ idbTable, localizeNumber, setConfirmConfig }: Expl
 	const fetchAllData = useCallback(async () => {
 		try {
 			const data = await idb.from(idbTable).findAll();
+
 			setData(data || []);
 		} catch (err) {
-			console.error(`Failed to fetch IDB ${idbTable}'`, err);
+			console.error(`Failed to fetch ${idbTable}'`, err);
 		}
 	}, [idbTable]);
 

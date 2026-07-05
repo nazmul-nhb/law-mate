@@ -1,4 +1,4 @@
-import type { $UUID } from 'locality-idb';
+import type { $UUID, SortDirection } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
 import { getFromLocalStorage, saveToLocalStorage } from 'toolbox-x/dom';
 import { DELETE_NOTES_QUEUE_KEY } from '@/constants/app';
@@ -6,18 +6,20 @@ import { idb } from '@/database/db';
 import { DatabaseError, NotFoundError, ValidationError } from '@/lib/errors';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
+import type { SortableField } from '@/types/common.types';
 import type { CreateNoteInput, EditNoteInput, Note, UpdateNote } from '@/types/note.types';
 
 /** Repository layer for Note CRUD operations via locality-idb. */
 export const noteRepository = {
 	/** Get all active (non-deleted) notes, ordered by updated_at descending. */
-	async getAll(): Promise<Note[]> {
+	async getAll(sortBy?: SortableField, sortOrder?: SortDirection): Promise<Note[]> {
 		try {
 			const { user } = useAuthStore.getState();
 
 			return await idb
 				.from('notes')
 				.where((note) => !note.deleted_at && note.user_id === user?.id)
+				.orderBy(sortBy || 'title', sortOrder)
 				.findAll();
 		} catch (error) {
 			throw new DatabaseError('getAll notes', error);

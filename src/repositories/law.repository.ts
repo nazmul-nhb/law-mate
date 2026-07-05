@@ -1,4 +1,4 @@
-import type { $UUID } from 'locality-idb';
+import type { $UUID, SortDirection } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
 import { getFromLocalStorage, saveToLocalStorage } from 'toolbox-x/dom';
 import { DELETE_LAWS_QUEUE_KEY } from '@/constants/app';
@@ -6,18 +6,20 @@ import { idb } from '@/database/db';
 import { DatabaseError, NotFoundError, ValidationError } from '@/lib/errors';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/auth.store';
+import type { SortableField } from '@/types/common.types';
 import type { CreateLawInput, EditLawInput, Law, UpdateLaw } from '@/types/laws.types';
 
 /** Repository layer for Law CRUD operations via locality-idb. */
 export const lawRepository = {
 	/** Get all active (non-deleted) laws, ordered by updated_at descending. */
-	async getAll(): Promise<Law[]> {
+	async getAll(sortBy?: SortableField, sortOrder?: SortDirection): Promise<Law[]> {
 		try {
 			const { user } = useAuthStore.getState();
 
 			return await idb
 				.from('laws')
 				.where((law) => !law.deleted_at && law.user_id === user?.id)
+				.orderBy(sortBy || 'title', sortOrder)
 				.findAll();
 		} catch (error) {
 			throw new DatabaseError('getAll laws', error);

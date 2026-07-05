@@ -27,8 +27,15 @@ export function NotesPage() {
 		error: notesError,
 		refresh: refreshNotes,
 		deleteNote,
+		noteSorter,
 	} = useNotes();
-	const { laws, isLoading: isLawsLoading, error: lawsError, deleteLaw } = useLaws();
+	const {
+		laws,
+		isLoading: isLawsLoading,
+		error: lawsError,
+		deleteLaw,
+		lawSorter,
+	} = useLaws();
 	const openNoteDialog = useUIStore((s) => s.openNoteDialog);
 	const { getQueryParam, setQueryParams } = useQueryParams();
 
@@ -104,6 +111,7 @@ export function NotesPage() {
 			{/* Desktop Left Sidebar */}
 			<div className="hidden md:block h-full shrink-0 w-64">
 				<LawSidebar
+					lawSorter={lawSorter}
 					laws={laws}
 					onAddLaw={() => {
 						setEditingLawId(null);
@@ -124,6 +132,7 @@ export function NotesPage() {
 				<SheetContent className="w-72 p-0 h-full border-r border-border" side="left">
 					<LawSidebar
 						isMobileDevice={isMobileLawsOpen}
+						lawSorter={lawSorter}
 						laws={laws}
 						onAddLaw={() => {
 							setIsMobileLawsOpen(false);
@@ -188,14 +197,18 @@ export function NotesPage() {
 										{t('notes.title')}
 									</span>
 								</h1>
-								<button
-									className="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer shrink-0"
-									onClick={() => openNoteDialog()}
-									type="button"
-								>
-									<Plus className="size-3.5" />
-									{t('notes.create')}
-								</button>
+
+								<div className="flex items-center gap-3 flex-wrap">
+									{activeNotes.length ? noteSorter : null}
+									<button
+										className="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer shrink-0"
+										onClick={() => openNoteDialog()}
+										type="button"
+									>
+										<Plus className="size-3.5" />
+										{t('notes.create')}
+									</button>
+								</div>
 							</div>
 							{selectedLaw.description ? (
 								<div className="text-xs text-muted-foreground prose dark:prose-invert max-w-none pt-2 border-t border-border/40">

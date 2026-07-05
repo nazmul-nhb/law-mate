@@ -23,7 +23,7 @@ export function SearchCommand() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { isSearchOpen, setSearchOpen } = useUIStore();
-	const [allNotes, setAllNotes] = useState<Note[]>([]);
+	const [notes, setNotes] = useState<Note[]>([]);
 	const [laws, setLaws] = useState<Law[]>([]);
 
 	const {
@@ -34,12 +34,12 @@ export function SearchCommand() {
 		setScopeLawId,
 		searchFields,
 		setSearchFields,
-	} = useNoteSearch(allNotes);
+	} = useNoteSearch(notes);
 
 	useEffect(() => {
 		if (isSearchOpen) {
-			noteRepository.getAll().then(setAllNotes);
-			lawRepository.getAll().then(setLaws);
+			noteRepository.getAll('title', 'asc').then(setNotes);
+			lawRepository.getAll('title', 'asc').then(setLaws);
 		} else {
 			setQuery('');
 			setScopeLawId(null);

@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import type { Nullable } from '@/types/common.types';
 import type { Note } from '@/types/note.types';
 
-interface UseSearchReturn {
+interface SearchResult {
 	query: string;
 	setQuery: (query: string) => void;
 	results: Note[];
@@ -13,7 +13,7 @@ interface UseSearchReturn {
 	setSearchFields: (fields: 'all' | 'title' | 'description') => void;
 }
 
-export function useNoteSearch(notes: Note[]): UseSearchReturn {
+export function useNoteSearch(notes: Note[]): SearchResult {
 	const [query, setQuery] = useState('');
 	const [scopeLawId, setScopeLawId] = useState<Nullable<string>>(null);
 	const [searchFields, setSearchFields] = useState<'all' | 'title' | 'description'>('all');

@@ -1,7 +1,8 @@
 import type { $UUID } from 'locality-idb';
-import { useCallback, useEffect, useState } from 'react';
+import { type JSX, useCallback, useEffect, useState } from 'react';
 import { CUSTOM_EVENTS } from '@/constants/app';
 import { useAuth } from '@/hooks/useAuth';
+import { useSorter } from '@/hooks/useSorter';
 import { lawRepository } from '@/repositories/law.repository';
 import { syncService } from '@/services/sync.service';
 import type { Nullable } from '@/types/common.types';
@@ -15,6 +16,7 @@ interface UseLawsReturn {
 	createLaw: (input: CreateLawInput) => Promise<Nullable<Law>>;
 	updateLaw: (id: $UUID, input: EditLawInput) => Promise<boolean>;
 	deleteLaw: (id: $UUID) => Promise<boolean>;
+	lawSorter: JSX.Element;
 }
 
 export function useLaws(): UseLawsReturn {
@@ -23,10 +25,12 @@ export function useLaws(): UseLawsReturn {
 	const [error, setError] = useState<Nullable<string>>(null);
 	const { user } = useAuth();
 
+	const { sortField, sortOrder, sorter } = useSorter();
+
 	const refresh = useCallback(async () => {
 		try {
 			setError(null);
-			const data = await lawRepository.getAll();
+			const data = await lawRepository.getAll(sortField, sortOrder);
 			setLaws(data);
 		} catch (err) {
 			const message = err instanceof Error ? err.message : 'Failed to load laws';
@@ -34,7 +38,7 @@ export function useLaws(): UseLawsReturn {
 		} finally {
 			setIsLoading(false);
 		}
-	}, []);
+	}, [sortField, sortOrder]);
 
 	useEffect(() => {
 		refresh();
@@ -106,5 +110,14 @@ export function useLaws(): UseLawsReturn {
 		[refresh, isSyncable]
 	);
 
-	return { laws, isLoading, error, refresh, createLaw, updateLaw, deleteLaw };
+	return {
+		laws,
+		isLoading,
+		error,
+		refresh,
+		createLaw,
+		updateLaw,
+		deleteLaw,
+		lawSorter: sorter,
+	};
 }

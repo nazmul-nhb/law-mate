@@ -54,9 +54,7 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 	// Load laws
 	useEffect(() => {
 		if (noteDialog.open) {
-			lawRepository.getAll().then((data) => {
-				setLaws(data || []);
-			});
+			lawRepository.getAll('title', 'asc').then(setLaws);
 		}
 	}, [noteDialog.open]);
 

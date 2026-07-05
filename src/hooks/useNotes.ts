@@ -1,7 +1,8 @@
 import type { $UUID } from 'locality-idb';
-import { useCallback, useEffect, useState } from 'react';
+import { type JSX, useCallback, useEffect, useState } from 'react';
 import { CUSTOM_EVENTS } from '@/constants/app';
 import { useAuth } from '@/hooks/useAuth';
+import { useSorter } from '@/hooks/useSorter';
 import { noteRepository } from '@/repositories/note.repository';
 import { syncService } from '@/services/sync.service';
 import type { Nullable } from '@/types/common.types';
@@ -15,6 +16,7 @@ interface UseNotesReturn {
 	createNote: (input: CreateNoteInput) => Promise<Nullable<Note>>;
 	updateNote: (id: $UUID, input: EditNoteInput) => Promise<boolean>;
 	deleteNote: (id: $UUID) => Promise<boolean>;
+	noteSorter: JSX.Element;
 }
 
 export function useNotes(): UseNotesReturn {
@@ -23,10 +25,15 @@ export function useNotes(): UseNotesReturn {
 	const [error, setError] = useState<Nullable<string>>(null);
 	const { user } = useAuth();
 
+	const { sortField, sortOrder, sorter } = useSorter({
+		defaultField: 'title',
+		defaultOrder: 'asc',
+	});
+
 	const refresh = useCallback(async () => {
 		try {
 			setError(null);
-			const data = await noteRepository.getAll();
+			const data = await noteRepository.getAll(sortField, sortOrder);
 			setNotes(data);
 		} catch (err) {
 			const message = err instanceof Error ? err.message : 'Failed to load notes';
@@ -34,7 +41,7 @@ export function useNotes(): UseNotesReturn {
 		} finally {
 			setIsLoading(false);
 		}
-	}, []);
+	}, [sortField, sortOrder]);
 
 	useEffect(() => {
 		refresh();
@@ -106,5 +113,14 @@ export function useNotes(): UseNotesReturn {
 		[refresh, isSyncable]
 	);
 
-	return { notes, isLoading, error, refresh, createNote, updateNote, deleteNote };
+	return {
+		notes,
+		isLoading,
+		error,
+		refresh,
+		createNote,
+		updateNote,
+		deleteNote,
+		noteSorter: sorter,
+	};
 }

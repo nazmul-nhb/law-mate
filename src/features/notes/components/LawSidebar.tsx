@@ -1,5 +1,6 @@
 import type { $UUID } from 'locality-idb';
 import { FolderPlus, Pencil, Trash2 } from 'lucide-react';
+import type { JSX } from 'react/jsx-runtime';
 import { useTranslation } from 'react-i18next';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
@@ -16,6 +17,7 @@ interface LawSidebarProps {
 	onDeleteLaw: (id: $UUID) => void;
 	isMobileDevice?: boolean;
 	className?: string;
+	lawSorter: JSX.Element;
 }
 
 export function LawSidebar({
@@ -27,6 +29,7 @@ export function LawSidebar({
 	onDeleteLaw,
 	isMobileDevice = false,
 	className,
+	lawSorter,
 }: LawSidebarProps) {
 	const { t } = useTranslation();
 
@@ -38,19 +41,24 @@ export function LawSidebar({
 			)}
 		>
 			{/* Sidebar Header */}
-			<div className="p-4 border-b border-border flex items-center justify-between shrink-0 pr-12 md:pr-4">
+			<div className="p-4 border-b border-border flex items-center flex-wrap justify-between shrink-0 pr-12 md:pr-4">
 				<h2 className="text-xs font-semibold text-foreground uppercase tracking-wider font-mono">
 					{t('laws.sidebar.title')}
 				</h2>
-				<TooltipSimple content={t('laws.create')}>
-					<button
-						className="rounded p-1.5 hover:bg-accent text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-						onClick={onAddLaw}
-						type="button"
-					>
-						<FolderPlus className="size-4" />
-					</button>
-				</TooltipSimple>
+
+				<div className="flex items-center gap-0.5 flex-wrap">
+					{laws.length ? lawSorter : null}
+
+					<TooltipSimple content={t('laws.create')}>
+						<button
+							className="rounded p-1.5 hover:bg-accent text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+							onClick={onAddLaw}
+							type="button"
+						>
+							<FolderPlus className="size-4.5" />
+						</button>
+					</TooltipSimple>
+				</div>
 			</div>
 
 			{/* Sidebar List */}

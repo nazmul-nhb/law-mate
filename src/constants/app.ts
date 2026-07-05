@@ -34,6 +34,12 @@ export const PAGE_LIMITS = [5, 10, 20, 30, 40, 50].map((val) => ({
 	label: String(val),
 }));
 
+export const SORT_FIELDS = {
+	title: 'Title',
+	updated_at: 'Updated',
+	created_at: 'Created',
+} as const;
+
 export const DATA_SHAPE = `{
   "metadata": {
     "dbName": "law-mate-db",
