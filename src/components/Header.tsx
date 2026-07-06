@@ -57,7 +57,7 @@ export default function Header() {
 								<SheetTitle className="text-left text-lg font-bold flex items-center gap-2">
 									<img
 										alt="Logo"
-										className="size-6 object-contain"
+										className="size-8 object-contain"
 										src="/law-mate.png"
 									/>
 									<span className="inline sm:hidden">{t('app.name')}</span>
@@ -79,10 +79,10 @@ export default function Header() {
 					>
 						<img
 							alt="LawMate Logo"
-							className="size-7.5 sm:size-6 object-contain"
+							className="size-9 object-contain"
 							src="/law-mate.png"
 						/>
-						<span className="sm:inline hidden">{t('app.name')}</span>
+						<span className="md:inline hidden">{t('app.name')}</span>
 					</NavLink>
 				</div>
 
