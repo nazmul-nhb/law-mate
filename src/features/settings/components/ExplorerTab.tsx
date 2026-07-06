@@ -109,7 +109,7 @@ export function ExplorerTab({ idbTable, localizeNumber, setConfirmConfig }: Expl
 
 	const handleClearAll = async () => {
 		try {
-			await idb.delete(idbTable).run();
+			await idb.clearTable(idbTable);
 			window.dispatchEvent(new CustomEvent(EVENT));
 			await fetchAllData();
 			table.resetRowSelection();
