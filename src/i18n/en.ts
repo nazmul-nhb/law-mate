@@ -46,7 +46,7 @@ const en = {
 		'notes.delete': 'Delete',
 		'notes.save': 'Save',
 		'notes.cancel': 'Cancel',
-		'notes.title.label': 'Title',
+		'notes.title.label': 'Note Title',
 		'notes.title.placeholder': 'Enter note title...',
 		'notes.description.label': 'Description',
 		'notes.description.placeholder': 'Write note description...',
@@ -165,6 +165,9 @@ const en = {
 		'admin.confirm.delete': 'Are you sure you want to soft delete this user?',
 
 		// Common
+		'common.title.label': 'Title',
+		'common.updated.label': 'Updated',
+		'common.created.label': 'Created',
 		'common.loading': 'Loading...',
 		'common.error': 'An error occurred',
 		'common.retry': 'Retry',

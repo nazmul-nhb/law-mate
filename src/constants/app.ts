@@ -1,5 +1,6 @@
 import { getNumbersInRange } from 'toolbox-x';
 import type { LooseLiteral } from 'toolbox-x/types/utils';
+import type { I18Keys } from '@/i18n';
 import pkg from '../../package.json';
 
 export const APP_NAME = 'LawMate';
@@ -35,10 +36,10 @@ export const PAGE_LIMITS = [5, 10, 20, 30, 40, 50].map((val) => ({
 }));
 
 export const SORT_FIELDS = {
-	title: 'Title',
-	updated_at: 'Updated',
-	created_at: 'Created',
-} as const;
+	title: 'common.title.label',
+	updated_at: 'common.updated.label',
+	created_at: 'common.created.label',
+} as const satisfies Record<string, I18Keys>;
 
 export const DATA_SHAPE = `{
   "metadata": {

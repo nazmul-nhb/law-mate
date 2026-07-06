@@ -49,7 +49,7 @@ const bn = {
 		'notes.delete': 'মুছে ফেলুন',
 		'notes.save': 'সংরক্ষণ করুন',
 		'notes.cancel': 'বাতিল',
-		'notes.title.label': 'শিরোনাম',
+		'notes.title.label': 'নোটের শিরোনাম',
 		'notes.title.placeholder': 'নোটের শিরোনাম লিখুন...',
 		'notes.description.label': 'বিবরণ',
 		'notes.description.placeholder': 'নোটের বিবরণ লিখুন...',
@@ -168,6 +168,9 @@ const bn = {
 		'admin.confirm.delete': 'আপনি কি নিশ্চিত যে এই ব্যবহারকারীকে সাময়িকভাবে মুছে ফেলতে চান?',
 
 		// Common
+		'common.title.label': 'শিরোনাম',
+		'common.updated.label': 'সম্পাদনা',
+		'common.created.label': 'তৈরি',
 		'common.loading': 'লোড হচ্ছে...',
 		'common.error': 'একটি ত্রুটি ঘটেছে',
 		'common.retry': 'পুনরায় চেষ্টা করুন',
