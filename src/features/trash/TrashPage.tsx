@@ -3,16 +3,19 @@ import { useTitle } from 'nhb-hooks';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { digitToBangla } from 'toolbox-x';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { TooltipSimple } from '@/components/ui/tooltip-simple';
 import { TrashList } from '@/features/trash/components/TrashList';
 import { useTrash } from '@/hooks/useTrash';
 import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/stores/settings.store';
+import type { IDBTableNames, Nullable } from '@/types/common.types';
 
 export function TrashPage() {
 	const { t } = useTranslation();
@@ -34,6 +37,8 @@ export function TrashPage() {
 	const [isNotesOpen, setIsNotesOpen] = useState(true);
 	const [isLawsOpen, setIsLawsOpen] = useState(true);
 
+	const [deleteType, setDeleteType] = useState<Nullable<IDBTableNames>>(null);
+
 	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center py-16">
@@ -41,6 +46,20 @@ export function TrashPage() {
 			</div>
 		);
 	}
+
+	const handleDeleteAll = async (type: Nullable<IDBTableNames>) => {
+		switch (type) {
+			case 'laws':
+				Promise.all(deletedLaws.map((law) => permanentDeleteLaw(law.id)));
+				break;
+
+			case 'notes':
+				Promise.all(deletedNotes.map((note) => permanentDeleteNote(note.id)));
+				break;
+		}
+
+		setDeleteType(null);
+	};
 
 	if (trashError) {
 		return (
@@ -76,7 +95,7 @@ export function TrashPage() {
 				<div className="space-y-4">
 					{/* Laws Section */}
 					<Collapsible onOpenChange={setIsLawsOpen} open={isLawsOpen}>
-						<CollapsibleTrigger className="flex items-center justify-between w-full p-4 border border-border rounded-lg bg-muted/20 hover:bg-muted/30 transition-colors cursor-pointer select-none">
+						<CollapsibleTrigger className="flex items-center justify-between flex-wrap w-full p-4 border border-border rounded-lg bg-muted/20 hover:bg-muted/30 transition-colors cursor-pointer select-none">
 							<h2 className="text-sm font-semibold tracking-tight text-foreground font-mono">
 								{t('trash.laws.section')} (
 								{lang === 'bn'
@@ -84,12 +103,28 @@ export function TrashPage() {
 									: String(deletedLaws.length)}
 								)
 							</h2>
-							<ChevronDown
-								className={cn(
-									'size-4 text-muted-foreground transition-transform duration-200',
-									{ 'rotate-180': isLawsOpen }
-								)}
-							/>
+							<div className="flex items-center gap-2 flex-wrap">
+								{deletedLaws.length ? (
+									<TooltipSimple content={t('trash.delete.permanent')}>
+										<button
+											className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+											onClick={(e) => {
+												e.stopPropagation();
+												setDeleteType('laws');
+											}}
+											type="button"
+										>
+											<Trash2 className="size-5" />
+										</button>
+									</TooltipSimple>
+								) : null}
+								<ChevronDown
+									className={cn(
+										'size-4 text-muted-foreground transition-transform duration-200',
+										{ 'rotate-180': isLawsOpen }
+									)}
+								/>
+							</div>
 						</CollapsibleTrigger>
 						<CollapsibleContent className="mt-2 overflow-hidden transition-all duration-200">
 							{deletedLaws.length === 0 ? (
@@ -119,12 +154,28 @@ export function TrashPage() {
 									: String(deletedNotes.length)}
 								)
 							</h2>
-							<ChevronDown
-								className={cn(
-									'size-4 text-muted-foreground transition-transform duration-200',
-									{ 'rotate-180': isNotesOpen }
-								)}
-							/>
+							<div className="flex items-center gap-2 flex-wrap">
+								{deletedNotes.length ? (
+									<TooltipSimple content={t('trash.delete.permanent')}>
+										<button
+											className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+											onClick={(e) => {
+												e.stopPropagation();
+												setDeleteType('notes');
+											}}
+											type="button"
+										>
+											<Trash2 className="size-5" />
+										</button>
+									</TooltipSimple>
+								) : null}
+								<ChevronDown
+									className={cn(
+										'size-4 text-muted-foreground transition-transform duration-200',
+										{ 'rotate-180': isNotesOpen }
+									)}
+								/>
+							</div>
 						</CollapsibleTrigger>
 						<CollapsibleContent className="mt-2 overflow-hidden transition-all duration-200">
 							{deletedNotes.length === 0 ? (
@@ -143,6 +194,14 @@ export function TrashPage() {
 							)}
 						</CollapsibleContent>
 					</Collapsible>
+
+					<ConfirmDialog
+						description={t('trash.confirm.delete')}
+						onConfirm={async () => await handleDeleteAll(deleteType)}
+						onOpenChange={(open) => !open}
+						open={!!deleteType}
+						title={t('trash.delete.permanent')}
+					/>
 				</div>
 			)}
 		</div>
