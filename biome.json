@@ -119,6 +119,16 @@
 					}
 				}
 			}
+		},
+		{
+			"includes": ["src/hooks/*.tsx"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useComponentExportOnlyModules": "off"
+					}
+				}
+			}
 		}
 	]
 }

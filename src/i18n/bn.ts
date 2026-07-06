@@ -131,7 +131,7 @@ const bn = {
 		'settings.sync.status': 'সিঙ্ক স্ট্যাটাস',
 		'settings.sync.connected': 'সংযুক্ত',
 		'settings.sync.not.connected': 'সংযুক্ত নয়',
-		'settings.sync.label': 'সর্বশেষ সিঙ্ক করা হয়েছে',
+		'settings.sync.label': 'সর্বশেষ সিঙ্ক হয়েছে',
 		'settings.sync.auto': 'অটো সিঙ্ক',
 		'settings.sync.manual': 'সিঙ্ক করুন',
 		'settings.storage': 'স্টোরেজ ব্যবহার',

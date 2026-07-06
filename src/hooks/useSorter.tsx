@@ -22,16 +22,39 @@ type Options = {
 };
 
 export function useSorter(options?: Options): SorterResult {
-	const [open, setOpen] = useState(false);
-
 	const { defaultField = 'title', defaultOrder = 'asc' } = options ?? {};
 
 	const [sortField, setSortField] = useState<SortableField>(defaultField);
 	const [sortOrder, setSortOrder] = useState<SortDirection>(defaultOrder);
 
+	const sorter = (
+		<SorterUI
+			onFieldChange={setSortField}
+			onOrderChange={setSortOrder}
+			sortField={sortField}
+			sortOrder={sortOrder}
+		/>
+	);
+
+	return {
+		sortField,
+		sortOrder,
+		sorter,
+	};
+}
+
+interface SorterUIProps {
+	sortField: SortableField;
+	sortOrder: SortDirection;
+	onFieldChange: (field: SortableField) => void;
+	onOrderChange: (order: SortDirection) => void;
+}
+
+function SorterUI({ sortField, sortOrder, onFieldChange, onOrderChange }: SorterUIProps) {
+	const [open, setOpen] = useState(false);
 	const { t } = useTranslation();
 
-	const sorter = (
+	return (
 		<div className="flex items-center gap-1.5">
 			<Popover onOpenChange={setOpen} open={open}>
 				<PopoverTrigger
@@ -43,20 +66,16 @@ export function useSorter(options?: Options): SorterResult {
 
 				<PopoverContent align="start" className="w-fit p-0">
 					<Command>
-						{/* <CommandInput placeholder="Search field to sort" /> */}
-
 						<CommandList>
-							{/* <CommandEmpty>No fields found.</CommandEmpty> */}
-
 							<CommandGroup>
 								{extractEntries(SORT_FIELDS).map(([field, label]) => (
 									<CommandItem
 										key={field}
 										onSelect={() => {
-											setSortField(field);
+											onFieldChange(field);
 											setOpen(false);
 										}}
-										value={t(label)}
+										value={field}
 									>
 										<Check
 											className={`size-3.5 ${
@@ -78,7 +97,7 @@ export function useSorter(options?: Options): SorterResult {
 			<ToggleGroup
 				onValueChange={([value]) => {
 					if (value === 'asc' || value === 'desc') {
-						setSortOrder(value);
+						onOrderChange(value);
 					}
 				}}
 				value={[sortOrder]}
@@ -93,10 +112,4 @@ export function useSorter(options?: Options): SorterResult {
 			</ToggleGroup>
 		</div>
 	);
-
-	return {
-		sortField,
-		sortOrder,
-		sorter,
-	};
 }

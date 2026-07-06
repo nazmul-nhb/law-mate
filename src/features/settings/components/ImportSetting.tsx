@@ -25,6 +25,7 @@ import {
 import { CUSTOM_EVENTS } from '@/constants/app';
 import { idb } from '@/database/db';
 import { SampleDataLayout } from '@/features/settings/components/SampleDataLayout';
+import { AppError } from '@/lib/errors';
 import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/stores/settings.store';
 import type { IDBTableNames, LawMateSchema, Nullable } from '@/types/common.types';
@@ -128,6 +129,19 @@ export function ImportSetting() {
 				const json = parseJSON<ImportableData>(String(e.target?.result), false);
 				const notes = extractNotesFromJSON(json);
 				const laws = extractLawsFromJSON(json);
+
+				const currentLaws = await idb.from('laws').findAll();
+
+				const lawIds = new Set([...laws, ...currentLaws].map((law) => law.id));
+
+				const invalidParentLaw = notes.some((note) => !lawIds.has(note.law_id));
+
+				if (invalidParentLaw) {
+					throw new AppError(
+						'Some of the notes have invalid parent laws.',
+						'INVALID_REFERENCE'
+					);
+				}
 
 				if (notes.length === 0 && laws.length === 0) {
 					setError(t('settings.data.import.error.empty'));

@@ -3,6 +3,9 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 @plugin "@tailwindcss/typography";
+@plugin "tailwind-scrollbar" {
+	nocompatible: true;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -138,5 +141,11 @@
 
 	button {
 		user-select: none;
+	}
+}
+
+@layer base {
+	* {
+		@apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted-foreground/60 scrollbar-hover:scrollbar-thumb-muted-foreground scrollbar-thumb-rounded-md;
 	}
 }

@@ -186,7 +186,7 @@ export function NotesPage() {
 				{selectedLaw ? (
 					<div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
 						{/* Law Detail summary Card */}
-						<div className="mb-6 space-y-3 bg-muted/20 border border-border p-4 rounded-lg shrink-0">
+						<div className="mb-1 space-y-3 bg-muted/20 border border-border p-4 rounded-lg shrink-0">
 							<div className="flex items-center justify-between flex-wrap gap-4">
 								<h1 className="text-lg font-bold text-foreground flex items-center flex-wrap gap-2">
 									<span>{selectedLaw.title}</span>
@@ -218,7 +218,7 @@ export function NotesPage() {
 						</div>
 
 						{/* Notes Grid */}
-						<div className="flex-1 min-h-0 overflow-y-auto pr-1">
+						<div className="flex-1 min-h-0 overflow-y-auto pr-1 pt-2">
 							<NoteList
 								notes={activeNotes}
 								onCreateClick={() => openNoteDialog()}

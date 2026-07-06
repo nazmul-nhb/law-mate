@@ -48,7 +48,7 @@ export function SyncSetting() {
 						<p className="text-sm font-medium text-foreground">
 							{t('settings.sync.status')}
 						</p>
-						<p className="text-xs text-muted-foreground flex items-center min-h-4">
+						<div className="text-xs text-muted-foreground flex items-center min-h-4">
 							{isSynced ? (
 								isSyncing ? (
 									<div className="flex flex-col gap-1.5">
@@ -61,7 +61,7 @@ export function SyncSetting() {
 							) : (
 								t('settings.sync.not.connected')
 							)}
-						</p>
+						</div>
 						{user && lastSyncedAt && !isSyncing && (
 							<p className="text-xs text-muted-foreground mt-0.5">
 								{t('settings.sync.label')}:{' '}
