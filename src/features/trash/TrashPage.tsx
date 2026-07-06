@@ -198,7 +198,7 @@ export function TrashPage() {
 					<ConfirmDialog
 						description={t('trash.confirm.delete')}
 						onConfirm={async () => await handleDeleteAll(deleteType)}
-						onOpenChange={(open) => !open}
+						onOpenChange={(open) => !open && setDeleteType(null)}
 						open={!!deleteType}
 						title={t('trash.delete.permanent')}
 					/>
