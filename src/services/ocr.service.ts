@@ -1,3 +1,4 @@
+import { visionApiKey } from '@/constants/env';
 import type { OcrExtractionResult, VisionBatchAnnotateImagesResponse } from '@/types/ocr.types';
 
 /**
@@ -49,8 +50,7 @@ export const ocrService = {
 				};
 			}
 
-			const apiKey = import.meta.env.VITE_GOOGLE_VISION_API_KEY;
-			if (!apiKey || apiKey.trim() === '' || apiKey === 'YOUR_GOOGLE_VISION_API_KEY') {
+			if (!visionApiKey || visionApiKey.trim() === '') {
 				return {
 					text: '',
 					success: false,
@@ -61,7 +61,7 @@ export const ocrService = {
 			const base64Content = await fileToBase64(file);
 
 			const endpoint = `https://vision.googleapis.com/v1/images:annotate?key=${encodeURIComponent(
-				apiKey.trim()
+				visionApiKey.trim()
 			)}`;
 
 			const response = await fetch(endpoint, {
