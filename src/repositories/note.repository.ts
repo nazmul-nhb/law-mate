@@ -72,8 +72,6 @@ export const noteRepository = {
 					law_id: input.law_id,
 					title: input.title,
 					description: input.description,
-					last_synced_at: undefined,
-					deleted_at: undefined,
 				})
 				.run();
 

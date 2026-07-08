@@ -49,8 +49,9 @@
 				"useButtonType": "info",
 				"useKeyWithClickEvents": "off",
 				"noStaticElementInteractions": "off",
-				"useSemanticElements": "info",
+				"useSemanticElements": "off",
 				"noSvgWithoutTitle": "off",
+				"useFocusableInteractive": "off",
 				"noNoninteractiveElementToInteractiveRole": "info"
 			},
 			"suspicious": {

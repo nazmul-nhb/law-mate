@@ -4,3 +4,4 @@ packages:
 minimumReleaseAgeExclude:
   - toolbox-x
   - locality-idb
+  - "@types/*"

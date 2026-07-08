@@ -1,4 +1,4 @@
-import type { $UUID, Maybe } from 'locality-idb';
+import type { $UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
 import { getFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from 'toolbox-x/dom';
 import { CUSTOM_EVENTS, DELETE_LAWS_QUEUE_KEY, DELETE_NOTES_QUEUE_KEY } from '@/constants/app';
@@ -117,10 +117,10 @@ export const syncService = {
 						id: localLaw.id,
 						user_id: user.id,
 						title: localLaw.title,
-						description: (localLaw.description ?? null) as Maybe<string>,
+						description: localLaw.description || null,
 						created_at: localLaw.created_at,
 						updated_at: localLaw.updated_at,
-						deleted_at: localLaw.deleted_at ?? null,
+						deleted_at: localLaw.deleted_at || null,
 						version: localLaw.version,
 						last_synced_at: syncTime,
 					});
@@ -164,10 +164,10 @@ export const syncService = {
 							id: localLaw.id,
 							user_id: user.id,
 							title: localLaw.title,
-							description: (localLaw.description ?? null) as Maybe<string>,
+							description: localLaw.description || null,
 							created_at: localLaw.created_at,
 							updated_at: localLaw.updated_at,
-							deleted_at: localLaw.deleted_at ?? null,
+							deleted_at: localLaw.deleted_at || null,
 							version: localLaw.version,
 							last_synced_at: syncTime,
 						});
@@ -190,10 +190,10 @@ export const syncService = {
 							.update('laws')
 							.set({
 								title: remoteLaw.title,
-								description: remoteLaw.description || undefined,
+								description: remoteLaw.description || null,
 								created_at: remoteLaw.created_at,
 								updated_at: remoteLaw.updated_at,
-								deleted_at: remoteLaw.deleted_at || undefined,
+								deleted_at: remoteLaw.deleted_at || null,
 								version: remoteLaw.version,
 								last_synced_at: syncTime,
 								user_id: user.id,
@@ -301,7 +301,7 @@ export const syncService = {
 						description: localNote.description,
 						created_at: localNote.created_at,
 						updated_at: localNote.updated_at,
-						deleted_at: localNote.deleted_at ?? null,
+						deleted_at: localNote.deleted_at || null,
 						version: localNote.version,
 						last_synced_at: syncTime,
 					});
@@ -354,7 +354,7 @@ export const syncService = {
 							description: localNote.description,
 							created_at: localNote.created_at,
 							updated_at: localNote.updated_at,
-							deleted_at: localNote.deleted_at ?? null,
+							deleted_at: localNote.deleted_at || null,
 							version: localNote.version,
 							last_synced_at: syncTime,
 						});

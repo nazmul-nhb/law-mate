@@ -57,9 +57,7 @@ export const lawRepository = {
 				.values({
 					user_id: user?.id,
 					title: input.title,
-					description: input.description ?? undefined,
-					last_synced_at: undefined,
-					deleted_at: undefined,
+					description: input.description,
 				})
 				.run();
 

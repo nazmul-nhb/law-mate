@@ -5,7 +5,7 @@ export const lawMateSchema = defineSchema({
 		id: column.uuid().pk(),
 		user_id: column
 			.char<$UUID>(36)
-			.optional()
+			.nullable()
 			.index()
 			.validate((value) => (isUUID(value) ? null : 'User ID must be a valid UUID')),
 		law_id: column
@@ -16,23 +16,23 @@ export const lawMateSchema = defineSchema({
 		description: column.text(),
 		created_at: column.timestamp(),
 		updated_at: column.timestamp(),
-		deleted_at: column.timestamp().optional(),
-		last_synced_at: column.timestamp().optional(),
+		deleted_at: column.timestamp().nullable(),
+		last_synced_at: column.timestamp().nullable(),
 		version: column.int().default(1),
 	},
 	laws: {
 		id: column.uuid().pk(),
 		user_id: column
 			.char<$UUID>(36)
-			.optional()
+			.nullable()
 			.index()
 			.validate((value) => (isUUID(value) ? null : 'User ID must be a valid UUID')),
 		title: column.text(),
-		description: column.text().optional(),
+		description: column.text().nullable(),
 		created_at: column.timestamp(),
 		updated_at: column.timestamp(),
-		deleted_at: column.timestamp().optional(),
-		last_synced_at: column.timestamp().optional(),
+		deleted_at: column.timestamp().nullable(),
+		last_synced_at: column.timestamp().nullable(),
 		version: column.int().default(1),
 	},
 });

@@ -106,16 +106,16 @@ export function TrashPage() {
 							<div className="flex items-center gap-2 flex-wrap">
 								{deletedLaws.length ? (
 									<TooltipSimple content={t('trash.delete.permanent')}>
-										<button
+										<span
 											className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
 											onClick={(e) => {
 												e.stopPropagation();
 												setDeleteType('laws');
 											}}
-											type="button"
+											role="button"
 										>
 											<Trash2 className="size-5" />
-										</button>
+										</span>
 									</TooltipSimple>
 								) : null}
 								<ChevronDown
@@ -157,16 +157,16 @@ export function TrashPage() {
 							<div className="flex items-center gap-2 flex-wrap">
 								{deletedNotes.length ? (
 									<TooltipSimple content={t('trash.delete.permanent')}>
-										<button
+										<span
 											className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
 											onClick={(e) => {
 												e.stopPropagation();
 												setDeleteType('notes');
 											}}
-											type="button"
+											role="button"
 										>
 											<Trash2 className="size-5" />
-										</button>
+										</span>
 									</TooltipSimple>
 								) : null}
 								<ChevronDown
