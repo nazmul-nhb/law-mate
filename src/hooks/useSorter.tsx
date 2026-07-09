@@ -58,7 +58,7 @@ function SorterUI({ sortField, sortOrder, onFieldChange, onOrderChange }: Sorter
 		<div className="flex items-center gap-1.5">
 			<Popover onOpenChange={setOpen} open={open}>
 				<PopoverTrigger
-					render={<Button className="text-[0.6rem]" size="sm" variant="outline" />}
+					render={<Button className="text-[0.5625rem]" size="sm" variant="outline" />}
 				>
 					<ArrowUpDown className="size-3" />
 					{t(SORT_FIELDS[sortField])}

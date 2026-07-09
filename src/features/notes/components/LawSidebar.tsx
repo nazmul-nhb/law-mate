@@ -41,7 +41,7 @@ export function LawSidebar({
 			)}
 		>
 			{/* Sidebar Header */}
-			<div className="p-4 border-b border-border flex items-center flex-wrap justify-between shrink-0 pr-12 md:pr-4">
+			<div className="p-4 border-b border-border flex items-center justify-between shrink-0 pr-10">
 				<h2 className="text-xs font-semibold text-foreground uppercase tracking-wider font-mono">
 					{t('laws.sidebar.title')}
 				</h2>
