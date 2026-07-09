@@ -39,6 +39,8 @@ export function useAuth() {
 
 	const assureUserProfile = useCallback(
 		async (u: AppUser) => {
+			if (!window.navigator.onLine) return;
+
 			try {
 				const { data: prof } = await supabase
 					.from('profiles')

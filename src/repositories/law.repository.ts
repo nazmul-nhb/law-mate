@@ -5,6 +5,7 @@ import { DELETE_LAWS_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
 import { DatabaseError, NotFoundError, ValidationError } from '@/lib/errors';
 import { supabase } from '@/lib/supabase';
+import { idsEqual } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import type { SortableField } from '@/types/common.types';
 import type { CreateLawInput, EditLawInput, Law, UpdateLaw } from '@/types/laws.types';
@@ -18,7 +19,7 @@ export const lawRepository = {
 
 			return await idb
 				.from('laws')
-				.where((law) => !law.deleted_at && law.user_id === user?.id)
+				.where((law) => !law.deleted_at && idsEqual(law.user_id, user?.id))
 				.orderBy(sortBy || 'title', sortOrder)
 				.findAll();
 		} catch (error) {
@@ -151,7 +152,7 @@ export const lawRepository = {
 			await idb
 				.update('laws')
 				.set({
-					deleted_at: undefined,
+					deleted_at: null,
 					version: existing.version + 1,
 				})
 				.where('id', id)
@@ -164,7 +165,7 @@ export const lawRepository = {
 					await idb
 						.update('notes')
 						.set({
-							deleted_at: undefined,
+							deleted_at: null,
 							version: note.version + 1,
 						})
 						.where('id', note.id)
@@ -184,7 +185,7 @@ export const lawRepository = {
 
 			const laws = await idb
 				.from('laws')
-				.where((law) => law.deleted_at && law.user_id === user?.id)
+				.where((law) => law.deleted_at != null && idsEqual(law.user_id, user?.id))
 				.orderBy('deleted_at', 'desc')
 				.findAll();
 

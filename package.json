@@ -1,7 +1,7 @@
 {
   "name": "law-mate",
   "private": true,
-  "version": "1.11.15",
+  "version": "1.11.16",
   "type": "module",
   "description": "LawMate - Keep Your Notes about Law Sections Organized.",
   "author": {
@@ -34,7 +34,7 @@
     "framer-motion": "^12.42.2",
     "fuse.js": "^7.4.2",
     "i18next": "^26.3.4",
-    "locality-idb": "^2.2.4",
+    "locality-idb": "^2.2.10",
     "lucide-react": "^1.23.0",
     "nhb-hooks": "^1.50.11",
     "react": "^19.2.7",

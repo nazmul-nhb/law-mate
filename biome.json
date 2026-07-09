@@ -108,7 +108,7 @@
 	},
 	"overrides": [
 		{
-			"includes": ["__ideas__/**/*.ts", "__*.ts", "!*/**/routeTree.gen.ts"],
+			"includes": ["__ideas__/**/*.ts", "__*.ts", "*/**/utils.ts"],
 			"linter": {
 				"rules": {
 					"correctness": {
@@ -116,7 +116,8 @@
 					},
 					"suspicious": {
 						"noConsole": "off",
-						"noExplicitAny": "off"
+						"noExplicitAny": "off",
+						"noDoubleEquals": "off"
 					}
 				}
 			}

@@ -5,6 +5,7 @@ import { DELETE_NOTES_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
 import { DatabaseError, NotFoundError, ValidationError } from '@/lib/errors';
 import { supabase } from '@/lib/supabase';
+import { idsEqual } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
 import type { SortableField } from '@/types/common.types';
 import type { CreateNoteInput, EditNoteInput, Note, UpdateNote } from '@/types/note.types';
@@ -18,7 +19,7 @@ export const noteRepository = {
 
 			return await idb
 				.from('notes')
-				.where((note) => !note.deleted_at && note.user_id === user?.id)
+				.where((note) => !note.deleted_at && idsEqual(note.user_id, user?.id))
 				.orderBy(sortBy || 'title', sortOrder)
 				.findAll();
 		} catch (error) {
@@ -164,7 +165,7 @@ export const noteRepository = {
 			await idb
 				.update('notes')
 				.set({
-					deleted_at: undefined,
+					deleted_at: null,
 					version: existing.version + 1,
 				})
 				.where('id', id)
@@ -182,7 +183,7 @@ export const noteRepository = {
 
 			const notes = await idb
 				.from('notes')
-				.where((note) => note.deleted_at && note.user_id === user?.id)
+				.where((note) => note.deleted_at != null && idsEqual(note.user_id, user?.id))
 				.orderBy('deleted_at', 'desc')
 				.findAll();
 
