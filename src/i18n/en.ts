@@ -70,6 +70,7 @@ const en = {
 		'editor.code': 'Code',
 		'editor.list': 'List',
 		'editor.ordered.list': 'Ordered List',
+		'editor.task.list': 'Task List',
 		'editor.quote': 'Quote',
 		'editor.ocr.scan': 'Scan text from image (OCR)',
 		'editor.ocr.scanning': 'Scanning text...',
@@ -80,8 +81,7 @@ const en = {
 		'editor.ocr.mode.append': 'Append at End',
 		'editor.ocr.mode.prepend': 'Prepend at Start',
 		'editor.ocr.dropzone': 'Drop image here to extract text',
-		'editor.ocr.error.missing_key':
-			'Google Vision API key is missing. Please configure VITE_GOOGLE_VISION_API_KEY in your environment.',
+		'editor.ocr.error.missing_key': 'Google Vision API key is missing.',
 		'editor.ocr.error.invalid_type':
 			'Please select a valid image file (PNG, JPG, WEBP, GIF).',
 		'editor.ocr.error.too_large': 'Image file is too large (maximum 10MB).',
