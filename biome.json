@@ -38,6 +38,11 @@
 			"!**/components/ui"
 		]
 	},
+	"html": {
+		"assist": { "enabled": true },
+		"formatter": { "enabled": true },
+		"linter": { "enabled": true }
+	},
 	"linter": {
 		"enabled": true,
 		"rules": {

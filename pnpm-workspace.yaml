@@ -5,3 +5,5 @@ minimumReleaseAgeExclude:
   - toolbox-x
   - locality-idb
   - "@types/*"
+
+minimumReleaseAge: 360

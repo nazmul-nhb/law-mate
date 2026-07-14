@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { Layout } from '@/app/Layout';
 import { AppProviders } from '@/app/providers/AppProviders';
@@ -11,8 +12,15 @@ import { NotesPage } from '@/features/notes/NotesPage';
 import { IDBExplorerPage } from '@/features/settings/IDBExplorerPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { TrashPage } from '@/features/trash/TrashPage';
+import { useSettingsStore } from '@/stores/settings.store';
 
 export default function App() {
+	const lang = useSettingsStore((s) => s.language);
+
+	useEffect(() => {
+		document.documentElement.lang = lang;
+	}, [lang]);
+
 	return (
 		<ErrorBoundary>
 			<AppProviders>
