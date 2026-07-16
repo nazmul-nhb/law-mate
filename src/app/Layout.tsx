@@ -36,10 +36,10 @@ export function Layout() {
 
 				const removeTimer = setTimeout(() => {
 					setShowSplash(false);
-				}, 300);
+				}, 600);
 
 				return () => clearTimeout(removeTimer);
-			}, 1000);
+			}, 2000);
 
 			return () => clearTimeout(fadeTimer);
 		}

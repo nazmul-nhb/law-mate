@@ -58,6 +58,7 @@ export default function Header() {
 									<img
 										alt="Logo"
 										className="size-8 object-contain"
+										loading="eager"
 										src="/law-mate.png"
 									/>
 									<span className="inline sm:hidden">{t('app.name')}</span>
@@ -80,6 +81,7 @@ export default function Header() {
 						<img
 							alt="LawMate Logo"
 							className="size-9 object-contain"
+							loading="eager"
 							src="/law-mate.png"
 						/>
 						<span className="md:inline hidden">{t('app.name')}</span>

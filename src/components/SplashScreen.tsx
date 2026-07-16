@@ -19,6 +19,7 @@ export function SplashScreen({ isFading }: SplashScreenProps) {
 				<img
 					alt="LawMate Logo"
 					className="size-20 rounded-2xl shadow-xl shadow-black/60 animate-pulse border border-white/5"
+					loading="eager"
 					src="/lm-192x192.png"
 				/>
 
@@ -29,6 +30,9 @@ export function SplashScreen({ isFading }: SplashScreenProps) {
 					</h1>
 					<p className="text-neutral-400 max-w-xs px-4 select-none">
 						{t('app.tagline')}
+					</p>
+					<p className="text-sm text-neutral-500 max-w-xs px-4 select-none">
+						{t('footer.created.by')}
 					</p>
 				</div>
 			</div>
