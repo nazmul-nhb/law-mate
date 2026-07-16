@@ -1,4 +1,5 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { numberArray } from '@/lib/utils';
 
 export default function NotesPageSkeleton() {
 	return (
@@ -9,8 +10,8 @@ export default function NotesPageSkeleton() {
 					<div className="h-8 bg-muted/60 rounded w-3/4" />
 					<div className="h-9 bg-muted/60 rounded w-full" />
 					<div className="space-y-2.5 py-4">
-						{Array.from({ length: 12 }).map((_, i) => (
-							<div className="h-9 bg-muted/60 rounded-md w-full" key={i} />
+						{numberArray(12).map((el) => (
+							<div className="h-9 bg-muted/60 rounded-md w-full" key={el} />
 						))}
 					</div>
 				</div>
@@ -27,8 +28,8 @@ export default function NotesPageSkeleton() {
 						<div className="h-8 bg-muted/60 rounded w-36" />
 					</div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-						{Array.from({ length: 12 }).map((_, i) => (
-							<NoteCardSkeleton key={i} />
+						{numberArray(12).map((el) => (
+							<NoteCardSkeleton key={el} />
 						))}
 					</div>
 				</div>

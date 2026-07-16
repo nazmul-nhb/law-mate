@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { googleClientId } from '@/constants/env';
 import { idb } from '@/database/db';
-import { supabase } from '@/lib/supabase';
 import { invalidateLawsAndNotes, queryClient } from '@/lib/queryClient';
+import { supabase } from '@/lib/supabase';
 import { syncService } from '@/services/sync.service';
 import { useAuthStore } from '@/stores/auth.store';
 import type { AppUser } from '@/types/profile.types';
@@ -85,37 +85,30 @@ export function useAuth() {
 
 	useEffect(() => {
 		// Initial session check
-		if (isOnline) {
-			supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
-				if (initialSession?.user) {
-					const appUser = initialSession.user as AppUser;
-					setUser(appUser);
+		supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
+			if (initialSession?.user) {
+				const appUser = initialSession.user as AppUser;
+				setUser(appUser);
+				if (window.navigator.onLine) {
 					await assureUserProfile(appUser);
-					await syncService.sync();
-					await invalidateLawsAndNotes();
-				} else {
-					setProfile(null);
-					setUser(null);
 				}
-				setIsLoading(false);
-				setInitialized(true);
-			});
-		} else {
+			} else {
+				setProfile(null);
+				setUser(null);
+			}
 			setIsLoading(false);
 			setInitialized(true);
-		}
+		});
 
 		// Listen for auth changes
 		const {
 			data: { subscription },
-		} = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+		} = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
 			if (currentSession?.user) {
 				const appUser = currentSession.user as AppUser;
 				setUser(appUser);
-				await assureUserProfile(appUser);
-				if (event === 'SIGNED_IN') {
-					await syncService.sync();
-					await invalidateLawsAndNotes();
+				if (window.navigator.onLine) {
+					await assureUserProfile(appUser);
 				}
 			} else {
 				setProfile(null);
@@ -128,7 +121,17 @@ export function useAuth() {
 		return () => {
 			subscription.unsubscribe();
 		};
-	}, [setUser, setProfile, setIsLoading, setInitialized, isOnline, assureUserProfile]);
+	}, [setUser, setProfile, setIsLoading, setInitialized, assureUserProfile]);
+
+	// Auto-sync when transitioning to online or signing in
+	useEffect(() => {
+		if (isOnline && initialized && user) {
+			syncService
+				.sync()
+				.then(() => invalidateLawsAndNotes())
+				.catch((err) => console.warn('Sync failed:', err));
+		}
+	}, [isOnline, initialized, user]);
 
 	// Initialize Google One Tap if GIS SDK is loaded and client ID exists
 	useEffect(() => {

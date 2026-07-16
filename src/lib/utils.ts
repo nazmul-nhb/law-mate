@@ -37,3 +37,12 @@ export function idsEqual(id1: Uncertain<string>, id2: Uncertain<string>) {
 		return id1 === id2;
 	}
 }
+
+/**
+ * Generate an array of numbers
+ * @param length number of elements in the array
+ * @returns array of numbers
+ */
+export function numberArray(length: number = 12) {
+	return Array.from({ length }).map((_, i) => i + 1);
+}

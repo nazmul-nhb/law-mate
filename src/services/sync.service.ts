@@ -15,6 +15,12 @@ import type { Note } from '@/types/note.types';
 
 export const syncService = {
 	async sync(): Promise<void> {
+		const { isSyncing, setIsSyncing } = useUIStore.getState();
+		if (isSyncing) {
+			console.info('Skipping sync: Sync is already in progress.');
+			return;
+		}
+
 		const { user } = useAuthStore.getState();
 
 		if (!user) {
@@ -26,8 +32,6 @@ export const syncService = {
 			console.info('Skipping sync: Device is offline.');
 			return;
 		}
-
-		const { setIsSyncing } = useUIStore.getState();
 
 		try {
 			setIsSyncing(true);

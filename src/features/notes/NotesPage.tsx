@@ -13,6 +13,7 @@ import { LawSidebar } from '@/features/notes/components/LawSidebar';
 import { NoteDialog } from '@/features/notes/components/NoteDialog';
 import { NoteList } from '@/features/notes/components/NoteList';
 import NotesPageSkeleton from '@/features/notes/components/skeletons';
+import { useAuth } from '@/hooks/useAuth';
 import { useLaws } from '@/hooks/useLaws';
 import { useNotes } from '@/hooks/useNotes';
 import { useQueryParams } from '@/hooks/useQueryParams';
@@ -90,7 +91,11 @@ export function NotesPage() {
 	const activeNotes = notes.filter((n) => n.law_id === selectedLawId);
 	const totalNotes = activeNotes.length;
 
-	if (isNotesLoading || isLawsLoading) {
+	const isSyncing = useUIStore((s) => s.isSyncing);
+	const lastSyncedAt = useSettingsStore((s) => s.lastSyncedAt);
+	const { user } = useAuth();
+
+	if (isNotesLoading || isLawsLoading || (user && !lastSyncedAt && isSyncing)) {
 		return <NotesPageSkeleton />;
 	}
 
