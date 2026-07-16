@@ -13,7 +13,7 @@ import type { $UUID } from 'locality-idb';
 import { ArrowUpDown, Eye, Trash2 } from 'lucide-react';
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import removeMd from 'remove-markdown';
+import { markdownToText } from 'toolbox-x';
 import { Button } from '@/components/ui/button';
 import { SEARCH_KEYS } from '@/constants/app';
 import type { Law } from '@/types/laws.types';
@@ -127,7 +127,7 @@ export function useExplorerTables<Data extends Note | Law>(
 					const note = row.original;
 					return (
 						<span className="font-medium truncate line-clamp-1 max-w-50 block">
-							{removeMd(note?.description ?? '') || (
+							{markdownToText(note?.description) || (
 								<span className="text-muted-foreground italic">
 									{t('notes.no.description')}
 								</span>

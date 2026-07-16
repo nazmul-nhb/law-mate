@@ -2,7 +2,7 @@ import type { $UUID } from 'locality-idb';
 import { Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import removeMd from 'remove-markdown';
+import { markdownToText } from 'toolbox-x';
 import { formatDateRelativeNative } from 'toolbox-x/date';
 import { isNonEmptyString } from 'toolbox-x/guards';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -65,7 +65,7 @@ export function NoteCard({ note, onDelete }: NoteCardProps) {
 				{isNonEmptyString(note.description) && (
 					<CardContent className="">
 						<div className="line-clamp-2 text-sm text-muted-foreground">
-							{removeMd(note.description)}
+							{markdownToText(note.description)}
 						</div>
 					</CardContent>
 				)}

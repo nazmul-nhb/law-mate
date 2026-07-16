@@ -2,7 +2,7 @@ import { FileText, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import removeMd from 'remove-markdown';
+import { markdownToText } from 'toolbox-x';
 import { isNonEmptyString } from 'toolbox-x/guards';
 import {
 	CommandDialog,
@@ -63,7 +63,7 @@ export function SearchCommand() {
 			{/* Advanced Filters Row */}
 			<div className="flex items-center justify-between gap-2 px-4 py-2 border-b border-border bg-muted/20 shrink-0 select-none">
 				<select
-					className="text-[11px] h-7 bg-popover text-foreground border border-border rounded px-2 outline-none focus:border-primary shrink-0 max-w-37.5 cursor-pointer"
+					className="text-[11px] h-7 bg-popover text-foreground border border-border rounded px-2 outline-none shrink-0 max-w-37.5 cursor-pointer"
 					onChange={(e) => setScopeLawId(e.target.value || null)}
 					value={scopeLawId || ''}
 				>
@@ -122,7 +122,7 @@ export function SearchCommand() {
 									</p>
 									{isNonEmptyString(note.description) && (
 										<div className="truncate line-clamp-1 text-xs text-muted-foreground">
-											{removeMd(note.description)}
+											{markdownToText(note.description)}
 										</div>
 									)}
 								</div>

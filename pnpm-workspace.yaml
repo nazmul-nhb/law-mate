@@ -6,4 +6,4 @@ minimumReleaseAgeExclude:
   - locality-idb
   - "@types/*"
 
-minimumReleaseAge: 360
+minimumReleaseAge: 120

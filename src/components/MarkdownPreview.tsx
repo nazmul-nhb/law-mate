@@ -1,6 +1,6 @@
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import removeMd from 'remove-markdown';
+import { markdownToText } from 'toolbox-x';
 import { cn } from '@/lib/utils';
 
 interface MarkdownPreviewProps {
@@ -23,7 +23,7 @@ export function MarkdownPreview({
 	return (
 		<div className={cn(`prose prose-neutral dark:prose-invert max-w-none`, className)}>
 			{removeMarkdown ? (
-				removeMd(replaceNewLine ? content.replace(/\n/g, ' ') : content)
+				markdownToText(replaceNewLine ? content.replace(/\n+/g, ' ') : content)
 			) : (
 				<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
 			)}
