@@ -45,7 +45,7 @@ export function Layout() {
 		}
 	}, [initialized]);
 
-	if (profile?.status !== 'active') {
+	if (profile && profile?.status !== 'active') {
 		return (
 			<div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center">
 				<div className="max-w-md space-y-4 rounded-lg border border-destructive/20 bg-destructive/5 p-6 shadow-xs">
