@@ -22,10 +22,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { CUSTOM_EVENTS } from '@/constants/app';
 import { idb } from '@/database/db';
 import { SampleDataLayout } from '@/features/settings/components/SampleDataLayout';
 import { AppError } from '@/lib/errors';
+import { invalidateLawsAndNotes } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
 import { useSettingsStore } from '@/stores/settings.store';
 import type { IDBTableNames, LawMateSchema, Nullable } from '@/types/common.types';
@@ -165,8 +165,7 @@ export function ImportSetting() {
 			await idb.$import(importedData as ExportData<IDBTableNames, LawMateSchema>, {
 				mode: importMode,
 			});
-			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
-			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
+			await invalidateLawsAndNotes();
 			setSuccess(true);
 			setPreview(null);
 			setImportedData(null);

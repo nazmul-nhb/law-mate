@@ -41,8 +41,12 @@ export function TrashPage() {
 
 	if (isLoading) {
 		return (
-			<div className="flex items-center justify-center py-16">
-				<p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+			<div className="space-y-6 animate-pulse">
+				<div className="h-7 bg-muted/60 rounded w-48" />
+				<div className="space-y-4">
+					<div className="h-14 bg-muted/30 border border-border/60 rounded-lg" />
+					<div className="h-14 bg-muted/30 border border-border/60 rounded-lg" />
+				</div>
 			</div>
 		);
 	}

@@ -3,7 +3,7 @@ import { getTimestamp } from 'toolbox-x/date';
 import { getFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from 'toolbox-x/dom';
 import { DELETE_LAWS_QUEUE_KEY, DELETE_NOTES_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
-import { queryClient } from '@/lib/queryClient';
+import { invalidateLawsAndNotes } from '@/lib/queryClient';
 import { supabase } from '@/lib/supabase';
 import { getTimeDiff } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
@@ -28,9 +28,10 @@ export const syncService = {
 		}
 
 		const { setIsSyncing } = useUIStore.getState();
-		setIsSyncing(true);
 
 		try {
+			setIsSyncing(true);
+
 			const syncTime = getTimestamp();
 
 			// Auto-claim any unowned laws or notes for the current authenticated user
@@ -419,12 +420,13 @@ export const syncService = {
 				}
 			}
 
-			await queryClient.invalidateQueries({ queryKey: ['laws', 'notes'] });
+			await invalidateLawsAndNotes();
 
 			// Save overall last synced timestamp
 			useSettingsStore.getState().setLastSyncedAt(syncTime);
 		} catch (error) {
 			console.error('Synchronization failed:', error);
+
 			throw error;
 		} finally {
 			setIsSyncing(false);

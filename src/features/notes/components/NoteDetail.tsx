@@ -49,8 +49,25 @@ export function NoteDetail() {
 
 	if (isLoading) {
 		return (
-			<div className="text-center text-sm text-muted-foreground">
-				{t('common.loading')}
+			<div className="space-y-6 animate-pulse">
+				<div className="flex items-center justify-between">
+					<div className="h-5 bg-muted/60 rounded w-20" />
+					<div className="flex items-center gap-1">
+						<div className="h-8 w-8 bg-muted/60 rounded-md" />
+						<div className="h-8 w-8 bg-muted/60 rounded-md" />
+					</div>
+				</div>
+				<article className="space-y-4">
+					<div className="h-8 bg-muted/60 rounded w-1/2" />
+					<div className="h-4 bg-muted/60 rounded w-1/4" />
+					<div className="space-y-2 mt-6">
+						<div className="h-4 bg-muted/60 rounded w-full" />
+						<div className="h-4 bg-muted/60 rounded w-5/6" />
+						<div className="h-4 bg-muted/60 rounded w-4/5" />
+						<div className="h-4 bg-muted/60 rounded w-full" />
+						<div className="h-4 bg-muted/60 rounded w-2/3" />
+					</div>
+				</article>
 			</div>
 		);
 	}

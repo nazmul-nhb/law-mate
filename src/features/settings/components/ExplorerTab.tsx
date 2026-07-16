@@ -27,10 +27,11 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { CUSTOM_EVENTS, PAGE_LIMITS } from '@/constants/app';
+import { PAGE_LIMITS } from '@/constants/app';
 import { idb } from '@/database/db';
 import ExplorerDataView from '@/features/settings/components/ExplorerDataView';
 import { useExplorerTables } from '@/hooks/useExplorerTables';
+import { queryClient } from '@/lib/queryClient';
 import type { IDBTableNames, Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
 import type { Note } from '@/types/note.types';
@@ -53,9 +54,6 @@ export function ExplorerTab({ idbTable, localizeNumber, setConfirmConfig }: Expl
 	const [data, setData] = useState<Array<Law | Note>>([]);
 	const [globalFilter, setGlobalFilter] = useState('');
 	const [viewingData, setViewingData] = useState<Nullable<Law | Note>>(null);
-
-	const EVENT =
-		idbTable === 'notes' ? CUSTOM_EVENTS.NOTES_UPDATED : CUSTOM_EVENTS.LAWS_UPDATED;
 
 	const fetchAllData = useCallback(async () => {
 		try {
@@ -83,7 +81,7 @@ export function ExplorerTab({ idbTable, localizeNumber, setConfirmConfig }: Expl
 				onConfirm: async () => {
 					try {
 						await idb.delete(idbTable).where('id', id).run();
-						window.dispatchEvent(new CustomEvent(EVENT));
+						await queryClient.invalidateQueries({ queryKey: [idbTable] });
 						await fetchAllData();
 					} catch (err) {
 						console.error(`Failed to delete item from ${idbTable}:`, err);
@@ -99,7 +97,7 @@ export function ExplorerTab({ idbTable, localizeNumber, setConfirmConfig }: Expl
 		try {
 			const ids = selectedRows.map((r) => r.original.id);
 			await Promise.all(ids.map((id) => idb.delete(idbTable).where('id', id).run()));
-			window.dispatchEvent(new CustomEvent(EVENT));
+			await queryClient.invalidateQueries({ queryKey: [idbTable] });
 			await fetchAllData();
 			table.resetRowSelection();
 		} catch (err) {
@@ -110,7 +108,7 @@ export function ExplorerTab({ idbTable, localizeNumber, setConfirmConfig }: Expl
 	const handleClearAll = async () => {
 		try {
 			await idb.clearTable(idbTable);
-			window.dispatchEvent(new CustomEvent(EVENT));
+			await queryClient.invalidateQueries({ queryKey: [idbTable] });
 			await fetchAllData();
 			table.resetRowSelection();
 		} catch (err) {

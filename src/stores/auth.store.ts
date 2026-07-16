@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { CUSTOM_EVENTS } from '@/constants/app';
+import { queryClient } from '@/lib/queryClient';
 import { supabase } from '@/lib/supabase';
 import type { Nullable } from '@/types/common.types';
 import type { AppUser, Profile } from '@/types/profile.types';
@@ -73,8 +73,7 @@ export const useAuthStore = create<AuthState>()(
 
 					if (error) throw error;
 
-					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
-					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
+					queryClient.clear();
 				} catch (error) {
 					console.error('Failed to sign out:', error);
 				} finally {

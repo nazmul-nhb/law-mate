@@ -12,6 +12,7 @@ import { LawDialog } from '@/features/notes/components/LawDialog';
 import { LawSidebar } from '@/features/notes/components/LawSidebar';
 import { NoteDialog } from '@/features/notes/components/NoteDialog';
 import { NoteList } from '@/features/notes/components/NoteList';
+import NotesPageSkeleton from '@/features/notes/components/skeletons';
 import { useLaws } from '@/hooks/useLaws';
 import { useNotes } from '@/hooks/useNotes';
 import { useQueryParams } from '@/hooks/useQueryParams';
@@ -90,11 +91,7 @@ export function NotesPage() {
 	const totalNotes = activeNotes.length;
 
 	if (isNotesLoading || isLawsLoading) {
-		return (
-			<div className="flex items-center justify-center py-16">
-				<p className="text-sm text-muted-foreground">{t('common.loading')}</p>
-			</div>
-		);
+		return <NotesPageSkeleton />;
 	}
 
 	const error = notesError || lawsError;

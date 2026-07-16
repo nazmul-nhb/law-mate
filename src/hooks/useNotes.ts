@@ -40,7 +40,11 @@ export function useCreateNoteMutation() {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: noteKeys.all });
 			if (window.navigator.onLine && user) {
-				await syncService.sync();
+				try {
+					await syncService.sync();
+				} catch (err) {
+					console.warn('Sync failed after create note mutation:', err);
+				}
 			}
 		},
 	});
@@ -54,7 +58,11 @@ export function useUpdateNoteMutation() {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: noteKeys.all });
 			if (window.navigator.onLine && user) {
-				await syncService.sync();
+				try {
+					await syncService.sync();
+				} catch (err) {
+					console.warn('Sync failed after update note mutation:', err);
+				}
 			}
 		},
 	});
@@ -68,7 +76,11 @@ export function useDeleteNoteMutation() {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: noteKeys.all });
 			if (window.navigator.onLine && user) {
-				await syncService.sync();
+				try {
+					await syncService.sync();
+				} catch (err) {
+					console.warn('Sync failed after delete note mutation:', err);
+				}
 			}
 		},
 	});

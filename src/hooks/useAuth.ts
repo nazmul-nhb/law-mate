@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { CUSTOM_EVENTS } from '@/constants/app';
 import { googleClientId } from '@/constants/env';
 import { idb } from '@/database/db';
 import { supabase } from '@/lib/supabase';
+import { invalidateLawsAndNotes, queryClient } from '@/lib/queryClient';
 import { syncService } from '@/services/sync.service';
 import { useAuthStore } from '@/stores/auth.store';
 import type { AppUser } from '@/types/profile.types';
@@ -66,11 +66,15 @@ export function useAuth() {
 					.where((l) => !l.user_id)
 					.run();
 
+				const invalidations: Array<Promise<void>> = [];
 				if (updatedNotes > 0) {
-					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
+					invalidations.push(queryClient.invalidateQueries({ queryKey: ['notes'] }));
 				}
 				if (updatedLaws > 0) {
-					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
+					invalidations.push(queryClient.invalidateQueries({ queryKey: ['laws'] }));
+				}
+				if (invalidations.length > 0) {
+					await Promise.all(invalidations);
 				}
 			} catch (err) {
 				console.error('Failed to assure user profile:', err);
@@ -88,8 +92,7 @@ export function useAuth() {
 					setUser(appUser);
 					await assureUserProfile(appUser);
 					await syncService.sync();
-					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
-					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
+					await invalidateLawsAndNotes();
 				} else {
 					setProfile(null);
 					setUser(null);
@@ -112,8 +115,7 @@ export function useAuth() {
 				await assureUserProfile(appUser);
 				if (event === 'SIGNED_IN') {
 					await syncService.sync();
-					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
-					window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
+					await invalidateLawsAndNotes();
 				}
 			} else {
 				setProfile(null);

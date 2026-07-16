@@ -11,3 +11,10 @@ export const queryClient = new QueryClient({
 		},
 	},
 });
+
+export async function invalidateLawsAndNotes() {
+	await Promise.all([
+		queryClient.invalidateQueries({ queryKey: ['laws'] }),
+		queryClient.invalidateQueries({ queryKey: ['notes'] }),
+	]);
+}

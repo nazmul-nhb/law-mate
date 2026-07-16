@@ -64,7 +64,11 @@ export function useTrash(): UseTrashReturn {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: noteKeys.all });
 			if (window.navigator.onLine && user) {
-				await syncService.sync();
+				try {
+					await syncService.sync();
+				} catch (err) {
+					console.warn('Sync failed after restore note mutation:', err);
+				}
 			}
 		},
 	});
@@ -75,7 +79,11 @@ export function useTrash(): UseTrashReturn {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: noteKeys.all });
 			if (window.navigator.onLine && user) {
-				await syncService.sync();
+				try {
+					await syncService.sync();
+				} catch (err) {
+					console.warn('Sync failed after permanent delete note mutation:', err);
+				}
 			}
 		},
 	});
@@ -86,7 +94,11 @@ export function useTrash(): UseTrashReturn {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: lawKeys.all });
 			if (window.navigator.onLine && user) {
-				await syncService.sync();
+				try {
+					await syncService.sync();
+				} catch (err) {
+					console.warn('Sync failed after restore law mutation:', err);
+				}
 			}
 		},
 	});
@@ -97,7 +109,11 @@ export function useTrash(): UseTrashReturn {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: lawKeys.all });
 			if (window.navigator.onLine && user) {
-				await syncService.sync();
+				try {
+					await syncService.sync();
+				} catch (err) {
+					console.warn('Sync failed after permanent delete law mutation:', err);
+				}
 			}
 		},
 	});

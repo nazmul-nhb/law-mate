@@ -40,7 +40,11 @@ export function useCreateLawMutation() {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: lawKeys.all });
 			if (window.navigator.onLine && user) {
-				await syncService.sync();
+				try {
+					await syncService.sync();
+				} catch (err) {
+					console.warn('Sync failed after create law mutation:', err);
+				}
 			}
 		},
 	});
@@ -54,7 +58,11 @@ export function useUpdateLawMutation() {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: lawKeys.all });
 			if (window.navigator.onLine && user) {
-				await syncService.sync();
+				try {
+					await syncService.sync();
+				} catch (err) {
+					console.warn('Sync failed after update law mutation:', err);
+				}
 			}
 		},
 	});
@@ -68,7 +76,11 @@ export function useDeleteLawMutation() {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: lawKeys.all });
 			if (window.navigator.onLine && user) {
-				await syncService.sync();
+				try {
+					await syncService.sync();
+				} catch (err) {
+					console.warn('Sync failed after delete law mutation:', err);
+				}
 			}
 		},
 	});
