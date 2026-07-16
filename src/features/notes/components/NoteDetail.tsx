@@ -1,54 +1,34 @@
 import type { $UUID } from 'locality-idb';
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
 import { useTitle } from 'nhb-hooks';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { formatDateRelativeNative } from 'toolbox-x/date';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { TooltipSimple } from '@/components/ui/tooltip-simple';
-import { CUSTOM_EVENTS } from '@/constants/app';
-import { noteRepository } from '@/repositories/note.repository';
+import { useDeleteNoteMutation, useNoteQuery } from '@/hooks/useNotes';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useUIStore } from '@/stores/ui.store';
-import type { Nullable } from '@/types/common.types';
-import type { Note } from '@/types/note.types';
 
 export function NoteDetail() {
 	const { t } = useTranslation();
-	const { id } = useParams<{ id: $UUID }>();
+	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 	const openNoteDialog = useUIStore((s) => s.openNoteDialog);
-	const [note, setNote] = useState<Nullable<Note>>(null);
-	const [isLoading, setIsLoading] = useState(true);
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 	const language = useSettingsStore((s) => s.language);
 
-	const fetchNote = useCallback(async () => {
-		if (!id) return;
-		try {
-			setIsLoading(true);
-			const data = await noteRepository.getById(id);
-			setNote(data);
-		} catch (error) {
-			console.error('Failed to fetch note:', error);
-			navigate('/');
-		} finally {
-			setIsLoading(false);
-		}
-	}, [id, navigate]);
+	const { data: note, isLoading, error } = useNoteQuery(id as $UUID);
+	const deleteNoteMutation = useDeleteNoteMutation();
 
 	useEffect(() => {
-		fetchNote();
-
-		// Listen to save events
-		const handleUpdated = () => {
-			fetchNote();
-		};
-		window.addEventListener(CUSTOM_EVENTS.NOTES_UPDATED, handleUpdated);
-		return () => window.removeEventListener(CUSTOM_EVENTS.NOTES_UPDATED, handleUpdated);
-	}, [fetchNote]);
+		if (error) {
+			console.error('Failed to fetch note:', error);
+			navigate('/');
+		}
+	}, [error, navigate]);
 
 	useTitle(note?.title || t('app.tagline'));
 
@@ -60,8 +40,7 @@ export function NoteDetail() {
 	const handleDelete = async () => {
 		if (!note) return;
 		try {
-			await noteRepository.softDelete(note.id);
-			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
+			await deleteNoteMutation.mutateAsync(note.id);
 			navigate(-1);
 		} catch (error) {
 			console.error('Failed to delete note:', error);

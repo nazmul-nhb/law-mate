@@ -14,10 +14,8 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CUSTOM_EVENTS } from '@/constants/app';
-import { lawRepository } from '@/repositories/law.repository';
+import { useCreateLawMutation, useLawQuery, useUpdateLawMutation } from '@/hooks/useLaws';
 import type { Nullable } from '@/types/common.types';
-import type { Law } from '@/types/laws.types';
 
 interface LawDialogProps {
 	open: boolean;
@@ -31,24 +29,28 @@ export function LawDialog({ open, onOpenChange, lawId, onSelectLaw, onSaved }: L
 	const { t } = useTranslation();
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
-	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<Nullable<string>>(null);
 
 	const navigate = useNavigate();
 
 	const isEditing = !!lawId;
 
+	// Fetch existing law data using reusable hook when editing
+	const { data: existingLaw } = useLawQuery(lawId || undefined);
+
+	const createMutation = useCreateLawMutation();
+	const updateMutation = useUpdateLawMutation();
+	const isSaving = createMutation.isPending || updateMutation.isPending;
+
 	useEffect(() => {
-		if (open && lawId) {
-			lawRepository.getById(lawId).then((law) => {
-				setTitle(law.title);
-				setDescription(law.description ?? '');
-			});
+		if (open && existingLaw && lawId) {
+			setTitle(existingLaw.title);
+			setDescription(existingLaw.description ?? '');
 		} else if (open) {
 			setTitle('');
 			setDescription('');
 		}
-	}, [open, lawId]);
+	}, [open, lawId, existingLaw]);
 
 	const handleSave = async () => {
 		if (!title.trim()) {
@@ -56,40 +58,40 @@ export function LawDialog({ open, onOpenChange, lawId, onSelectLaw, onSaved }: L
 			return;
 		}
 
-		setIsSaving(true);
 		setError(null);
-
-		let createdLaw: Nullable<Law> = null;
 
 		try {
 			if (isEditing && lawId) {
-				await lawRepository.update(lawId, {
-					title: title.trim(),
-					description: description.trim() || undefined,
+				await updateMutation.mutateAsync({
+					id: lawId,
+					input: {
+						title: title.trim(),
+						description: description.trim() || undefined,
+					},
 				});
+				onOpenChange(false);
+				setTitle('');
+				setDescription('');
+				onSaved?.();
 			} else {
-				createdLaw = await lawRepository.create({
+				const createdLaw = await createMutation.mutateAsync({
 					title: title.trim(),
 					description: description.trim() || undefined,
 				});
+				onOpenChange(false);
+				setTitle('');
+				setDescription('');
+
+				if (createdLaw) {
+					onSelectLaw?.(createdLaw.id);
+					const queryString = generateQueryParams({ law_id: createdLaw.id });
+					navigate({ pathname: '/', search: queryString }, { replace: true });
+				}
+
+				onSaved?.();
 			}
-
-			onOpenChange(false);
-			setTitle('');
-			setDescription('');
-			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
-
-			if (createdLaw) {
-				onSelectLaw?.(createdLaw.id);
-				const queryString = generateQueryParams({ law_id: createdLaw.id });
-				navigate({ pathname: '/', search: queryString }, { replace: true });
-			}
-
-			onSaved?.();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : t('common.error'));
-		} finally {
-			setIsSaving(false);
 		}
 	};
 

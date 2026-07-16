@@ -1,7 +1,10 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type { $UUID } from 'locality-idb';
-import { useCallback, useEffect, useState } from 'react';
-import { CUSTOM_EVENTS } from '@/constants/app';
+import { useCallback, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { lawKeys } from '@/hooks/useLaws';
+import { noteKeys } from '@/hooks/useNotes';
+import { queryClient } from '@/lib/queryClient';
 import { lawRepository } from '@/repositories/law.repository';
 import { noteRepository } from '@/repositories/note.repository';
 import { syncService } from '@/services/sync.service';
@@ -22,122 +25,146 @@ interface UseTrashReturn {
 }
 
 export function useTrash(): UseTrashReturn {
-	const [deletedNotes, setDeletedNotes] = useState<Note[]>([]);
-	const [deletedLaws, setDeletedLaws] = useState<Law[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<Nullable<string>>(null);
+	const [mutationError, setMutationError] = useState<Nullable<string>>(null);
 	const { user } = useAuth();
 
+	// Fetch deleted notes query
+	const {
+		data: deletedNotes = [],
+		isLoading: isNotesLoading,
+		error: notesError,
+		refetch: refetchNotes,
+	} = useQuery<Note[], Error>({
+		queryKey: [...noteKeys.all, 'deleted'] as const,
+		queryFn: () => noteRepository.getDeleted(),
+	});
+
+	// Fetch deleted laws query
+	const {
+		data: deletedLaws = [],
+		isLoading: isLawsLoading,
+		error: lawsError,
+		refetch: refetchLaws,
+	} = useQuery<Law[], Error>({
+		queryKey: [...lawKeys.all, 'deleted'] as const,
+		queryFn: () => lawRepository.getDeleted(),
+	});
+
+	const isLoading = isNotesLoading || isLawsLoading;
+	const queryError = notesError || lawsError;
+
 	const refresh = useCallback(async () => {
-		try {
-			setError(null);
-			const [notesData, lawsData] = await Promise.all([
-				noteRepository.getDeleted(),
-				lawRepository.getDeleted(),
-			]);
-			setDeletedNotes(notesData);
-			setDeletedLaws(lawsData);
-		} catch (err) {
-			const message = err instanceof Error ? err.message : 'Failed to load trash';
-			setError(message);
-		} finally {
-			setIsLoading(false);
-		}
-	}, []);
+		setMutationError(null);
+		await Promise.all([refetchNotes(), refetchLaws()]);
+	}, [refetchNotes, refetchLaws]);
 
-	useEffect(() => {
-		refresh();
-		window.addEventListener(CUSTOM_EVENTS.NOTES_UPDATED, refresh);
-		window.addEventListener(CUSTOM_EVENTS.LAWS_UPDATED, refresh);
-		return () => {
-			window.removeEventListener(CUSTOM_EVENTS.NOTES_UPDATED, refresh);
-			window.removeEventListener(CUSTOM_EVENTS.LAWS_UPDATED, refresh);
-		};
-	}, [refresh]);
+	// Mutation: Restore Note
+	const restoreNoteMutation = useMutation<void, Error, $UUID>({
+		mutationFn: (id) => noteRepository.restore(id),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: noteKeys.all });
+			if (window.navigator.onLine && user) {
+				await syncService.sync();
+			}
+		},
+	});
 
-	const isSyncable = window.navigator.onLine && !!user;
+	// Mutation: Permanent Delete Note
+	const permanentDeleteNoteMutation = useMutation<void, Error, $UUID>({
+		mutationFn: (id) => noteRepository.permanentDelete(id),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: noteKeys.all });
+			if (window.navigator.onLine && user) {
+				await syncService.sync();
+			}
+		},
+	});
+
+	// Mutation: Restore Law
+	const restoreLawMutation = useMutation<void, Error, $UUID>({
+		mutationFn: (id) => lawRepository.restore(id),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: lawKeys.all });
+			if (window.navigator.onLine && user) {
+				await syncService.sync();
+			}
+		},
+	});
+
+	// Mutation: Permanent Delete Law
+	const permanentDeleteLawMutation = useMutation<void, Error, $UUID>({
+		mutationFn: (id) => lawRepository.permanentDelete(id),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: lawKeys.all });
+			if (window.navigator.onLine && user) {
+				await syncService.sync();
+			}
+		},
+	});
 
 	const restoreNote = useCallback(
 		async (id: $UUID): Promise<boolean> => {
 			try {
-				await noteRepository.restore(id);
-				await refresh();
-
-				if (isSyncable) {
-					await syncService.sync();
-				}
-
+				setMutationError(null);
+				await restoreNoteMutation.mutateAsync(id);
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to restore note';
-				setError(message);
+				setMutationError(message);
 				return false;
 			}
 		},
-		[refresh, isSyncable]
+		[restoreNoteMutation]
 	);
 
 	const permanentDeleteNote = useCallback(
 		async (id: $UUID): Promise<boolean> => {
 			try {
-				await noteRepository.permanentDelete(id);
-				await refresh();
-
-				if (isSyncable) {
-					await syncService.sync();
-				}
-
+				setMutationError(null);
+				await permanentDeleteNoteMutation.mutateAsync(id);
 				return true;
 			} catch (err) {
 				const message =
 					err instanceof Error ? err.message : 'Failed to permanently delete note';
-				setError(message);
+				setMutationError(message);
 				return false;
 			}
 		},
-		[refresh, isSyncable]
+		[permanentDeleteNoteMutation]
 	);
 
 	const restoreLaw = useCallback(
 		async (id: $UUID): Promise<boolean> => {
 			try {
-				await lawRepository.restore(id);
-				await refresh();
-
-				if (isSyncable) {
-					await syncService.sync();
-				}
-
+				setMutationError(null);
+				await restoreLawMutation.mutateAsync(id);
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to restore law';
-				setError(message);
+				setMutationError(message);
 				return false;
 			}
 		},
-		[refresh, isSyncable]
+		[restoreLawMutation]
 	);
 
 	const permanentDeleteLaw = useCallback(
 		async (id: $UUID): Promise<boolean> => {
 			try {
-				await lawRepository.permanentDelete(id);
-				await refresh();
-
-				if (isSyncable) {
-					await syncService.sync();
-				}
-
+				setMutationError(null);
+				await permanentDeleteLawMutation.mutateAsync(id);
 				return true;
 			} catch (err) {
 				const message =
 					err instanceof Error ? err.message : 'Failed to permanently delete law';
-				setError(message);
+				setMutationError(message);
 				return false;
 			}
 		},
-		[refresh, isSyncable]
+		[permanentDeleteLawMutation]
 	);
+
+	const error = queryError ? queryError.message : mutationError;
 
 	return {
 		deletedNotes,

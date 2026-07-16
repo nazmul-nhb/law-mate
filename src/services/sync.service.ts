@@ -1,8 +1,9 @@
 import type { $UUID } from 'locality-idb';
 import { getTimestamp } from 'toolbox-x/date';
 import { getFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from 'toolbox-x/dom';
-import { CUSTOM_EVENTS, DELETE_LAWS_QUEUE_KEY, DELETE_NOTES_QUEUE_KEY } from '@/constants/app';
+import { DELETE_LAWS_QUEUE_KEY, DELETE_NOTES_QUEUE_KEY } from '@/constants/app';
 import { idb } from '@/database/db';
+import { queryClient } from '@/lib/queryClient';
 import { supabase } from '@/lib/supabase';
 import { getTimeDiff } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth.store';
@@ -418,8 +419,7 @@ export const syncService = {
 				}
 			}
 
-			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
-			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.LAWS_UPDATED));
+			await queryClient.invalidateQueries({ queryKey: ['laws', 'notes'] });
 
 			// Save overall last synced timestamp
 			useSettingsStore.getState().setLastSyncedAt(syncTime);

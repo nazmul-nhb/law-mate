@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { FileText, Search } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { markdownToText } from 'toolbox-x';
@@ -12,7 +13,9 @@ import {
 	CommandItem,
 	CommandList,
 } from '@/components/ui/command';
+import { lawKeys } from '@/hooks/useLaws';
 import { useNoteSearch } from '@/hooks/useNoteSearch';
+import { noteKeys } from '@/hooks/useNotes';
 import { lawRepository } from '@/repositories/law.repository';
 import { noteRepository } from '@/repositories/note.repository';
 import { useUIStore } from '@/stores/ui.store';
@@ -23,8 +26,18 @@ export function SearchCommand() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { isSearchOpen, setSearchOpen } = useUIStore();
-	const [notes, setNotes] = useState<Note[]>([]);
-	const [laws, setLaws] = useState<Law[]>([]);
+
+	const { data: notes = [] } = useQuery<Note[], Error>({
+		queryKey: noteKeys.list('title', 'asc'),
+		queryFn: () => noteRepository.getAll('title', 'asc'),
+		enabled: isSearchOpen,
+	});
+
+	const { data: laws = [] } = useQuery<Law[], Error>({
+		queryKey: lawKeys.list('title', 'asc'),
+		queryFn: () => lawRepository.getAll('title', 'asc'),
+		enabled: isSearchOpen,
+	});
 
 	const {
 		query,
@@ -37,10 +50,7 @@ export function SearchCommand() {
 	} = useNoteSearch(notes);
 
 	useEffect(() => {
-		if (isSearchOpen) {
-			noteRepository.getAll('title', 'asc').then(setNotes);
-			lawRepository.getAll('title', 'asc').then(setLaws);
-		} else {
+		if (!isSearchOpen) {
 			setQuery('');
 			setScopeLawId(null);
 			setSearchFields('all');

@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import type { $UUID } from 'locality-idb';
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,14 +23,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CUSTOM_EVENTS } from '@/constants/app';
+import { lawKeys } from '@/hooks/useLaws';
+import { useCreateNoteMutation, useNoteQuery, useUpdateNoteMutation } from '@/hooks/useNotes';
 import { useQueryParams } from '@/hooks/useQueryParams';
 import { lawRepository } from '@/repositories/law.repository';
-import { noteRepository } from '@/repositories/note.repository';
 import { useUIStore } from '@/stores/ui.store';
 import type { Nullable } from '@/types/common.types';
 import type { Law } from '@/types/laws.types';
-import type { Note } from '@/types/note.types';
 
 interface NoteDialogProps {
 	onSaved?: () => void;
@@ -41,9 +41,7 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 	const { noteDialog, closeNoteDialog } = useUIStore();
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
-	const [laws, setLaws] = useState<Law[]>([]);
 	const [selectedLawId, setSelectedLawId] = useState<Nullable<$UUID>>(null);
-	const [isSaving, setIsSaving] = useState(false);
 	const [error, setError] = useState<Nullable<string>>(null);
 	const navigate = useNavigate();
 
@@ -51,22 +49,26 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 
 	const isEditing = !!noteDialog.noteId;
 
-	// Load laws
-	useEffect(() => {
-		if (noteDialog.open) {
-			lawRepository.getAll('title', 'asc').then(setLaws);
-		}
-	}, [noteDialog.open]);
+	// Load laws using TanStack Query
+	const { data: laws = [] } = useQuery<Law[], Error>({
+		queryKey: lawKeys.list('title', 'asc'),
+		queryFn: () => lawRepository.getAll('title', 'asc'),
+		enabled: noteDialog.open,
+	});
 
-	// Load existing note data when editing
+	// Load existing note data using reusable hook when editing
+	const { data: existingNote } = useNoteQuery(noteDialog.noteId || undefined);
+
+	const createMutation = useCreateNoteMutation();
+	const updateMutation = useUpdateNoteMutation();
+	const isSaving = createMutation.isPending || updateMutation.isPending;
+
 	useEffect(() => {
-		if (noteDialog.open && noteDialog.noteId) {
-			noteRepository.getById(noteDialog.noteId).then((note) => {
-				setTitle(note.title);
-				setDescription(note.description ?? '');
-				setSelectedLawId(note.law_id);
-			});
-		} else if (noteDialog.open) {
+		if (noteDialog.open && existingNote && noteDialog.noteId) {
+			setTitle(existingNote.title);
+			setDescription(existingNote.description ?? '');
+			setSelectedLawId(existingNote.law_id);
+		} else if (noteDialog.open && !noteDialog.noteId) {
 			setTitle('');
 			setDescription('');
 			setSelectedLawId(defaultLawId || null);
@@ -76,7 +78,7 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 				setSelectedLawId(lawId);
 			}
 		}
-	}, [noteDialog.open, noteDialog.noteId, defaultLawId, getQueryParam]);
+	}, [noteDialog.open, noteDialog.noteId, existingNote, defaultLawId, getQueryParam]);
 
 	const handleSave = async () => {
 		if (!selectedLawId) {
@@ -94,41 +96,40 @@ export function NoteDialog({ onSaved, defaultLawId }: NoteDialogProps = {}) {
 			return;
 		}
 
-		setIsSaving(true);
 		setError(null);
-
-		let createdNote: Nullable<Note> = null;
 
 		try {
 			if (isEditing && noteDialog.noteId) {
-				await noteRepository.update(noteDialog.noteId, {
-					title: title.trim(),
-					description: description.trim(),
-					law_id: selectedLawId,
+				await updateMutation.mutateAsync({
+					id: noteDialog.noteId,
+					input: {
+						title: title.trim(),
+						description: description.trim(),
+						law_id: selectedLawId,
+					},
 				});
+				closeNoteDialog();
+				setTitle('');
+				setDescription('');
+				setSelectedLawId(null);
+				onSaved?.();
 			} else {
-				createdNote = await noteRepository.create({
+				const createdNote = await createMutation.mutateAsync({
 					title: title.trim(),
 					description: description.trim(),
 					law_id: selectedLawId,
 				});
+				closeNoteDialog();
+				setTitle('');
+				setDescription('');
+				setSelectedLawId(null);
+				if (createdNote) {
+					navigate(`/note/${createdNote.id}`, { replace: true });
+				}
+				onSaved?.();
 			}
-
-			closeNoteDialog();
-			setTitle('');
-			setDescription('');
-			setSelectedLawId(null);
-			window.dispatchEvent(new CustomEvent(CUSTOM_EVENTS.NOTES_UPDATED));
-
-			if (createdNote) {
-				navigate(`/note/${createdNote.id}`, { replace: true });
-			}
-
-			onSaved?.();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : t('common.error'));
-		} finally {
-			setIsSaving(false);
 		}
 	};
 

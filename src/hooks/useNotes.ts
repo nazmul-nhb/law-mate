@@ -1,12 +1,78 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type { $UUID } from 'locality-idb';
-import { type JSX, useCallback, useEffect, useState } from 'react';
-import { CUSTOM_EVENTS } from '@/constants/app';
+import { type JSX, useCallback, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSorter } from '@/hooks/useSorter';
+import { queryClient } from '@/lib/queryClient';
 import { noteRepository } from '@/repositories/note.repository';
 import { syncService } from '@/services/sync.service';
 import type { Nullable } from '@/types/common.types';
 import type { CreateNoteInput, EditNoteInput, Note } from '@/types/note.types';
+
+// Strict Query Keys Factory for Note repository
+export const noteKeys = {
+	all: ['notes'] as const,
+	lists: () => [...noteKeys.all, 'list'] as const,
+	list: (sortField: string, sortOrder: string) => {
+		return [...noteKeys.lists(), { sortField, sortOrder }] as const;
+	},
+	details: () => [...noteKeys.all, 'detail'] as const,
+	detail: (id: $UUID) => [...noteKeys.details(), id] as const,
+};
+
+// Reusable Query Hook for a single note
+export function useNoteQuery(id: $UUID | undefined) {
+	return useQuery<Note, Error>({
+		queryKey: id ? noteKeys.detail(id) : [],
+		queryFn: async () => {
+			if (!id) throw new Error('Note ID is required');
+			return noteRepository.getById(id);
+		},
+		enabled: !!id,
+	});
+}
+
+// Reusable Mutation Hook for creating a note
+export function useCreateNoteMutation() {
+	const { user } = useAuth();
+	return useMutation<Nullable<Note>, Error, CreateNoteInput>({
+		mutationFn: (input) => noteRepository.create(input),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: noteKeys.all });
+			if (window.navigator.onLine && user) {
+				await syncService.sync();
+			}
+		},
+	});
+}
+
+// Reusable Mutation Hook for updating a note
+export function useUpdateNoteMutation() {
+	const { user } = useAuth();
+	return useMutation<void, Error, { id: $UUID; input: EditNoteInput }>({
+		mutationFn: ({ id, input }) => noteRepository.update(id, input),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: noteKeys.all });
+			if (window.navigator.onLine && user) {
+				await syncService.sync();
+			}
+		},
+	});
+}
+
+// Reusable Mutation Hook for deleting a note
+export function useDeleteNoteMutation() {
+	const { user } = useAuth();
+	return useMutation<void, Error, $UUID>({
+		mutationFn: (id) => noteRepository.softDelete(id),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: noteKeys.all });
+			if (window.navigator.onLine && user) {
+				await syncService.sync();
+			}
+		},
+	});
+}
 
 interface UseNotesReturn {
 	notes: Note[];
@@ -20,98 +86,77 @@ interface UseNotesReturn {
 }
 
 export function useNotes(): UseNotesReturn {
-	const [notes, setNotes] = useState<Note[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<Nullable<string>>(null);
-	const { user } = useAuth();
+	const [mutationError, setMutationError] = useState<Nullable<string>>(null);
 
 	const { sortField, sortOrder, sorter } = useSorter({
 		defaultField: 'title',
 		defaultOrder: 'asc',
 	});
 
+	const {
+		data: notes = [],
+		isLoading,
+		error: queryError,
+		refetch,
+	} = useQuery<Note[], Error>({
+		queryKey: noteKeys.list(sortField, sortOrder),
+		queryFn: () => noteRepository.getAll(sortField, sortOrder),
+	});
+
 	const refresh = useCallback(async () => {
-		try {
-			setError(null);
-			const data = await noteRepository.getAll(sortField, sortOrder);
-			setNotes(data);
-		} catch (err) {
-			const message = err instanceof Error ? err.message : 'Failed to load notes';
-			setError(message);
-		} finally {
-			setIsLoading(false);
-		}
-	}, [sortField, sortOrder]);
+		setMutationError(null);
+		await refetch();
+	}, [refetch]);
 
-	useEffect(() => {
-		refresh();
-		window.addEventListener(CUSTOM_EVENTS.NOTES_UPDATED, refresh);
-		return () => {
-			window.removeEventListener(CUSTOM_EVENTS.NOTES_UPDATED, refresh);
-		};
-	}, [refresh]);
-
-	const isSyncable = window.navigator.onLine && !!user;
+	const createNoteMutation = useCreateNoteMutation();
+	const updateNoteMutation = useUpdateNoteMutation();
+	const deleteNoteMutation = useDeleteNoteMutation();
 
 	const createNote = useCallback(
 		async (input: CreateNoteInput): Promise<Nullable<Note>> => {
 			try {
-				const note = await noteRepository.create(input);
-				await refresh();
-
-				if (isSyncable) {
-					await syncService.sync();
-				}
-
-				return note;
+				setMutationError(null);
+				return await createNoteMutation.mutateAsync(input);
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to create note';
-				setError(message);
+				setMutationError(message);
 				return null;
 			}
 		},
-		[refresh, isSyncable]
+		[createNoteMutation]
 	);
 
 	const updateNote = useCallback(
 		async (id: $UUID, input: EditNoteInput): Promise<boolean> => {
 			try {
-				await noteRepository.update(id, input);
-				await refresh();
-
-				if (isSyncable) {
-					await syncService.sync();
-				}
-
+				setMutationError(null);
+				await updateNoteMutation.mutateAsync({ id, input });
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to update note';
-				setError(message);
+				setMutationError(message);
 				return false;
 			}
 		},
-		[refresh, isSyncable]
+		[updateNoteMutation]
 	);
 
 	const deleteNote = useCallback(
 		async (id: $UUID): Promise<boolean> => {
 			try {
-				await noteRepository.softDelete(id);
-				await refresh();
-
-				if (isSyncable) {
-					await syncService.sync();
-				}
-
+				setMutationError(null);
+				await deleteNoteMutation.mutateAsync(id);
 				return true;
 			} catch (err) {
 				const message = err instanceof Error ? err.message : 'Failed to delete note';
-				setError(message);
+				setMutationError(message);
 				return false;
 			}
 		},
-		[refresh, isSyncable]
+		[deleteNoteMutation]
 	);
+
+	const error = queryError ? queryError.message : mutationError;
 
 	return {
 		notes,

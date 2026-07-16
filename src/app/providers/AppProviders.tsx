@@ -1,8 +1,10 @@
 import '@/i18n';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { TitleProvider } from 'nhb-hooks';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { queryClient } from '@/lib/queryClient';
 import { useSettingsStore } from '@/stores/settings.store';
 
 function ThemeApplier() {
@@ -44,16 +46,18 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 	const { t } = useTranslation();
 
 	return (
-		<TitleProvider
-			config={{
-				siteTitle: t('app.name'),
-			}}
-		>
-			<TooltipProvider>
-				<ThemeApplier />
-				<FontSizeApplier />
-				{children}
-			</TooltipProvider>
-		</TitleProvider>
+		<QueryClientProvider client={queryClient}>
+			<TitleProvider
+				config={{
+					siteTitle: t('app.name'),
+				}}
+			>
+				<TooltipProvider>
+					<ThemeApplier />
+					<FontSizeApplier />
+					{children}
+				</TooltipProvider>
+			</TitleProvider>
+		</QueryClientProvider>
 	);
 }
