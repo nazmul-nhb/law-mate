@@ -20,7 +20,7 @@ Live URL: <https://law-mate.nazmul-nhb.dev/>
 - **Core**: `React 19`, `TypeScript`, `Vite`
 - **Database**: `IndexedDB` ([`locality-idb`](https://github.com/nazmul-nhb/locality-idb)) + `Supabase`
 - **OCR**: `Google Cloud Vision API`
-- **State Management**: `Zustand`
+- **State Management**: `Zustand`, `TanStack Query`
 - **UI Components**: `Base UI` (via `shadcn`), `TailwindCSS`, `Lucide Icons`
 - **i18n**: `i18next` & `react-i18next`
 

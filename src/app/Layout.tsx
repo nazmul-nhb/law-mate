@@ -1,10 +1,11 @@
 import { Shield } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { SearchCommand } from '@/components/SearchCommand';
+import { SplashScreen } from '@/components/SplashScreen';
 import { NoteDialog } from '@/features/notes/components/NoteDialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useSearchCommand } from '@/hooks/useSearchCommand';
@@ -17,6 +18,8 @@ export function Layout() {
 	const { user, initialized } = useAuth();
 	const { profile, signOut } = useAuthStore();
 	const autoSync = useSettingsStore((s) => s.autoSync);
+	const [showSplash, setShowSplash] = useState(true);
+	const [isFading, setIsFading] = useState(false);
 
 	useSearchCommand();
 
@@ -26,7 +29,23 @@ export function Layout() {
 		}
 	}, [initialized, user, autoSync]);
 
-	if (profile?.status === 'blocked') {
+	useEffect(() => {
+		if (initialized) {
+			const fadeTimer = setTimeout(() => {
+				setIsFading(true);
+
+				const removeTimer = setTimeout(() => {
+					setShowSplash(false);
+				}, 300);
+
+				return () => clearTimeout(removeTimer);
+			}, 1000);
+
+			return () => clearTimeout(fadeTimer);
+		}
+	}, [initialized]);
+
+	if (profile?.status !== 'active') {
 		return (
 			<div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center">
 				<div className="max-w-md space-y-4 rounded-lg border border-destructive/20 bg-destructive/5 p-6 shadow-xs">
@@ -65,6 +84,8 @@ export function Layout() {
 
 			{/* Global Note create/edit dialog */}
 			<NoteDialog />
+
+			{showSplash ? <SplashScreen isFading={isFading} /> : null}
 		</div>
 	);
 }
