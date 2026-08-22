@@ -25,7 +25,7 @@ export default function Footer() {
 					</NavLink>
 					<a
 						className="hover:text-foreground transition-colors"
-						href="https://nazmul-nhb.dev"
+						href="https://nazmul-nhb.vercel.app"
 						rel="noopener"
 						target="_blank"
 					>

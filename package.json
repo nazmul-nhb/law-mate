@@ -1,13 +1,13 @@
 {
   "name": "law-mate",
   "private": true,
-  "version": "1.12.6",
+  "version": "1.12.7",
   "type": "module",
   "description": "LawMate - Keep Your Notes about Law Sections Organized.",
   "author": {
     "name": "Nazmul Hassan",
     "email": "nazmulnhb@gmail.com",
-    "url": "https://nazmul-nhb.dev"
+    "url": "https://nazmul-nhb.vercel.app"
   },
   "scripts": {
     "dev": "vite",

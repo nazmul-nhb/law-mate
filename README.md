@@ -2,7 +2,7 @@
 
 LawMate is a modern, progressive web application (PWA) designed to help legal professionals and law students organize notes with ease. It combines a clean, distraction-free markdown editing interface with local-first offline storage and real-time cloud synchronization.
 
-Live URL: <https://law-mate.nazmul-nhb.dev/>
+Live URL: <https://law-mate-nhb.vercel.app/>
 
 ## ✨ Features
 
@@ -75,4 +75,4 @@ pnpm preview
 
 ---
 
-Built with ❤️ by [Nazmul Hassan](https://nazmul-nhb.dev)
+Built with ❤️ by [Nazmul Hassan](https://nazmul-nhb.vercel.app)
